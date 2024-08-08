@@ -1,0 +1,88 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Create Your Account</h4>
+                        <form id="registerForm" action="" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.username.label_tag }}
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger">{{ form.username.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password1.label_tag }}
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="text-danger">{{ form.password1.errors }}</div>
+                                {% endif %}
+                                <div id="password1Error" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.password2.label_tag }}
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="text-danger">{{ form.password2.errors }}</div>
+                                {% endif %}
+                                <div id="password2Error" class="text-danger"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Register</button>
+                        </form>
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted">Already have an account? <a href="{% url 'login' %}" class="text-primary font-weight-bold">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('registerForm');
+    var password1Field = form.querySelector('input[name="password1"]');
+    var password2Field = form.querySelector('input[name="password2"]');
+    var password1Error = document.getElementById('password1Error');
+    var password2Error = document.getElementById('password2Error');
+
+    function validatePasswords() {
+        var password1 = password1Field.value;
+        var password2 = password2Field.value;
+
+        // Password match check
+        if (password2 && password1 !== password2) {
+            password2Error.textContent = 'Passwords do not match.';
+        } else {
+            password2Error.textContent = '';
+        }
+
+        // Password strength check
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (password1 && !passwordPattern.test(password1)) {
+            password1Error.textContent = 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.';
+        } else {
+            password1Error.textContent = '';
+        }
+    }
+
+    password1Field.addEventListener('input', validatePasswords);
+    password2Field.addEventListener('input', validatePasswords);
+});
+</script>
+{% endblock %}
