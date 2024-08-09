@@ -8,43 +8,32 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body p-4">
+                        <div id="formErrors" class="alert alert-danger d-none">
+                            <strong id="formErrorsMessage"></strong>
+                        </div>
                         <h4 class="card-title text-center mb-4">Create Your Account</h4>
                         <form id="registerForm" action="" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                {{ form.username.label_tag }}
                                 {{ form.username }}
-                                {% if form.username.errors %}
-                                    <div class="text-danger">{{ form.username.errors }}</div>
-                                {% endif %}
+                                <div id="usernameError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                {{ form.email.label_tag }}
                                 {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="text-danger">{{ form.email.errors }}</div>
-                                {% endif %}
+                                <div id="emailError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                {{ form.password1.label_tag }}
                                 {{ form.password1 }}
-                                {% if form.password1.errors %}
-                                    <div class="text-danger">{{ form.password1.errors }}</div>
-                                {% endif %}
                                 <div id="password1Error" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                {{ form.password2.label_tag }}
                                 {{ form.password2 }}
-                                {% if form.password2.errors %}
-                                    <div class="text-danger">{{ form.password2.errors }}</div>
-                                {% endif %}
                                 <div id="password2Error" class="text-danger"></div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Register</button>
                         </form>
                         <div class="form-group text-center mt-4">
-                            <p class="text-muted">Already have an account? <a href="{% url 'login' %}" class="text-primary font-weight-bold">Login here</a></p>
+                            <p class="text-muted">Already have an account? <a href="" class="text-primary font-weight-bold">Login here</a></p>
                         </div>
                     </div>
                 </div>
@@ -54,35 +43,71 @@
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var form = document.getElementById('registerForm');
-    var password1Field = form.querySelector('input[name="password1"]');
-    var password2Field = form.querySelector('input[name="password2"]');
-    var password1Error = document.getElementById('password1Error');
-    var password2Error = document.getElementById('password2Error');
-
-    function validatePasswords() {
-        var password1 = password1Field.value;
-        var password2 = password2Field.value;
-
-        // Password match check
-        if (password2 && password1 !== password2) {
-            password2Error.textContent = 'Passwords do not match.';
-        } else {
-            password2Error.textContent = '';
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registerForm');
+    const fields = {
+        username: {
+            element: document.getElementById('username'),
+            errorElement: document.getElementById('usernameError'),
+            pattern: /^[a-zA-Z0-9]{3,}$/,
+            message: 'Username must be at least 3 characters long and contain only letters and numbers.'
+        },
+        email: {
+            element: document.getElementById('email'),
+            errorElement: document.getElementById('emailError'),
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Enter a valid email address.'
+        },
+        password1: {
+            element: document.getElementById('password1'),
+            errorElement: document.getElementById('password1Error'),
+            pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            message: 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.'
+        },
+        password2: {
+            element: document.getElementById('password2'),
+            errorElement: document.getElementById('password2Error'),
+            pattern: () => document.getElementById('password1').value === document.getElementById('password2').value,
+            message: 'Passwords do not match.'
         }
+    };
 
-        // Password strength check
-        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (password1 && !passwordPattern.test(password1)) {
-            password1Error.textContent = 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.';
+    function validateField(name) {
+        const { element, errorElement, pattern, message } = fields[name];
+        const value = element.value;
+        if (typeof pattern === 'function') {
+            const isValid = pattern();
+            errorElement.textContent = isValid ? '' : message;
+            return isValid;
         } else {
-            password1Error.textContent = '';
+            const isValid = pattern.test(value);
+            errorElement.textContent = isValid ? '' : message;
+            return isValid;
         }
     }
 
-    password1Field.addEventListener('input', validatePasswords);
-    password2Field.addEventListener('input', validatePasswords);
+    function validateForm() {
+        return Object.keys(fields).every(name => validateField(name));
+    }
+
+    Object.values(fields).forEach(({ element }) => {
+        element.addEventListener('input', () => validateField(element.id));
+    });
+
+    form.addEventListener('submit', (event) => {
+        const isValid = validateForm();
+        const formErrors = document.getElementById('formErrors');
+        const formErrorsMessage = document.getElementById('formErrorsMessage');
+
+        if (!isValid) {
+            event.preventDefault();
+            formErrors.classList.remove('d-none');
+            formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
+        } else {
+            formErrors.classList.add('d-none');
+        }
+    });
 });
 </script>
+
 {% endblock %}

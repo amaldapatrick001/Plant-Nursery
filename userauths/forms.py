@@ -9,14 +9,16 @@ class UserRegisterForm(UserCreationForm):
             "class": "form-control",
             "required": "required",
             "pattern": "[a-zA-Z0-9]{3,}",  # Example pattern
-            "title": "Username must be at least 3 characters long and contain only letters and numbers."
+            "title": "Username must be at least 3 characters long and contain only letters and numbers.",
+            "id": "username"
         })
     )
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             "placeholder": "Email",
             "class": "form-control",
-            "required": "required"
+            "required": "required",
+            "id": "email"
         })
     )
     password1 = forms.CharField(
@@ -25,7 +27,8 @@ class UserRegisterForm(UserCreationForm):
             "class": "form-control",
             "required": "required",
             "pattern": "(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}",  # Pattern for strong password
-            "title": "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols."
+            "title": "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.",
+            "id": "password1"
         })
     )
     password2 = forms.CharField(
@@ -33,7 +36,8 @@ class UserRegisterForm(UserCreationForm):
             "placeholder": "Confirm Password",
             "class": "form-control",
             "required": "required",
-            "minlength": "8"
+            "minlength": "8",
+            "id": "password2"
         })
     )
 
