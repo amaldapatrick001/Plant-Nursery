@@ -1,0 +1,89 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <div id="formErrors" class="alert alert-danger d-none">
+                            <strong id="formErrorsMessage"></strong>
+                        </div>
+                        <h4 class="card-title text-center mb-4">Login to Your Account</h4>
+                        <form id="loginForm" action="{% url 'userauths:login' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.email.label_tag }} <!-- Label for email -->
+                                {{ form.email }}
+                                <div id="emailError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.label_tag }} <!-- Label for password -->
+                                {{ form.password }}
+                                <div id="passwordError" class="text-danger"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Login</button>
+                        </form>
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted">Don't have an account? <a href="{% url 'userauths:register' %}" class="text-primary font-weight-bold">Register here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    const fields = {
+        email: {
+            element: document.getElementById('id_email'),
+            errorElement: document.getElementById('emailError'),
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Enter a valid email address.'
+        },
+        password: {
+            element: document.getElementById('id_password'),
+            errorElement: document.getElementById('passwordError'),
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/,
+            message: 'Password must be at least 8 characters long and contain letters and numbers.'
+        }
+    };
+
+    function validateField(name) {
+        const { element, errorElement, pattern, message } = fields[name];
+        const value = element.value;
+        const isValid = pattern.test(value);
+        errorElement.textContent = isValid ? '' : message;
+        return isValid;
+    }
+
+    function validateForm() {
+        return Object.keys(fields).every(name => validateField(name));
+    }
+
+    Object.values(fields).forEach(({ element }) => {
+        element.addEventListener('input', () => validateField(element.id));
+    });
+
+    form.addEventListener('submit', (event) => {
+        const isValid = validateForm();
+        const formErrors = document.getElementById('formErrors');
+        const formErrorsMessage = document.getElementById('formErrorsMessage');
+
+        if (!isValid) {
+            event.preventDefault();
+            formErrors.classList.remove('d-none');
+            formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
+        } else {
+            formErrors.classList.add('d-none');
+        }
+    });
+});
+</script>
+
+{% endblock %}

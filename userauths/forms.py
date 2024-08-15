@@ -1,46 +1,23 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from userauths.models import User
+from .models import User
 
-class UserRegisterForm(UserCreationForm):
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={
-            "placeholder": "Username",
-            "class": "form-control",
-            "required": "required",
-            "pattern": "[a-zA-Z0-9]{3,}",  # Example pattern
-            "title": "Username must be at least 3 characters long and contain only letters and numbers.",
-            "id": "username"
-        })
-    )
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={
-            "placeholder": "Email",
-            "class": "form-control",
-            "required": "required",
-            "id": "email"
-        })
-    )
-    password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            "placeholder": "Password",
-            "class": "form-control",
-            "required": "required",
-            "pattern": "(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}",  # Pattern for strong password
-            "title": "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.",
-            "id": "password1"
-        })
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            "placeholder": "Confirm Password",
-            "class": "form-control",
-            "required": "required",
-            "minlength": "8",
-            "id": "password2"
-        })
-    )
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    phoneno = forms.CharField(max_length=15, required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'email', 'phoneno', 'password1', 'password2']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)

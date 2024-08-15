@@ -15,25 +15,39 @@
                         <form id="registerForm" action="" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                {{ form.username }}
-                                <div id="usernameError" class="text-danger"></div>
+                                {{ form.first_name.label_tag }}
+                                {{ form.first_name }}
+                                <div id="firstNameError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
+                                {{ form.last_name.label_tag }}
+                                {{ form.last_name }}
+                                <div id="lastNameError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.email.label_tag }}
                                 {{ form.email }}
                                 <div id="emailError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
+                                {{ form.phoneno.label_tag }}
+                                {{ form.phoneno }}
+                                <div id="phonenoError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.password1.label_tag }}
                                 {{ form.password1 }}
                                 <div id="password1Error" class="text-danger"></div>
                             </div>
                             <div class="form-group">
+                                {{ form.password2.label_tag }}
                                 {{ form.password2 }}
                                 <div id="password2Error" class="text-danger"></div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Register</button>
                         </form>
                         <div class="form-group text-center mt-4">
-                            <p class="text-muted">Already have an account? <a href="" class="text-primary font-weight-bold">Login here</a></p>
+                            <p class="text-muted">Already have an account? <a href="{% url 'userauths:login' %}" class="text-primary font-weight-bold">Login here</a></p>
                         </div>
                     </div>
                 </div>
@@ -46,28 +60,40 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registerForm');
     const fields = {
-        username: {
-            element: document.getElementById('username'),
-            errorElement: document.getElementById('usernameError'),
-            pattern: /^[a-zA-Z0-9]{3,}$/,
-            message: 'Username must be at least 3 characters long and contain only letters and numbers.'
+        first_name: {
+            element: document.getElementById('id_first_name'),
+            errorElement: document.getElementById('firstNameError'),
+            pattern: /^[a-zA-Z]+$/,
+            message: 'First name must contain only letters.'
+        },
+        last_name: {
+            element: document.getElementById('id_last_name'),
+            errorElement: document.getElementById('lastNameError'),
+            pattern: /^[a-zA-Z]+$/,
+            message: 'Last name must contain only letters.'
         },
         email: {
-            element: document.getElementById('email'),
+            element: document.getElementById('id_email'),
             errorElement: document.getElementById('emailError'),
             pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             message: 'Enter a valid email address.'
         },
+        phoneno: {
+            element: document.getElementById('id_phoneno'),
+            errorElement: document.getElementById('phonenoError'),
+            pattern: /^\d{10,15}$/,
+            message: 'Enter a valid phone number with 10-15 digits.'
+        },
         password1: {
-            element: document.getElementById('password1'),
+            element: document.getElementById('id_password1'),
             errorElement: document.getElementById('password1Error'),
             pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             message: 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.'
         },
         password2: {
-            element: document.getElementById('password2'),
+            element: document.getElementById('id_password2'),
             errorElement: document.getElementById('password2Error'),
-            pattern: () => document.getElementById('password1').value === document.getElementById('password2').value,
+            pattern: () => document.getElementById('id_password1').value === document.getElementById('id_password2').value,
             message: 'Passwords do not match.'
         }
     };
@@ -91,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     Object.values(fields).forEach(({ element }) => {
-        element.addEventListener('input', () => validateField(element.id));
+        element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
     });
 
     form.addEventListener('submit', (event) => {

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
 
     # Custom Apps
     'core',
@@ -55,13 +56,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default, stores session data in the database
+
+# Other session settings
+SESSION_COOKIE_NAME = 'sessionid'  # Name of the session cookie
+SESSION_COOKIE_AGE = 1209600  # 2 weeks, session expiration in seconds
+SESSION_SAVE_EVERY_REQUEST = False  # Save the session to the database on every request
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Whether to expire the session when the user closes their browser
 
 ROOT_URLCONF = 'PlantNursery.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +82,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'PlantNursery.wsgi.application'
 
 
@@ -82,10 +91,15 @@ WSGI_APPLICATION = 'PlantNursery.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'amalda',        # Replace with your database name
+        'USER': 'postgres',        # Replace with your database user
+        'PASSWORD': 'Amalda@123',# Replace with your database password
+        'HOST': 'localhost',                 # Set to your database server's address
+        'PORT': '5432',                      # Default PostgreSQL port
     }
 }
+
 
 
 # Password validation
