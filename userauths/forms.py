@@ -10,6 +10,13 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ['first_name', 'last_name', 'email', 'phoneno', 'password1', 'password2']
 
+    def save(self, commit=True):
+        user = super(RegistrationForm, self).save(commit=False)
+        user.username = self.cleaned_data['email']  # # Set username as email #
+        if commit:
+            user.save()
+        return user
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
