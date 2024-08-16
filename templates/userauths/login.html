@@ -63,19 +63,67 @@
     .text-danger {
         font-size: 0.875rem;
     }
+
     .logo {
         display: block;
         margin: 0 auto 20px;
         width: 200px; /* Adjust the width as needed */
     }
+
+    .separator {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .separator::before,
+    .separator::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: #e0e0e0;
+    }
+
+    .separator span {
+        padding: 0 10px;
+        color: #6c757d;
+    }
+
+    .google-signin-button {
+        display: block;
+        margin: 0 auto;
+        padding: 10px 15px;
+        background-color: #ffffff; /* White background */
+        color: #757575; /* Text color */
+        border: 1px solid #dadce0; /* Border color */
+        border-radius: 25px; /* Rounded corners */
+        text-decoration: none; /* Remove underline from link */
+        font-size: 18px; /* Medium font size */
+        font-weight: 500; /* Font weight */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+        transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+        width: 60%; /* Adjust size to medium */
+    }
+
+    .google-signin-button:hover {
+        background-color: #f7f7f7; /* Slightly darker background on hover */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
+    }
+
+    .google-logo {
+        width: 20px; /* Google logo size */
+        height: 20px; /* Google logo size */
+        margin-right: 10px; /* Space between logo and text */
+    }
 </style>
+
 <section class="ftco-section py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body p-4">
-                        <img src="{% static 'images/logo.png' %}"  alt="Logo" class="logo">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
                         <div id="formErrors" class="alert alert-danger d-none">
                             <strong id="formErrorsMessage"></strong>
                         </div>
@@ -83,19 +131,28 @@
                         <form id="loginForm" action="{% url 'userauths:login' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                {{ form.email.label_tag }} <!-- Label for email -->
-                                {{ form.email }}
+                                <input type="email" id="id_email" name="email" placeholder="Email Address" class="form-control">
                                 <div id="emailError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                {{ form.password.label_tag }} <!-- Label for password -->
-                                {{ form.password }}
+                                <input type="password" id="id_password" name="password" placeholder="Password" class="form-control">
                                 <div id="passwordError" class="text-danger"></div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Login</button>
                         </form>
+                        <div class="separator">
+                            <span>or</span>
+                        </div>
+                        <a href="#" class="google-signin-button">
+                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="google-logo">
+                            <span>Sign in with Google</span>
+                        </a>
+                        
                         <div class="form-group text-center mt-4">
                             <p class="text-muted">Don't have an account? <a href="{% url 'userauths:register' %}" class="text-primary font-weight-bold">Register here</a></p>
+                        </div>
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted"><a href="" class="text-primary font-weight-bold">Forgot Your Password?</a></p>
                         </div>
                     </div>
                 </div>
@@ -109,11 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('loginForm');
     const fields = {
         email: {
-            element: document.getElementById('id_email'),
-            errorElement: document.getElementById('emailError'),
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: 'Enter a valid email address.'
-        },
+                element: document.getElementById('id_email'),
+                errorElement: document.getElementById('emailError'),
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address.',
+                placeholder: 'Email Address'
+            },
         password: {
             element: document.getElementById('id_password'),
             errorElement: document.getElementById('passwordError'),
@@ -122,36 +180,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    function validateField(name) {
-        const { element, errorElement, pattern, message } = fields[name];
-        const value = element.value;
-        const isValid = pattern.test(value);
-        errorElement.textContent = isValid ? '' : message;
-        return isValid;
-    }
-
-    function validateForm() {
-        return Object.keys(fields).every(name => validateField(name));
-    }
-
-    Object.values(fields).forEach(({ element }) => {
-        element.addEventListener('input', () => validateField(element.id));
-    });
-
-    form.addEventListener('submit', (event) => {
-        const isValid = validateForm();
-        const formErrors = document.getElementById('formErrors');
-        const formErrorsMessage = document.getElementById('formErrorsMessage');
-
-        if (!isValid) {
-            event.preventDefault();
-            formErrors.classList.remove('d-none');
-            formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
-        } else {
-            formErrors.classList.add('d-none');
+    function setPlaceholders() {
+            Object.values(fields).forEach(({ element, placeholder }) => {
+                element.setAttribute('placeholder', placeholder);
+            });
         }
+    
+        function validateField(name) {
+            const { element, errorElement, pattern, message } = fields[name];
+            const value = element.value;
+            if (typeof pattern === 'function') {
+                const isValid = pattern();
+                errorElement.textContent = isValid ? '' : message;
+                return isValid;
+            } else {
+                const isValid = pattern.test(value);
+                errorElement.textContent = isValid ? '' : message;
+                return isValid;
+            }
+        }
+    
+        function validateForm() {
+            return Object.keys(fields).every(name => validateField(name));
+        }
+    
+        Object.values(fields).forEach(({ element }) => {
+            element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
+        });
+    
+        form.addEventListener('submit', (event) => {
+            const isValid = validateForm();
+            const formErrors = document.getElementById('formErrors');
+            const formErrorsMessage = document.getElementById('formErrorsMessage');
+    
+            if (!isValid) {
+                event.preventDefault();
+                formErrors.classList.remove('d-none');
+                formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
+            } else {
+                formErrors.classList.add('d-none');
+            }
+        });
+        
+        setPlaceholders();
     });
-});
 </script>
 
 {% endblock %}
