@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.sites',
     
 
     # Custom Apps
@@ -92,7 +94,7 @@ WSGI_APPLICATION = 'PlantNursery.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'amalda',        # Replace with your database name
+        'NAME': 'PN',        # Replace with your database name
         'USER': 'postgres',        # Replace with your database user
         'PASSWORD': 'Amalda@123',# Replace with your database password
         'HOST': 'localhost',                 # Set to your database server's address
@@ -100,6 +102,10 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+AUTH_USER_MODEL = 'userauths.User'  # Adjust 'userauths' to your app name if different
 
 
 # Password validation
@@ -156,4 +162,19 @@ JAZZMIN_SETTINGS = {
     'site_logo': '/images/logo1.jpg',
     'copyright': 'enchanted-eden.com',
 }
-AUTH_USER_MODEL='userauths.User'
+
+
+
+# Email Backend Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'  # Your email address
+EMAIL_HOST_PASSWORD = 'Amalda@MCA'  # Your email password
+
+DEFAULT_FROM_EMAIL = 'amaldapatrick2025@mca.ajce.in'  # Default sender email address
+
+SITE_ID = 1
+

@@ -130,16 +130,30 @@
                         <h4 class="card-title text-center mb-4">Login to Your Account</h4>
                         <form id="loginForm" action="{% url 'userauths:login' %}" method="post">
                             {% csrf_token %}
+                            
+                            <!-- Error messages -->
+                            <div id="formErrors" class="alert alert-danger {% if not messages %}d-none{% endif %}">
+                                {% for message in messages %}
+                                <strong id="formErrorsMessage">{{ message }}</strong>
+                                {% endfor %}
+                            </div>
+                        
+                            <!-- Email Field -->
                             <div class="form-group">
-                                <input type="email" id="id_email" name="email" placeholder="Email Address" class="form-control">
+                                <input type="email" id="id_email" name="email" placeholder="Email id" class="form-control">
                                 <div id="emailError" class="text-danger"></div>
                             </div>
+                        
+                            <!-- Password Field -->
                             <div class="form-group">
                                 <input type="password" id="id_password" name="password" placeholder="Password" class="form-control">
                                 <div id="passwordError" class="text-danger"></div>
                             </div>
+                        
+                            <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Login</button>
                         </form>
+                        
                         <div class="separator">
                             <span>or</span>
                         </div>
@@ -152,7 +166,12 @@
                             <p class="text-muted">Don't have an account? <a href="{% url 'userauths:register' %}" class="text-primary font-weight-bold">Register here</a></p>
                         </div>
                         <div class="form-group text-center mt-4">
-                            <p class="text-muted"><a href="" class="text-primary font-weight-bold">Forgot Your Password?</a></p>
+                            <p class="text-muted">
+                                <a href="{% url 'userauths:password_reset' %}" class="text-primary font-weight-bold">Forgot Your Password?</a>
+                            </p>
+                        </div>
+                        
+                        
                         </div>
                     </div>
                 </div>
@@ -170,13 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorElement: document.getElementById('emailError'),
                 pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: 'Enter a valid email address.',
-                placeholder: 'Email Address'
+                placeholder: 'Email address'
             },
         password: {
             element: document.getElementById('id_password'),
             errorElement: document.getElementById('passwordError'),
             pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/,
-            message: 'Password must be at least 8 characters long and contain letters and numbers.'
+            message: 'Password must be at least 8 characters long and contain letters and numbers.',
+            placeholder:'Password'
         }
     };
 
@@ -215,8 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
             if (!isValid) {
                 event.preventDefault();
-                formErrors.classList.remove('d-none');
-                formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
             } else {
                 formErrors.classList.add('d-none');
             }

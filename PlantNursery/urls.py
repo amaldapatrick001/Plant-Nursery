@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("core.urls")),  # core app included at root
     path("user/", include("userauths.urls")),  # userauths app included under 'user/' path
+    path('user/', include('django.contrib.auth.urls')),  # Django's auth URLs
 ]
 
 if settings.DEBUG:
