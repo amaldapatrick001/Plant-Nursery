@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
     
+    
 
     # Custom Apps
     'core',
@@ -67,7 +68,6 @@ SESSION_SAVE_EVERY_REQUEST = False  # Save the session to the database on every 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Whether to expire the session when the user closes their browser
 
 ROOT_URLCONF = 'PlantNursery.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -79,6 +79,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'userauths.context_processors.site_context',  # Added this line
+                'userauths.context_processors.site_info',      # Added this line
             ],
         },
     },
@@ -163,18 +165,28 @@ JAZZMIN_SETTINGS = {
     'copyright': 'enchanted-eden.com',
 }
 
+# settings.py
 
+# Site Configuration
+SITE_ID = 1 
+SITE_NAME = 'Enchanted Eden'
+DOMAIN = 'localhost:8000'
+PASSWORD_RESET_EMAIL_TEMPLATE = 'userauths/password_reset_email.html'
 
 # Email Backend Configuration
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'  # Your email address
-EMAIL_HOST_PASSWORD = 'Amalda@MCA'  # Your email password
+EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'
+EMAIL_HOST_PASSWORD = 'Amalda@MCA'  # Consider using environment variables for security
 
-DEFAULT_FROM_EMAIL = 'amaldapatrick2025@mca.ajce.in'  # Default sender email address
+DEFAULT_FROM_EMAIL = 'amaldapatrick2025@mca.ajce.in'
 
-SITE_ID = 1
 
+# Email Backend Configuration
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+LOGIN_URL = '/user/login/'
