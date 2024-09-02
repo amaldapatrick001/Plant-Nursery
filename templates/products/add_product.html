@@ -1,0 +1,67 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .form-group input {
+        border-radius: 5px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+    .card {
+        border: 1px solid #e0e0e0;
+    }
+    .card-body {
+        border-radius: 15px;
+        background-color: #f9f9f9;
+    }
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Add Product</h4>
+                        {% if messages %}
+                          <div class="alert alert-info">
+                            {% for message in messages %}
+                              <p>{{ message }}</p>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                        <form id="registerForm" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
