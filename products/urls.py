@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # products/urls.py
 
 from django.urls import path
@@ -13,14 +12,3 @@ urlpatterns = [
     path('add-category/', add_category, name='add_category'),
     path('categories/', category_list, name='category_list'),
 ]
-=======
-from django.urls import path
-from .views import product_list, add_product, update_product
-
-app_name = "products"
-urlpatterns = [
-    path('', product_list, name='product_list'),
-    path('add/', add_product, name='add_product'),
-    path('update/<int:pk>/', update_product, name='update_product'),
-]
->>>>>>> origin/main

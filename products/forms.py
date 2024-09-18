@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django import forms
 from .models import Product, Category
 from django import forms
@@ -77,15 +76,3 @@ class ProductForm(forms.ModelForm):
         if description and len(description) > 1000:
             raise forms.ValidationError("Description cannot exceed 1000 characters.")
         return description
-=======
-from django import forms
-from .models import Product
-
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = '__all__'
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }
->>>>>>> origin/main
