@@ -140,6 +140,7 @@
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 @media (forced-colors: active) {
   #changelist-filter {
@@ -148,6 +149,8 @@
 }
 
 >>>>>>> b583b2f (Updated code)
+=======
+>>>>>>> origin/main
 #changelist-filter h2 {
     font-size: 0.875rem;
     text-transform: uppercase;
@@ -163,9 +166,13 @@
     padding: 0 15px;
     margin-bottom: 10px;
 <<<<<<< HEAD
+<<<<<<< HEAD
     cursor: pointer;
 =======
 >>>>>>> b583b2f (Updated code)
+=======
+    cursor: pointer;
+>>>>>>> origin/main
 }
 
 #changelist-filter details summary > * {

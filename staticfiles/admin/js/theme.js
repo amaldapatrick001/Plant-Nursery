@@ -1,6 +1,9 @@
 'use strict';
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
     window.addEventListener('load', function(e) {
 
         function setTheme(mode) {
@@ -54,6 +57,7 @@
 
         setupTheme();
     });
+<<<<<<< HEAD
 =======
     function setTheme(mode) {
         if (mode !== "light" && mode !== "dark" && mode !== "auto") {
@@ -104,4 +108,6 @@
 
     initTheme();
 >>>>>>> b583b2f (Updated code)
+=======
+>>>>>>> origin/main
 }

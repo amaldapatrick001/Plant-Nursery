@@ -97,12 +97,17 @@
         // '.../<model>/<id>/change/' depending the action (add or change).
         const modelName = path.split('/')[path.split('/').length - (objId ? 4 : 3)];
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Exclude autocomplete selects.
         const selectsRelated = document.querySelectorAll(`[data-model-ref="${modelName}"] select:not(.admin-autocomplete)`);
 =======
         // Select elements with a specific model reference and context of "available-source".
         const selectsRelated = document.querySelectorAll(`[data-model-ref="${modelName}"] [data-context="available-source"]`);
 >>>>>>> b583b2f (Updated code)
+=======
+        // Exclude autocomplete selects.
+        const selectsRelated = document.querySelectorAll(`[data-model-ref="${modelName}"] select:not(.admin-autocomplete)`);
+>>>>>>> origin/main
 
         selectsRelated.forEach(function(select) {
             if (currentSelect === select) {

@@ -172,6 +172,7 @@ input[type="submit"], button {
 
     label {
 <<<<<<< HEAD
+<<<<<<< HEAD
         font-size: 0.875rem;
     }
 
@@ -185,6 +186,11 @@ input[type="submit"], button {
     */
     .form-row input:not([type]),
 >>>>>>> b583b2f (Updated code)
+=======
+        font-size: 0.875rem;
+    }
+
+>>>>>>> origin/main
     .form-row input[type=text],
     .form-row input[type=password],
     .form-row input[type=email],
@@ -199,10 +205,14 @@ input[type="submit"], button {
         padding: 6px 8px;
         min-height: 2.25rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
         font-size: 0.875rem;
 =======
         font-size: 1rem;
 >>>>>>> b583b2f (Updated code)
+=======
+        font-size: 0.875rem;
+>>>>>>> origin/main
     }
 
     .form-row select {
@@ -462,6 +472,9 @@ input[type="submit"], button {
     /* Layout */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
     #header, #content, #footer {
         padding: 15px;
     }
@@ -470,12 +483,15 @@ input[type="submit"], button {
         padding: 0;
     }
 
+<<<<<<< HEAD
 =======
     #header, #content {
         padding: 15px;
     }
 
 >>>>>>> b583b2f (Updated code)
+=======
+>>>>>>> origin/main
     div.breadcrumbs {
         padding: 10px 15px;
     }
@@ -587,12 +603,18 @@ input[type="submit"], button {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
     fieldset.collapsed .form-row {
         display: none;
     }
 
+<<<<<<< HEAD
 =======
 >>>>>>> b583b2f (Updated code)
+=======
+>>>>>>> origin/main
     .aligned label {
         width: 100%;
         min-width: auto;

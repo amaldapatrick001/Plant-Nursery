@@ -83,6 +83,7 @@
                         <h4 class="card-title text-center mb-4">Create Your Account</h4>
                         <form id="registerForm" action="" method="post">
                             {% csrf_token %}
+<<<<<<< HEAD
                             {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -91,6 +92,8 @@
     </ul>
 {% endif %}
 
+=======
+>>>>>>> origin/main
                             <div class="form-group row">
                                 <div class="col-md-6">
                                     {{ form.first_name }}
@@ -108,7 +111,11 @@
                             <div class="form-group">
                                 {{ form.phoneno }}
                                 <div id="phonenoError" class="text-danger"></div>
+<<<<<<< HEAD
                             </div>                            
+=======
+                            </div>
+>>>>>>> origin/main
                             <div class="form-group">
                                 {{ form.password1 }}
                                 <div id="password1Error" class="text-danger"></div>
@@ -119,7 +126,10 @@
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Register</button>
                         </form>
+<<<<<<< HEAD
                         
+=======
+>>>>>>> origin/main
                         <div class="form-group text-center mt-4">
                             <p class="text-muted">Already have an account? <a href="{% url 'userauths:login' %}" class="text-primary font-weight-bold">Login here</a></p>
                         </div>
@@ -155,6 +165,7 @@
             placeholder: 'Email Address'
         },
         phoneno: {
+<<<<<<< HEAD
         element: document.getElementById('id_phoneno'),
         errorElement: document.getElementById('phonenoError'),
         pattern: /^\d{10,15}$/,
@@ -163,6 +174,14 @@
     },
 
 
+=======
+            element: document.getElementById('id_phoneno'),
+            errorElement: document.getElementById('phonenoError'),
+            pattern: /^\d{10,15}$/,
+            message: 'Enter a valid phone number with 10 digits.',
+            placeholder: 'Phone Number'
+        },
+>>>>>>> origin/main
         password1: {
         element: document.getElementById('id_password1'),
         errorElement: document.getElementById('password1Error'),
