@@ -1,0 +1,123 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #d0d0d0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(255, 87, 34, 0.25);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #c2d6a5, #82ae46);
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1rem;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        border-color: #6d8a2e;
+    }
+
+    .alert-info {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Add Category</h4>
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <ul>
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                       
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.category_name.label_tag }}
+                                {{ form.category_name }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.description.label_tag }}
+                                {{ form.description }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

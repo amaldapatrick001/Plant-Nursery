@@ -1,0 +1,249 @@
+
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #d0d0d0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(255, 87, 34, 0.25);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg,#c2d6a5, #82ae46);
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1rem;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #82ae46; /* Matches the gradient color */
+        border-color: #82ae46; /* Matches the gradient color */
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e; /* Darker shade of the gradient color */
+        border-color: #6d8a2e; /* Darker shade of the gradient color */
+    }
+
+    .alert-info {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Add Product</h4>
+                        {% if messages %}
+                          <div class="alert alert-info">
+                            {% for message in messages %}
+                              <p>{{ message }}</p>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                        <form id="productForm" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label for="product_name">Product Name:</label>
+                                <input type="text" id="product_name" name="product_name" class="form-control" required minlength="3">
+                                <small class="form-text text-muted">Product name must be at least 3 characters long.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="price">Price:</label>
+                                <input type="number" id="price" name="price" class="form-control" min="0.01" step="0.01" max="10000" required>
+                                <small class="form-text text-muted">Price must be between 0.01 and 10,000.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="stock_quantity">Stock Quantity:</label>
+                                <input type="number" id="stock_quantity" name="stock_quantity" class="form-control" min="0" max="1000" required>
+                                <small class="form-text text-muted">Stock quantity must be between 0 and 1,000.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">Category:</label>
+                                <select id="category" name="category" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for category in form.category.field.queryset %}
+                                      <option value="{{ category.id }}">{{ category.category_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sunlight_requirement">Sunlight Requirement:</label>
+                                <select id="sunlight_requirement" name="sunlight_requirement" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.sunlight_requirement.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="water_need">Water Need:</label>
+                                <select id="water_need" name="water_need" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.water_need.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="climate_compatibility">Climate Compatibility:</label>
+                                <select id="climate_compatibility" name="climate_compatibility" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.climate_compatibility.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="growth_rate">Growth Rate:</label>
+                                <select id="growth_rate" name="growth_rate" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.growth_rate.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="soil_type">Soil Type:</label>
+                                <select id="soil_type" name="soil_type" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.soil_type.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="flowering_season">Flowering Season:</label>
+                                <select id="flowering_season" name="flowering_season" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.flowering_season.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="height_range">Height Range:</label>
+                                <select id="height_range" name="height_range" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for value, label in form.height_range.field.choices %}
+                                      <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_image">Product Image:</label>
+                                <input type="file" id="product_image" name="product_image" class="form-control" accept="image/jpeg, image/png" required>
+                                <small class="form-text text-muted">Only JPG and PNG images are allowed.</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('productForm');
+
+        form.addEventListener('input', function(event) {
+            const target = event.target;
+            
+            if (target.id === 'price') {
+                if (target.value <= 0) {
+                    target.setCustomValidity('Price must be greater than zero.');
+                } else if (target.value > 10000) {
+                    target.setCustomValidity('Price cannot exceed 10,000.');
+                } else {
+                    target.setCustomValidity('');
+                }
+            }
+
+            if (target.id === 'stock_quantity') {
+                if (target.value < 0) {
+                    target.setCustomValidity('Stock quantity cannot be negative.');
+                } else if (target.value > 1000) {
+                    target.setCustomValidity('Stock quantity cannot exceed 1,000.');
+                } else {
+                    target.setCustomValidity('');
+                }
+            }
+
+            if (target.id === 'product_name') {
+                if (target.value.length < 3) {
+                    target.setCustomValidity('Product name must be at least 3 characters long.');
+                } else {
+                    target.setCustomValidity('');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

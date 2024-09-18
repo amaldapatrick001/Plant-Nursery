@@ -1,0 +1,16 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome, {{ user_first_name }}!</h2>
+    <a href="{% url 'userauths:logout' %}">Logout</a>
+</body>
+</html>
+
+{% endblock %}

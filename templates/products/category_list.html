@@ -1,0 +1,66 @@
+
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Category List */
+    .category-list-heading {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .category-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-item {
+        background: #f8f9fa;
+        border: 1px solid #d0d0d0;
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .category-item:nth-child(odd) {
+        background: #ffffff;
+    }
+
+    .category-item h4 {
+        font-size: 1.25rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .category-item p {
+        margin: 0;
+        color: #555;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <h2 class="category-list-heading">Category List</h2>
+        <ul class="category-list">
+            {% for category in categories %}
+                <li class="category-item">
+                    <h4>{{ category.category_name }}</h4>
+                    <p>{{ category.description }}</p>
+                </li>
+            {% empty %}
+                <li class="category-item">No categories available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock %}
