@@ -20,19 +20,27 @@ class User_Reg(models.Model):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
+from django.contrib.auth.hashers import make_password, check_password
+
 class Login(models.Model):
     login_id = models.AutoField(primary_key=True)
     uid = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
-    status = models.BooleanField(default=True)  # Status set to True at the time of registration (auto-login)
+    password = models.CharField(max_length=128)  # Store hashed password
+    status = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True, blank=True)
     last_logout = models.DateTimeField(null=True, blank=True)
     login_count = models.IntegerField(default=0)
 
-    def get_email_field_name(self):
-        return 'email'
+    def set_password(self, raw_password):
+        """ Hashes the password before storing it """
+        self.password = make_password(raw_password)
+        self.save()
 
+    def check_password(self, raw_password):
+        """ Checks if the provided password matches the stored hash """
+        return check_password(raw_password, self.password)
+    
     def login(self):
         """ Logs the user in by updating the login timestamp, status, and login count. """
         self.status = True  # Set status to True on login

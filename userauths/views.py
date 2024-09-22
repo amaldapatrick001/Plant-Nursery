@@ -52,7 +52,6 @@ def register(request):
 
     return render(request, 'userauths/register.html', {'form': form})
 
-
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -61,6 +60,11 @@ def login(request):
         try:
             # Fetch the Login record
             user_login = Login.objects.get(email=email)
+
+            # Check if the user is already logged in by checking the status
+            if user_login.status:
+                messages.error(request, 'This account is already logged in from another session.')
+                return redirect('userauths:login')
 
             # Authenticate using the raw password
             user = authenticate(request, username=email, password=password)
@@ -72,6 +76,7 @@ def login(request):
                 # Update login details
                 user_login.login_count += 1
                 user_login.last_login = timezone.now()
+                user_login.status = True  # Set status to True after successful login
                 user_login.save()
 
                 # Store additional information in the session
@@ -94,14 +99,12 @@ def login(request):
                     messages.error(request, 'User type is not recognized.')
             else:
                 # Authentication failed
-                messages.error(request, 'Incorrect  password.')
+                messages.error(request, 'Incorrect password.')
 
         except Login.DoesNotExist:
             messages.error(request, 'No account found with this email.')
 
     return render(request, 'userauths/login.html')
-
-
 
 @transaction.atomic
 def logout(request):

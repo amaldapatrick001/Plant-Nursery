@@ -5,56 +5,86 @@
 <style>
     /* Custom Styles for the Form */
     body {
-        font-family: 'Arial', sans-serif;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
     }
 
     .form-group {
         margin-bottom: 1.5rem;
+        position: relative;
     }
 
     .form-group label {
-        font-weight: bold;
-        color: #333;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 0.5rem;
+        display: inline-block;
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         border-radius: 8px;
         padding: 12px 16px;
-        border: 1px solid #d0d0d0;
+        border: 1px solid #ddd;
         width: 100%;
         box-sizing: border-box;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
     }
 
     .form-group input:focus,
-    .form-group select:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 0.2rem rgba(255, 87, 34, 0.25);
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
     }
 
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .form-icon {
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        font-size: 1.25rem;
+        color: #82ae46;
+    }
+
+    /* Card Styling */
     .card {
         border: none;
         border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
 
     .card-body {
-        background: linear-gradient(135deg, #c2d6a5, #82ae46);
+        background: linear-gradient(135deg, #e3f2e1, #a3c99b);
         color: #333;
         border-radius: 15px;
-        padding: 2rem;
+        padding: 2rem 2.5rem;
     }
 
     .card-title {
-        font-size: 1.75rem;
-        color: #333;
-        margin-bottom: 1rem;
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2f5131;
+        text-align: center;
+        margin-bottom: 1.5rem;
     }
 
+    /* Button Styling */
     .btn {
         border-radius: 25px;
         padding: 12px 25px;
-        font-size: 1rem;
+        font-size: 1.1rem;
+        font-weight: bold;
         transition: background-color 0.3s, border-color 0.3s;
     }
 
@@ -62,30 +92,73 @@
         background-color: #82ae46;
         border-color: #82ae46;
         color: #fff;
+        transition: all 0.3s ease;
     }
 
     .btn-primary:hover {
         background-color: #6d8a2e;
         border-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+    
+    /* H2 Styling */
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem; /* Decrease font size */
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .alert-info {
-        background-color: #d1e7dd;
-        color: #0f5132;
-        border: 1px solid #badbcc;
-        border-radius: 8px;
+    /* Alert Box */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-color: #f5c2c7;
         padding: 1rem;
-        margin-bottom: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Placeholder Text */
+    .form-group input::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+        }
+        
+        .category-list-heading {
+            font-size: 1.3rem; /* Adjust heading for mobile */
+        }
     }
 </style>
 
+
 <section class="ftco-section py-5">
     <div class="container">
+        <h2 class="category-list-heading">Add New Category</h2>
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
                 <div class="card shadow-lg border-light rounded">
-                    <div class="card-body p-4">
-                        <h4 class="card-title text-center mb-4">Add Category</h4>
+                    <div class="card-body">
                         
                         {% if form.errors %}
                             <div class="alert alert-danger">
@@ -99,8 +172,6 @@
                             </div>
                         {% endif %}
                         
-                       
-                        
                         <form method="post">
                             {% csrf_token %}
                             <div class="form-group">
@@ -108,10 +179,12 @@
                                 {{ form.category_name }}
                             </div>
                             <div class="form-group">
-                                {{ form.description.label_tag }}
+                                 {{ form.description.label_tag }}
                                 {{ form.description }}
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
                         </form>
                     </div>
                 </div>

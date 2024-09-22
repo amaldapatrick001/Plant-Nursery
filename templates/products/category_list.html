@@ -1,16 +1,24 @@
-
 {% extends 'partials/abase.html' %}
 {% load static %}
 
 {% block content %}
 <style>
     /* Custom Styles for the Category List */
-    .category-list-heading {
+    body {
         font-family: 'Arial', sans-serif;
-        color: #333;
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
+        background-color: #f0f4f5;
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 2.5rem;
         text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .category-list {
@@ -20,37 +28,55 @@
     }
 
     .category-item {
-        background: #f8f9fa;
-        border: 1px solid #d0d0d0;
-        border-radius: 8px;
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .category-item:last-child {
-        margin-bottom: 0;
+    .category-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
     .category-item:nth-child(odd) {
-        background: #ffffff;
+        background-color: #f7faf8;
     }
 
     .category-item h4 {
-        font-size: 1.25rem;
-        color: #333;
-        margin: 0;
+        font-size: 1.5rem;
+        color: #444;
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 0.5rem;
     }
 
     .category-item p {
         margin: 0;
-        color: #555;
+        color: #666;
+        font-size: 1rem;
+        font-family: 'Lato', sans-serif;
+    }
+
+    .category-item p::before {
+        content: '🌿 ';
+        color: #82ae46;
+    }
+
+    .no-categories {
+        text-align: center;
+        font-size: 1.25rem;
+        color: #999;
+        font-style: italic;
+        margin-top: 1rem;
     }
 </style>
 
 <section class="ftco-section py-5">
     <div class="container">
-        <h2 class="category-list-heading">Category List</h2>
+        <h2 class="category-list-heading">Explore Our Categories</h2>
         <ul class="category-list">
             {% for category in categories %}
                 <li class="category-item">
@@ -58,7 +84,7 @@
                     <p>{{ category.description }}</p>
                 </li>
             {% empty %}
-                <li class="category-item">No categories available.</li>
+                <li class="no-categories">No categories available.</li>
             {% endfor %}
         </ul>
     </div>
