@@ -1,27 +1,22 @@
 from django import forms
 from .models import Product, Category
-from django import forms
 from django.core.exceptions import ValidationError
-from .models import Category
 
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['category_name', 'description']
-
         widgets = {
             'category_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category name'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter category description'}),
         }
 
-    # Custom validation for category_name
     def clean_category_name(self):
         category_name = self.cleaned_data.get('category_name')
         if len(category_name) < 3:
             raise ValidationError('Category name must be at least 3 characters long.')
         return category_name
 
-    # Custom validation for description
     def clean_description(self):
         description = self.cleaned_data.get('description')
         word_count = len(description.split())
@@ -29,23 +24,37 @@ class CategoryForm(forms.ModelForm):
             raise ValidationError('Description must not exceed 100 words.')
         return description
 
+
+
+import os
+
+# forms.py
+from django import forms
+from .models import Product
+from django.core.exceptions import ValidationError
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = [
+            'category', 'product_name', 'price', 'stock_quantity', 
+            'sunlight_requirement', 'water_need', 'climate_compatibility', 
+            'growth_rate', 'soil_type', 'flowering_season', 
+            'height_range', 'description', 'image', 'status'
+        ]
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'sunlight_requirement': forms.Select(attrs={'class': 'form-control'}),
+            'water_need': forms.Select(attrs={'class': 'form-control'}),
+            'climate_compatibility': forms.Select(attrs={'class': 'form-control'}),
+            'growth_rate': forms.Select(attrs={'class': 'form-control'}),
+            'soil_type': forms.Select(attrs={'class': 'form-control'}),
+            'flowering_season': forms.Select(attrs={'class': 'form-control'}),
+            'height_range': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
-
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=True)
-    sunlight_requirement = forms.ChoiceField(choices=Product.SunlightRequirement.choices, required=True)
-    water_need = forms.ChoiceField(choices=Product.WaterNeed.choices, required=True)
-    climate_compatibility = forms.ChoiceField(choices=Product.ClimateCompatibility.choices, required=True)
-    growth_rate = forms.ChoiceField(choices=Product.GrowthRate.choices, required=True)
-    soil_type = forms.ChoiceField(choices=Product.SoilType.choices, required=True)
-    flowering_season = forms.ChoiceField(choices=Product.FloweringSeason.choices, required=True)
-    height_range = forms.ChoiceField(choices=Product.HeightRange.choices, required=True)
-
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
@@ -76,3 +85,19 @@ class ProductForm(forms.ModelForm):
         if description and len(description) > 1000:
             raise forms.ValidationError("Description cannot exceed 1000 characters.")
         return description
+
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            # Validate file extension
+            valid_extensions = ['.jpg', '.jpeg', '.jpe', '.png']
+            extension = os.path.splitext(image.name)[1].lower()
+            if extension not in valid_extensions:
+                raise ValidationError('Only JPG, JPEG, JPE, and PNG images are allowed.')
+
+            # Validate file size (e.g., max 5MB)
+            max_size = 5 * 1024 * 1024  # 5MB
+            if image.size > max_size:
+                raise ValidationError('Image size must be under 5MB.')
+
+        return image

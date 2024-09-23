@@ -1,49 +1,371 @@
-<<<<<<< HEAD
-{% extends 'partials/base.html' %}
+{% extends 'partials/abase.html' %}
 {% load static %}
 
 {% block content %}
-  <h2>Update Product</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {% if form.errors %}
-      <div class="form-errors">
-        {% for field in form %}
-          {% for error in field.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endif %}
-    <button type="submit">Save</button>
-  </form>
-{% endblock %}
-=======
-{% extends 'partials/base.html' %}
-{% load static %}
+<style>
+    /* Custom Styles for the Update Product Form */
 
-{% block content %}
-  <h2>Update Product</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {% if form.errors %}
-      <div class="form-errors">
-        {% for field in form %}
-          {% for error in field.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endif %}
-    <button type="submit">Save</button>
-  </form>
+    /* Importing Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
+    /* Base Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Container Styling */
+    .ftco-section {
+        padding: 60px 0;
+    }
+
+    /* Card Styling */
+    .custom-card {
+        border: none;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card-body {
+        background: linear-gradient(135deg, #e3f2e1, #a3c99b);
+        color: #333;
+        border-radius: 15px;
+        padding: 2.5rem;
+    }
+
+    /* Title Styling */
+    .custom-card-title {
+        font-family: 'Roboto', sans-serif;
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2f5131;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Alert Styling */
+    .alert-info-custom {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form Wrapper Styling */
+    .form-wrapper {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-wrapper label {
+        display: block;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-wrapper input,
+    .form-wrapper select,
+    .form-wrapper textarea {
+        width: 100%;
+        padding: 7px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-wrapper input:focus,
+    .form-wrapper select:focus,
+    .form-wrapper textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .form-wrapper small {
+        display: block;
+        margin-top: 0.25rem;
+        color: #999;
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+
+    /* Submit Button Styling */
+    .btn-custom {
+        display: inline-block;
+        font-weight: bold;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        border: none;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        border-radius: 25px;
+        transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-custom-primary {
+        background-color: #82ae46;
+        color: #fff;
+    }
+
+    .btn-custom-primary:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    .custom-card-title{
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem; /* Decrease font size */
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .custom-card-body {
+            padding: 1.5rem;
+        }
+
+        .custom-card-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-custom {
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="custom-card shadow-lg border-light rounded">
+                    <div class="custom-card-body">
+                        <h4 class="custom-card-title">Update Product</h4>
+
+                        {% if messages %}
+                            <div class="alert alert-info-custom">
+                                {% for message in messages %}
+                                    <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form id="productForm" method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+
+                            <!-- Product Name -->
+                            <div class="form-wrapper">
+                                <label for="product_name">Product Name:</label>
+                                <input type="text" id="product_name" name="product_name" class="form-control" required minlength="3" value="{{ product.product_name }}" placeholder="Enter product name">
+                                <small>Product name must be at least 3 characters long.</small>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="form-wrapper">
+                                <label for="price">Price:</label>
+                                <input type="number" id="price" name="price" class="form-control" min="0.01" step="0.01" max="10000" required value="{{ product.price }}" placeholder="Enter price">
+                                <small>Price must be between 0.01 and 10,000.</small>
+                            </div>
+
+                            <!-- Stock Quantity -->
+                            <div class="form-wrapper">
+                                <label for="stock_quantity">Stock Quantity:</label>
+                                <input type="number" id="stock_quantity" name="stock_quantity" class="form-control" min="0" max="1000" required value="{{ product.stock_quantity }}" placeholder="Enter stock quantity">
+                                <small>Stock quantity must be between 0 and 1,000.</small>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-wrapper">
+                                <label for="category">Category:</label>
+                                <select id="category" name="category" class="form-control" required>
+                                  <option value="" disabled>Select a category</option>
+                                  {% for category in categories %}
+                                      <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>
+                                          {{ category.category_name }}
+                                      </option>
+                                  {% endfor %}
+                              </select>
+                              
+                            </div>
+
+                            <!-- Sunlight Requirement -->
+                            <div class="form-wrapper">
+                              <label for="sunlight_requirement">Sunlight Requirement:</label>
+                              <select id="sunlight_requirement" name="sunlight_requirement" class="form-control" required>
+                                  <option value="" disabled>Select sunlight requirement</option>
+                                  {% for value, label in product.SunlightRequirement.choices %}
+                                      <option value="{{ value }}" {% if product.sunlight_requirement == value %}selected{% endif %}>
+                                          {{ label }}
+                                      </option>
+                                  {% endfor %}
+                              </select>
+                          </div>
+
+                            <!-- Water Need -->
+                            <div class="form-wrapper">
+                                <label for="water_need">Water Need:</label>
+                                <select id="water_need" name="water_need" class="form-control" required>
+                                    <option value="" disabled>Select water need</option>
+                                    {% for value, label in product.WaterNeed.choices %}
+                                        <option value="{{ value }}" {% if product.water_need == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Climate Compatibility -->
+                            <div class="form-wrapper">
+                                <label for="climate_compatibility">Climate Compatibility:</label>
+                                <select id="climate_compatibility" name="climate_compatibility" class="form-control" required>
+                                    <option value="" disabled>Select climate compatibility</option>
+                                    {% for value, label in product.ClimateCompatibility.choices %}
+                                        <option value="{{ value }}" {% if product.climate_compatibility == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Growth Rate -->
+                            <div class="form-wrapper">
+                                <label for="growth_rate">Growth Rate:</label>
+                                <select id="growth_rate" name="growth_rate" class="form-control" required>
+                                    <option value="" disabled>Select growth rate</option>
+                                    {% for value, label in product.GrowthRate.choices %}
+                                        <option value="{{ value }}" {% if product.growth_rate == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Soil Type -->
+                            <div class="form-wrapper">
+                                <label for="soil_type">Soil Type:</label>
+                                <select id="soil_type" name="soil_type" class="form-control" required>
+                                    <option value="" disabled>Select soil type</option>
+                                    {% for value, label in product.SoilType.choices %}
+                                        <option value="{{ value }}" {% if product.soil_type == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Flowering Season -->
+                            <div class="form-wrapper">
+                                <label for="flowering_season">Flowering Season:</label>
+                                <select id="flowering_season" name="flowering_season" class="form-control" required>
+                                    <option value="" disabled>Select flowering season</option>
+                                    {% for value, label in product.FloweringSeason.choices %}
+                                        <option value="{{ value }}" {% if product.flowering_season == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Height Range -->
+                            <div class="form-wrapper">
+                                <label for="height_range">Height Range:</label>
+                                <select id="height_range" name="height_range" class="form-control" required>
+                                    <option value="" disabled>Select height range</option>
+                                    {% for value, label in product.HeightRange.choices %}
+                                        <option value="{{ value }}" {% if product.height_range == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-wrapper">
+                                <label for="description">Description:</label>
+                                <textarea id="description" name="description" class="form-control" placeholder="Enter product description">{{ product.description }}</textarea>
+                            </div>
+
+                            <!-- Product Image -->
+                            <div class="form-wrapper">
+                                <label for="image">Product Image:</label>
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.product_name }}" width="150">
+                                    <br>
+                                    <label>
+                                        <input type="checkbox" name="delete_image"> Delete current image
+                                    </label>
+                                    <br>
+                                {% endif %}
+                                <input type="file" id="image" name="image" class="form-control" accept="image/jpeg, image/png">
+                                <small>Only JPG and PNG images are allowed. Leave blank to keep current image.</small>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-custom btn-custom-primary">Update Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for Client-Side Validation -->
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('productForm');
+
+        form.addEventListener('submit', function(event) {
+            let errors = [];
+            
+            // Validate Price
+            const priceInput = document.getElementById('price');
+            const priceValue = parseFloat(priceInput.value);
+            if (priceValue <= 0) {
+                errors.push('Price must be greater than zero.');
+            } else if (priceValue > 10000) {
+                errors.push('Price cannot exceed 10,000.');
+            }
+
+            // Validate Stock Quantity
+            const stockInput = document.getElementById('stock_quantity');
+            const stockValue = parseInt(stockInput.value);
+            if (stockValue < 0) {
+                errors.push('Stock quantity cannot be negative.');
+            } else if (stockValue > 1000) {
+                errors.push('Stock quantity cannot exceed 1,000.');
+            }
+
+            // Validate Product Name
+            const nameInput = document.getElementById('product_name');
+            if (nameInput.value.trim().length < 3) {
+                errors.push('Product name must be at least 3 characters long.');
+            }
+
+            // Validate Image File Type
+            const imageInput = document.getElementById('image');
+            const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+            if (imageInput.files.length > 0 && !allowedExtensions.exec(imageInput.value)) {
+                errors.push('Only JPG, JPEG, and PNG files are allowed for the image.');
+            }
+
+            // If there are errors, prevent form submission and show alert
+            if (errors.length > 0) {
+                event.preventDefault();
+                alert('Please correct the following errors:\n' + errors.join('\n'));
+            }
+        }, false);
+    });
+</script>
 {% endblock %}
->>>>>>> origin/main

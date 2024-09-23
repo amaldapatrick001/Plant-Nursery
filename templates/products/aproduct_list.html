@@ -1,0 +1,247 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+    <style>
+        .filter-sidebar {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .filter-sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .filter-sidebar .form-group {
+            margin-bottom: 15px;
+        }
+        .filter-sidebar label {
+            font-weight: bold;
+        }
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            height: auto;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .product-card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .product-card-body h5 {
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+        }
+        .product-card-body p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .product-card-body a {
+            margin-top: 10px;
+        }
+        @media (max-width: 767px) {
+            .product-card {
+                height: auto;
+            }
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-card-body .btn {
+        background-color: #82ae46;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        margin-right: 10px;
+    }
+
+    .product-card-body .btn:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* Align Update and Delete buttons in one line */
+    .product-card-body .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    /* Product image styling */
+    .product-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+/* Align Update and Delete buttons in one line */
+.btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+    </style>
+
+    <section class="ftco-section">
+        <div class="container">
+            <!-- Heading for Products -->
+            <div class="row">
+                <div class="col-md-12 text-center mb-4">
+                    <h1>Products</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-5">
+                    <div class="filter-sidebar">
+                        <h3>Filter Products</h3>
+                        <form method="get" action="" class="filter-form">
+                            <!-- Filter by Category -->
+                            <div class="form-group">
+                                <label>Category</label><br>
+                                {% for category in categories %}
+                                    <div class="form-check">
+                                        <input type="radio" id="category_{{ category.id }}" name="category" value="{{ category.id }}" class="form-check-input"
+                                               {% if request.GET.category == category.id|stringformat:"s" %}checked{% endif %}>
+                                        <label class="form-check-label" for="category_{{ category.id }}">{{ category.category_name }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Filter by Sunlight Requirement -->
+                            <div class="form-group">
+                                <label>Sunlight Requirement</label><br>
+                                <div class="form-check">
+                                    <input type="radio" id="sunlight_full_sun" name="sunlight" value="Full Sun" class="form-check-input"
+                                           {% if request.GET.sunlight == "Full Sun" %}checked{% endif %}>
+                                    <label class="form-check-label" for="sunlight_full_sun">Full Sun</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="sunlight_partial_shade" name="sunlight" value="Partial Shade" class="form-check-input"
+                                           {% if request.GET.sunlight == "Partial Shade" %}checked{% endif %}>
+                                    <label class="form-check-label" for="sunlight_partial_shade">Partial Shade</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="sunlight_full_shade" name="sunlight" value="Full Shade" class="form-check-input"
+                                           {% if request.GET.sunlight == "Full Shade" %}checked{% endif %}>
+                                    <label class="form-check-label" for="sunlight_full_shade">Full Shade</label>
+                                </div>
+                            </div>
+
+                            <!-- Filter by Water Need -->
+                            <div class="form-group">
+                                <label>Water Need</label><br>
+                                <div class="form-check">
+                                    <input type="radio" id="water_low" name="water" value="Low" class="form-check-input"
+                                           {% if request.GET.water == "Low" %}checked{% endif %}>
+                                    <label class="form-check-label" for="water_low">Low</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="water_medium" name="water" value="Medium" class="form-check-input"
+                                           {% if request.GET.water == "Medium" %}checked{% endif %}>
+                                    <label class="form-check-label" for="water_medium">Medium</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="water_high" name="water" value="High" class="form-check-input"
+                                           {% if request.GET.water == "High" %}checked{% endif %}>
+                                    <label class="form-check-label" for="water_high">High</label>
+                                </div>
+                            </div>
+
+                            <!-- Filter by Climate Compatibility -->
+                            <div class="form-group">
+                                <label>Climate Compatibility</label><br>
+                                <div class="form-check">
+                                    <input type="radio" id="climate_tropical" name="climate" value="Tropical" class="form-check-input"
+                                           {% if request.GET.climate == "Tropical" %}checked{% endif %}>
+                                    <label class="form-check-label" for="climate_tropical">Tropical</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="climate_subtropical" name="climate" value="Subtropical" class="form-check-input"
+                                           {% if request.GET.climate == "Subtropical" %}checked{% endif %}>
+                                    <label class="form-check-label" for="climate_subtropical">Subtropical</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="climate_temperate" name="climate" value="Temperate" class="form-check-input"
+                                           {% if request.GET.climate == "Temperate" %}checked{% endif %}>
+                                    <label class="form-check-label" for="climate_temperate">Temperate</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="climate_arid" name="climate" value="Arid" class="form-check-input"
+                                           {% if request.GET.climate == "Arid" %}checked{% endif %}>
+                                    <label class="form-check-label" for="climate_arid">Arid</label>
+                                </div>
+                            </div>
+
+                            <!-- JavaScript to auto-submit the form -->
+                            <script>
+                                document.querySelectorAll('.filter-form input').forEach(element => {
+                                    element.addEventListener('change', function() {
+                                        this.form.submit();
+                                    });
+                                });
+                            </script>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-md-4 mb-4">
+                            <div class="product-card">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                <div class="product-card-body">
+                                    <h5>{{ product.product_name }}</h5>
+                                    <p>Price: Rs. {{ product.price }}</p>
+                                    <p>Stock: {{ product.stock_quantity }}</p>
+                                    
+                                    <!-- Flex container for Update and Delete Buttons -->
+                                   <div class="btn-container">
+                                    <a href="{% url 'products:update_product' product.id %}" class="btn btn-warning">Update</a>
+                                    <form action="{% url 'products:delete_product' product.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                    
+                                    </div>
+
+                                    
+                                    <a href="{% url 'products:product_details' product.id %}" class="btn btn-primary mt-2">View Details</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No products available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    $('#modalMessage').text("{{ message }}");
+                    $('#messageModal').modal('show');
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+    
+{% endblock %}

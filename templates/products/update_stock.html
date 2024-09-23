@@ -1,0 +1,149 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Table */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .table {
+        width: 100%;
+        margin: 1.5rem 0;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #82ae46;
+        color: white;
+        font-weight: bold;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .custom-card-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2f5131;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #82ae46;
+        color: #fff;
+        border: none;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-custom:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* Modal Styles */
+    .modal-header {
+        background-color: #82ae46;
+        color: white;
+    }
+
+    .modal-body p {
+        margin: 0;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <h4 class="custom-card-title">Update Stocks and Activate Products</h4>
+
+        <form method="post">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Current Stock</th>
+                        <th>New Stock Quantity (+/-)</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.stock_quantity }}</td>
+                        <td>
+                            <input type="number" name="stock_quantity_{{ product.id }}" min="-{{ product.stock_quantity }}" max="1000" placeholder="Enter stock change (+/-)" />
+                        </td>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="status_{{ product.id }}" {% if product.status %}checked{% endif %}>
+                                Active
+                            </label>
+                        </td>
+                        <td>
+                            <button type="submit" name="update_{{ product.id }}" class="btn btn-custom">Update</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+
+    </div>
+
+    <!-- Modal for Messages -->
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Update Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    // Show the modal if there are messages
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if messages %}
+            $('#messageModal').modal('show');
+        {% endif %}
+    });
+</script>
+
+{% endblock %}
