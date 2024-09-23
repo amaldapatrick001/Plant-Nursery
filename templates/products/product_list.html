@@ -3,6 +3,25 @@
 
 {% block content %}
     <style>
+         .category-nav {
+            display: flex;
+            justify-content: space-around; /* Space out the categories evenly */
+            background-color: #f8f9fa; /* Background color for nav */
+            padding: 10px 0;
+            border-radius: 8px;
+            margin-bottom: 20px; 
+        }
+        .category-nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 10px 15px; /* Padding for each link */
+            border-radius: 5px; /* Rounded edges */
+            transition: background-color 0.3s; /* Smooth hover effect */
+        }
+        .category-nav a:hover {
+            background-color: #82ae46; /* Hover background color */
+            color: white; /* Text color on hover */
+        }
         .filter-sidebar {
             background-color: #f8f9fa;
             padding: 20px;
@@ -53,35 +72,88 @@
             .product-card {
                 height: auto;
             }
-            
         }
         .product-card img {
-    width: 100%; /* Ensures the image takes up the full width of the container */
-    height: 200px; /* Sets a fixed height */
-    object-fit: cover; /* Ensures the image scales without stretching, maintaining aspect ratio */
+            width: 100%; /* Ensures the image takes up the full width of the container */
+            height: 200px; /* Sets a fixed height */
+            object-fit: cover; /* Ensures the image scales without stretching, maintaining aspect ratio */
+        }
+        .search-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            width: 250px;
+            padding: 10px;  /* Increased padding for a better look */
+            border-radius: 20px;  /* Makes edges rounded */
+            border: 1px solid #ced4da;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            padding: 10px 15px;  /* Increased padding for a better look */
+            border: none;
+            background: #82ae46;
+            border: 1px solid #82ae46;
+            color: #fff;
+            border-radius: 20px;  /* Makes edges rounded */
+            cursor: pointer;
+        }
+        .product-heading {
+    text-align: center; /* Center-align the heading */
+    font-size: 2rem; /* Increase font size */
+    font-weight: bold; /* Make it bold */
+    margin-bottom: 20px; /* Space below the heading */
+    color: #333; /* Change text color */
+    margin-top: -80px; /* Space below nav */
 }
 
     </style>
 
     <section class="ftco-section">
         <div class="container">
+            
+            <h2 class="product-heading">Products</h2>
+
+
+        </div>
+            <div class="category-nav">
+                <!-- Category Navigation Links -->
+                {% for category in categories %}
+                    <a href="?category={{ category.id }}">{{ category.category_name }}</a>
+                {% endfor %}
+            </div>
+        <div class="container">
             <div class="row">
                 <div class="col-md-3 mb-5">
                     <div class="filter-sidebar">
                         <h3>Filter Products</h3>
                         <form method="get" action="" class="filter-form">
-                            <!-- Filter by Category -->
-                            <div class="form-group">
-                                <label>Category</label><br>
-                                {% for category in categories %}
-                                    <div class="form-check">
-                                        <input type="radio" id="category_{{ category.id }}" name="category" value="{{ category.id }}" class="form-check-input"
-                                               {% if request.GET.category == category.id|stringformat:"s" %}checked{% endif %}>
-                                        <label class="form-check-label" for="category_{{ category.id }}">{{ category.category_name }}</label> <!-- This should display the category name -->
-                                    </div>
-                                {% endfor %}
-                            </div>
                             
+                            <!-- Filter by Price Range -->
+<div class="form-group">
+    <label>Price Range</label><br>
+    <div class="form-check">
+        <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
+               {% if request.GET.price == "0-500" %}checked{% endif %}>
+        <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
+    </div>
+    <div class="form-check">
+        <input type="radio" id="price_500_1000" name="price" value="500-1000" class="form-check-input"
+               {% if request.GET.price == "500-1000" %}checked{% endif %}>
+        <label class="form-check-label" for="price_500_1000">Rs. 500 - 1000</label>
+    </div>
+    <div class="form-check">
+        <input type="radio" id="price_1000_1500" name="price" value="1000-1500" class="form-check-input"
+               {% if request.GET.price == "1000-1500" %}checked{% endif %}>
+        <label class="form-check-label" for="price_1000_1500">Rs. 1000 - 1500</label>
+    </div>
+    <div class="form-check">
+        <input type="radio" id="price_above_1500" name="price" value="above_1500" class="form-check-input"
+               {% if request.GET.price == "above_1500" %}checked{% endif %}>
+        <label class="form-check-label" for="price_above_1500">Above Rs. 1500</label>
+    </div>
+</div>
 
                             <!-- Filter by Sunlight Requirement -->
                             <div class="form-group">
@@ -147,8 +219,7 @@
                                     <label class="form-check-label" for="climate_arid">Arid</label>
                                 </div>
                             </div>
-
-                        
+                            
 
                             <!-- JavaScript to automatically submit the form on change -->
                             <script>
@@ -162,6 +233,15 @@
                     </div>
                 </div>
                 <div class="col-md-9">
+                    <!-- Add heading for products -->
+                    <!-- Place the search bar below the category filter -->
+                    <div class="search-bar">
+                        <form method="get" action="">
+                            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search products...">
+                            <button type="submit">Search</button>
+                        </form>
+                    </div>
+
                     <div class="row">
                         {% for product in products %}
                         <div class="col-md-4 mb-4">
@@ -172,7 +252,6 @@
                                     <p>Price: Rs. {{ product.price }}</p>
                                     <a href="" class="btn btn-primary">Add to Cart</a>
                                     <a href="{% url 'products:product_details' product.id %}">View details</a>
-
                                 </div>
                             </div>
                         </div>

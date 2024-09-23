@@ -22,6 +22,10 @@ def category_list(request):
     return render(request, 'products/category_list.html', {'categories': categories})
 
 
+from fuzzywuzzy import fuzz
+from django.db.models import Q
+from django.shortcuts import render
+
 def product_list(request):
     categories = Category.objects.all()
     products = Product.objects.filter(status=True)
@@ -35,13 +39,43 @@ def product_list(request):
         products = products.filter(water_need=request.GET['water'])
     if request.GET.get('climate'):
         products = products.filter(climate_compatibility=request.GET['climate'])
+
+    # Filter by Price Range
     if request.GET.get('price'):
-        try:
-            price_range = request.GET['price'].split('-')
-            min_price, max_price = float(price_range[0]), float(price_range[1])
-            products = products.filter(price__gte=min_price, price__lte=max_price)
-        except ValueError:
-            pass  # Handle invalid price range input
+        price_range = request.GET['price']
+        if price_range == "0-500":
+            products = products.filter(price__gte=0, price__lte=500)
+        elif price_range == "500-1000":
+            products = products.filter(price__gte=500, price__lte=1000)
+        elif price_range == "1000-1500":
+            products = products.filter(price__gte=1000, price__lte=1500)
+        elif price_range == "above_1500":
+            products = products.filter(price__gt=1500)  # Use gt for above Rs. 1500
+
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        search_query_clean = search_query.strip().lower()  # Clean and normalize query
+
+        # Basic case-insensitive search using icontains
+        basic_matches = products.filter(
+            Q(product_name__icontains=search_query_clean) |
+            Q(description__icontains=search_query_clean)
+        )
+
+        if basic_matches.exists():
+            # If there are basic matches, use them
+            products = basic_matches
+        else:
+            # If no basic matches, perform fuzzy matching
+            fuzzy_filtered_products = []
+            for product in products:
+                ratio = fuzz.partial_ratio(search_query_clean, product.product_name.lower())
+                if ratio > 60:  # Threshold for fuzzy matching
+                    fuzzy_filtered_products.append(product)
+
+            # Update products to show fuzzy matches or set to empty list
+            products = fuzzy_filtered_products if fuzzy_filtered_products else []
 
     context = {
         'categories': categories,
