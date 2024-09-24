@@ -35,13 +35,15 @@ def register(request):
             user.save()
 
             # Create the Login entry with the hashed password
-            Login.objects.create(
+            user_login = Login.objects.create(
                 uid=user,
                 email=email,
-                password=make_password(password1),  # Ensure the password is hashed
                 login_count=0,
-                status=False
+                status=False  # Initially not logged in
             )
+
+            # Set the password using the model's method
+            user_login.set_password(password1)
 
             messages.success(request, 'Registration successful. You can now log in.')
             return redirect('userauths:login')
@@ -52,47 +54,31 @@ def register(request):
 
     return render(request, 'userauths/register.html', {'form': form})
 
+
+
+
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST.get('password')  # Raw password input by the user
-
-        # Check if the email and password match the hardcoded admin credentials
-        if email == 'admin@gmail.com' and password == 'Admin@123':
-            # Hardcoded admin user
-            request.session['user_id'] = 1  # Assign a dummy or specific admin user ID
-            request.session['user_first_name'] = 'Admin'
-            request.session['user_last_name'] = 'User'
-            request.session['email'] = email
-            return redirect('userauths:adminindex')  # Redirect to the admin index
+        password = request.POST.get('password')
 
         try:
-            # Fetch the Login record
             user_login = Login.objects.get(email=email)
 
-            # Check if the user is already logged in
             if user_login.status:
                 messages.error(request, 'This account is already logged in from another session.')
                 return redirect('userauths:login')
 
-            # Authenticate using the raw password
-            user = authenticate(request, username=email, password=password)
-
-            if user is not None:
+            if user_login.check_password(password):
                 # Successful authentication
-                auth_login(request, user)
+                user_login.login()  # This updates last_login, status, and login_count
 
-                # Update login details
-                user_login.login_count += 1
-                user_login.last_login = timezone.now()
-                user_login.status = True  # Set status to True after successful login
-                user_login.save()
-
-                # Store additional information in the session
+                # Set user information in session
                 request.session['user_id'] = user_login.login_id
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
                 request.session['email'] = user_login.email
+                request.session['is_authenticated'] = True
 
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
@@ -107,27 +93,22 @@ def login(request):
                 else:
                     messages.error(request, 'User type is not recognized.')
             else:
-                # Authentication failed
                 messages.error(request, 'Incorrect password.')
-
         except Login.DoesNotExist:
             messages.error(request, 'No account found with this email.')
 
     return render(request, 'userauths/login.html')
 
+from django.contrib.auth import logout as auth_logout
 
 @transaction.atomic
 def logout(request):
-    if request.user.is_authenticated:
+    if 'is_authenticated' in request.session and request.session['is_authenticated']:
         try:
-            # Fetch the user registration and login entries
-            user_reg = User_Reg.objects.get(first_name=request.user.first_name, last_name=request.user.last_name)
+            user_reg = User_Reg.objects.get(first_name=request.session['user_first_name'], last_name=request.session['user_last_name'])
             login_entry = Login.objects.get(uid=user_reg)
 
-            # Update last_logout and status
-            login_entry.last_logout = timezone.now()
-            login_entry.status = False
-            login_entry.save()
+            login_entry.logout()  # Set status to False and update last_logout
 
         except User_Reg.DoesNotExist:
             messages.error(request, 'User registration record not found.')
@@ -136,14 +117,22 @@ def logout(request):
         except Exception as e:
             messages.error(request, f'Error occurred: {str(e)}')
 
-        # Perform logout and flush the session
+        # Clear session data
         auth_logout(request)
         request.session.flush()
 
-        # Notify the user
+        # Notify user
         messages.info(request, 'You have been logged out.')
 
     return redirect('userauths:index')
+
+
+    self.save()
+
+def logout(self):
+    """ Logs the user out by updating the logout timestamp and status. """
+    self.status = False  # Set status to False on logout
+    self.last_logout = timezone.now()
 
 from django.views.generic import TemplateView
 class IndexView(TemplateView):
