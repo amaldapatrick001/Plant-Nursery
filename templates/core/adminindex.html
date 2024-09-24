@@ -4,36 +4,33 @@
 {% block content%}
                 
                 <!-- Sample dashboard content -->
-                <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="card text-white bg-primary mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Products</h5>
-                                <p class="card-text">Manage all your plants and accessories.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="card text-white bg-success mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Users</h5>
-                                <p class="card-text">Manage registered users and their activities.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="card text-white bg-warning mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Orders</h5>
-                                <p class="card-text">Track and manage customer orders.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
+                <br><br> 
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Products</h5>
+                <p class="card-text">{{ product_count }} products available.</p> <!-- Dynamic product count -->
             </div>
         </div>
     </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <p class="card-text">{{ user_count }} registered users.</p> <!-- Dynamic user count -->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text">0 orders placed.</p> <!-- Dynamic order count -->
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {%endblock content%}

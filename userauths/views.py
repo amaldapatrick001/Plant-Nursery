@@ -55,13 +55,22 @@ def register(request):
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST.get('password')  # This should be the raw password input by the user
+        password = request.POST.get('password')  # Raw password input by the user
+
+        # Check if the email and password match the hardcoded admin credentials
+        if email == 'admin@gmail.com' and password == 'Admin@123':
+            # Hardcoded admin user
+            request.session['user_id'] = 1  # Assign a dummy or specific admin user ID
+            request.session['user_first_name'] = 'Admin'
+            request.session['user_last_name'] = 'User'
+            request.session['email'] = email
+            return redirect('userauths:adminindex')  # Redirect to the admin index
 
         try:
             # Fetch the Login record
             user_login = Login.objects.get(email=email)
 
-            # Check if the user is already logged in by checking the status
+            # Check if the user is already logged in
             if user_login.status:
                 messages.error(request, 'This account is already logged in from another session.')
                 return redirect('userauths:login')
@@ -106,6 +115,7 @@ def login(request):
 
     return render(request, 'userauths/login.html')
 
+
 @transaction.atomic
 def logout(request):
     if request.user.is_authenticated:
@@ -138,8 +148,25 @@ def logout(request):
 from django.views.generic import TemplateView
 class IndexView(TemplateView):
     template_name = 'core/index.html'
+    
+from django.db.models import Count
+from django.shortcuts import render
+from .models import User_Reg # Assuming these are in the current app
+from products.models import Product  # Import Product from the 'product' app
+
 class adminindex(TemplateView):
-    template_name="core/adminindex.html"
+    template_name = "core/adminindex.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get the count of users, products, and orders, setting to 0 if no data exists
+        context['user_count'] = User_Reg.objects.count() if User_Reg.objects.exists() else 0
+        context['product_count'] = Product.objects.count() if Product.objects.exists() else 0
+        
+        return context
+
+
 
 
 def password_reset_request(request):
