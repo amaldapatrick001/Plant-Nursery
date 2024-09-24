@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import adminindex, password_reset_confirm, password_reset_request, register, login, logout, IndexView
+from .views import adminindex, delete_user_view, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, user_details, user_details_view
 from django.contrib.auth import views 
 from django.views.generic import TemplateView 
 
@@ -15,5 +15,13 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
     path('password_reset/done/', TemplateView.as_view(template_name="userauths/password_reset_done.html"), name='password_reset_done'),
     path('reset/done/', TemplateView.as_view(template_name="userauths/password_reset_complete.html"), name='password_reset_complete'),
+    
+    path('user-details/', user_details, name='user_details'),
+
+
+    path('Del-restore/', user_details_view, name='user_details_view'),  # View for showing active and deleted users
+    path('delete-user/<int:uid>/', delete_user_view, name='delete_user_view'),  # Soft delete user
+    path('undo-delete/<int:uid>/', undo_delete_view, name='undo_delete_view'),  # Restore user
+
 ]
 

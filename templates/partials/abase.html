@@ -142,9 +142,11 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="usersDropdown">
                         <a class="dropdown-item" href="{% url 'userauths:register' %}">Add User</a>
-                        <a class="dropdown-item" href="{% url 'userauths:index' %}">Update User</a>
-                        <a class="dropdown-item" href="">Delete User</a>
-                        <a class="dropdown-item" href="">View User</a>
+                        <a class="dropdown-item" href="{% url 'userauths:user_details' %}">View Users</a>
+                        <a class="dropdown-item" href="{% url 'userauths:user_details_view' %}">Deleted Users</a>
+
+
+
                     </div>
                 </div>
 

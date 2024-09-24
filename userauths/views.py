@@ -231,3 +231,62 @@ def password_reset_confirm(request, uidb64=None, token=None, *args, **kwargs):
         return TemplateResponse(request, 'userauths/password_reset_confirm.html', {
             'error_message': error_message,
         })
+    
+# myproject/userauths/views.py
+from django.shortcuts import render
+from .models import User_Reg
+
+def user_details(request):
+    # Fetch users with related login and usertype data
+    users = User_Reg.objects.select_related('user_type').prefetch_related('login_set').all()
+
+    # Prepare user data for template
+    user_data = []
+    for user in users:
+        login = user.login_set.first()  # Get the related login info
+        user_data.append({
+            'name': f'{user.first_name} {user.last_name}',
+            'phoneno': user.phoneno,
+            'email': login.email if login else '',
+            'registration_date': user.date_time_reg,
+            'last_login': login.last_login if login else '',
+            'login_count': login.login_count if login else 0,
+            'user_type': user.user_type.usertype if user.user_type else '',
+            'status': 'Active' if user.status else 'Inactive'
+        })
+
+    return render(request, 'userauths/user_details.html', {'users': user_data})
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import User_Reg
+from .models import Login  # Import the related Login model
+
+def user_details_view(request):
+    # Fetch active users with related login data
+    active_users = User_Reg.objects.filter(status=True).prefetch_related('login_set')
+    deleted_users = User_Reg.objects.filter(status=False).prefetch_related('login_set')
+
+    # Prepare user login info for both active and deleted users
+    logins = Login.objects.all()
+
+    return render(request, 'userauths/user_del_restor.html', {
+        'active_users': active_users,
+        'deleted_users': deleted_users,
+        'logins': logins
+    })
+
+def delete_user_view(request, uid):
+    # Soft delete user by setting status to False
+    user = get_object_or_404(User_Reg, uid=uid)
+    user.status = False
+    user.save()
+    return redirect('userauths:user_details_view')  # Redirect back to the user details page
+
+def undo_delete_view(request, uid):
+    # Restore user by setting status to True
+    user = get_object_or_404(User_Reg, uid=uid)
+    user.status = True
+    user.save()
+    return redirect('userauths:user_details_view')  # Redirect back to the user details page
