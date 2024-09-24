@@ -101,14 +101,25 @@ def login(request):
 
 from django.contrib.auth import logout as auth_logout
 
+from django.contrib.auth import logout as auth_logout
+
 @transaction.atomic
 def logout(request):
     if 'is_authenticated' in request.session and request.session['is_authenticated']:
         try:
-            user_reg = User_Reg.objects.get(first_name=request.session['user_first_name'], last_name=request.session['user_last_name'])
+            # Fetch the user registration and login entries
+            user_reg = User_Reg.objects.get(
+                first_name=request.session['user_first_name'], 
+                last_name=request.session['user_last_name']
+            )
             login_entry = Login.objects.get(uid=user_reg)
 
-            login_entry.logout()  # Set status to False and update last_logout
+            # Debugging: Ensure you are correctly fetching user and login entry
+            print(f"Logging out user: {user_reg.first_name} {user_reg.last_name}")
+
+            # Update last_logout and status
+            login_entry.logout()  # This sets status to False and updates last_logout
+            print(f"Updated last_logout to: {login_entry.last_logout}")
 
         except User_Reg.DoesNotExist:
             messages.error(request, 'User registration record not found.')
@@ -117,22 +128,15 @@ def logout(request):
         except Exception as e:
             messages.error(request, f'Error occurred: {str(e)}')
 
-        # Clear session data
+        # Now, perform logout and flush the session after updating the login entry
         auth_logout(request)
         request.session.flush()
 
-        # Notify user
+        # Notify the user
         messages.info(request, 'You have been logged out.')
 
     return redirect('userauths:index')
 
-
-    self.save()
-
-def logout(self):
-    """ Logs the user out by updating the logout timestamp and status. """
-    self.status = False  # Set status to False on logout
-    self.last_logout = timezone.now()
 
 from django.views.generic import TemplateView
 class IndexView(TemplateView):
