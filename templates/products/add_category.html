@@ -153,15 +153,6 @@
 
 <section class="ftco-section py-5">
     <div class="container">
-        {% if messages %}
-                        <div class="alert-messages">
-                            {% for message in messages %}
-                                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
                 <div class="card shadow-lg border-light rounded">
@@ -207,7 +198,7 @@
                 {% if status == 'success' %}
                     <p>Category added successfully!</p>
                 {% elif status == 'error' %}
-                    <p>There was an error adding the category. Please try again.</p>
+                    <p>A category with the name '{category_name}' already exists.</p>
                 {% endif %}
             </div>
             <div class="modal-footer">
@@ -222,27 +213,16 @@
      document.addEventListener('DOMContentLoaded', function () {
         const status = '{{ status }}';
 
-// Show modal if form status is success, error, or duplicate
-if (status === 'success' || status === 'error' || status === 'duplicate') {
-    $('#messageModal').modal('show');
+        // Show modal if form status is success or error
+        if (status === 'success' || status === 'error') {
+            $('#messageModal').modal('show');
 
-    const messageModalBody = document.querySelector('#messageModal .modal-body p');
-    if (status === 'success') {
-        messageModalBody.textContent = 'Category added successfully!';
-    } else if (status === 'duplicate') {
-        messageModalBody.textContent = 'Duplicate entry: This category already exists.';
-    } else if (status === 'error') {
-        messageModalBody.textContent = 'There was an error adding the category. Please try again.';
-    }
-
-    $('#messageModal').on('hidden.bs.modal', function () {
-        if (status === 'success') {
-            window.location.href = "{% url 'products:category_list' %}"; // Redirect to category list page on success
+            $('#messageModal').on('hidden.bs.modal', function () {
+                if (status === 'success') {
+                    window.location.href = "{% url 'products:category_list' %}"; // Redirect to category list page on success
+                }
+            });
         }
-    });
-}
-
-// Form validation logic remains unchanged...
 
         // Form validation
         const categoryNameField = document.getElementById('id_category_name');

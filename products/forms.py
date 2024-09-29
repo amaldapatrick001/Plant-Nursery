@@ -2,36 +2,15 @@ from django import forms
 from .models import Product, Category
 from django.core.exceptions import ValidationError
 
+from django import forms
+from .models import Category
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['category_name', 'description']
-        widgets = {
-            'category_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter category description'}),
-        }
 
-    def clean_category_name(self):
-        category_name = self.cleaned_data.get('category_name')
-        if len(category_name) < 3:
-            raise ValidationError('Category name must be at least 3 characters long.')
-        return category_name
-
-    def clean_description(self):
-        description = self.cleaned_data.get('description')
-        word_count = len(description.split())
-        if word_count > 100:
-            raise ValidationError('Description must not exceed 100 words.')
-        return description
-
-
-
-import os
-
-# forms.py
-from django import forms
-from .models import Product
-from django.core.exceptions import ValidationError
+        
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -56,36 +35,7 @@ class ProductForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
-    def clean_price(self):
-        price = self.cleaned_data.get('price')
-        if price <= 0:
-            raise forms.ValidationError("Price must be greater than zero.")
-        if price > 10000:
-            raise forms.ValidationError("Price cannot exceed 10,000.")
-        return price
-
-    def clean_stock_quantity(self):
-        stock_quantity = self.cleaned_data.get('stock_quantity')
-        if stock_quantity < 0:
-            raise forms.ValidationError("Stock quantity cannot be negative.")
-        if stock_quantity > 1000:
-            raise forms.ValidationError("Stock quantity cannot exceed 1,000.")
-        return stock_quantity
-
-    def clean_product_name(self):
-        product_name = self.cleaned_data.get('product_name')
-        if not product_name or len(product_name.strip()) == 0:
-            raise forms.ValidationError("Product name cannot be empty.")
-        if len(product_name) < 3:
-            raise forms.ValidationError("Product name must be at least 3 characters long.")
-        return product_name
-
-    def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description and len(description) > 1000:
-            raise forms.ValidationError("Description cannot exceed 1000 characters.")
-        return description
-
+    
     def clean_image(self):
         image = self.cleaned_data.get('image')
         if image:

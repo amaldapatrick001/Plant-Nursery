@@ -2,44 +2,31 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CategoryForm
 
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import CategoryForm
-from .models import Category
-from django.db import IntegrityError
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.db import IntegrityError
-from .models import Category
-from .forms import CategoryForm
-
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            category_name = form.cleaned_data.get('category_name')
-            description = form.cleaned_data.get('description')
-            
-            try:
-                # Check if category already exists
-                category, created = Category.objects.get_or_create(
-                    category_name=category_name,
-                    defaults={'description': description}
-                )
-                if created:
-                    messages.success(request, 'Category added successfully!')
-                    return redirect('products:category_list')
-                else:
-                    messages.warning(request, 'Duplicate entry: This category already exists.')
-            except IntegrityError:
-                messages.error(request, 'An error occurred while adding the category. Please try again.')
+            form.save()  # Save the new category to the database
+            messages.success(request, 'Category added successfully!')  # Add success message
+            return render(request, 'products/add_category.html', {
+                'form': form,
+                'status': 'success'  # Set status to 'success' for modal to trigger
+            })
         else:
-            messages.error(request, 'Duplicate entry: This category already exists.')
+            # If form is invalid, display error messages and pass 'error' status for modal
+            messages.error(request, 'Please correct the errors below.')
+            status = 'error'
     else:
         form = CategoryForm()
+        status = None  # No status if it's a GET request (initial form load)
+    
 
-    return render(request, 'products/add_category.html', {'form': form})
+    # Pass form and status to the template
+    return render(request, 'products/add_category.html', {
+        'form': form,
+        'status': status  # Pass status to control modal behavior in the template
+    })
+
 
 from .models import Category
 
