@@ -65,10 +65,9 @@
     }
 
     .card-body {
-        background: linear-gradient(135deg, #e3f2e1, #a3c99b);
+        background: linear-gradient(135deg, #ffffff, #ffffff);
         color: #333;
         border-radius: 15px;
-        padding: 2rem 2.5rem;
     }
 
     .card-title {
@@ -154,36 +153,37 @@
 
 <section class="ftco-section py-5">
     <div class="container">
+        {% if messages %}
+                        <div class="alert-messages">
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body">
                         <h2 class="category-list-heading">Add New Category</h2>
+
                         
-                        {% if form.errors %}
-                            <div class="alert alert-danger">
-                                <ul>
-                                    {% for field in form %}
-                                        {% for error in field.errors %}
-                                            <li>{{ error }}</li>
-                                        {% endfor %}
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {% endif %}
-                        
-                        <form method="post">
+
+                        <form method="post" id="categoryForm">
                             {% csrf_token %}
                             <div class="form-group">
                                 {{ form.category_name.label_tag }}
                                 {{ form.category_name }}
+                                <div id="categoryNameError" class="text-danger"></div> <!-- Error message for category name -->
                             </div>
                             <div class="form-group">
-                                 {{ form.description.label_tag }}
+                                {{ form.description.label_tag }}
                                 {{ form.description }}
+                                <div id="descriptionError" class="text-danger"></div> <!-- Error message for description -->
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -193,5 +193,128 @@
     </div>
 </section>
 
-{% endblock content %}
+<!-- Bootstrap Modal for Messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if status == 'success' %}
+                    <p>Category added successfully!</p>
+                {% elif status == 'error' %}
+                    <p>There was an error adding the category. Please try again.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- JavaScript for handling validation and modal display -->
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+        const status = '{{ status }}';
+
+// Show modal if form status is success, error, or duplicate
+if (status === 'success' || status === 'error' || status === 'duplicate') {
+    $('#messageModal').modal('show');
+
+    const messageModalBody = document.querySelector('#messageModal .modal-body p');
+    if (status === 'success') {
+        messageModalBody.textContent = 'Category added successfully!';
+    } else if (status === 'duplicate') {
+        messageModalBody.textContent = 'Duplicate entry: This category already exists.';
+    } else if (status === 'error') {
+        messageModalBody.textContent = 'There was an error adding the category. Please try again.';
+    }
+
+    $('#messageModal').on('hidden.bs.modal', function () {
+        if (status === 'success') {
+            window.location.href = "{% url 'products:category_list' %}"; // Redirect to category list page on success
+        }
+    });
+}
+
+// Form validation logic remains unchanged...
+
+        // Form validation
+        const categoryNameField = document.getElementById('id_category_name');
+        const descriptionField = document.getElementById('id_description');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Error containers
+        const categoryNameError = document.getElementById('categoryNameError');
+        const descriptionError = document.getElementById('descriptionError');
+
+        function validateCategoryName() {
+            const categoryName = categoryNameField.value.trim();
+            let errorMessage = '';
+
+            // Check order: Uppercase -> Min Length -> Max Length
+            if (categoryName[0] !== categoryName[0].toUpperCase()) {
+                errorMessage = 'Category name must start with a capital letter.';
+            } else if (categoryName.length < 3) 
+            {
+                errorMessage = 'Category name must be at least 3 characters long.';
+            } else if (categoryName.length > 20) {
+                errorMessage = 'Category name must be less than 20 characters.';
+            }
+
+            categoryNameError.textContent = errorMessage;
+            return errorMessage === ''; // Return true if no error
+        }
+
+        function validateDescription() {
+            const description = descriptionField.value.trim();
+            let errorMessage = '';
+
+            // Check order: Start with uppercase -> Min Length -> End with full stop -> Max Length -> Sentence uppercase
+            if (description[0] !== description[0].toUpperCase()) {
+                errorMessage = 'Description must begin with an uppercase letter.';
+            } else if (description.length < 20) {
+                errorMessage = 'Description must be at least 20 characters long.';
+            } else if (!description.endsWith('.')) {
+                errorMessage = 'Description must end with a full stop (.)';
+            } else if (description.length > 100) {
+                errorMessage = 'Description must be less than 100 characters.';
+            } else {
+                // Check if each sentence starts with a capital letter
+                const sentences = description.split('.');
+                for (let i = 0; i < sentences.length - 1; i++) { // Last element is empty after the split on full stop
+                    const sentence = sentences[i].trim();
+                    if (sentence.length > 0 && sentence[0] !== sentence[0].toUpperCase()) {
+                        errorMessage = 'Each sentence must start with a capital letter.';
+                        break;
+                    }
+                }
+            }
+
+            descriptionError.textContent = errorMessage;
+            return errorMessage === ''; // Return true if no error
+        }
+
+        // Event listeners for real-time validation
+        categoryNameField.addEventListener('input', validateCategoryName);
+        descriptionField.addEventListener('input', validateDescription);
+
+        // Form submit event
+        document.getElementById('categoryForm').addEventListener('submit', function (event) {
+            const isCategoryNameValid = validateCategoryName();
+            const isDescriptionValid = validateDescription();
+
+            // Prevent form submission if validation fails
+            if (!isCategoryNameValid || !isDescriptionValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

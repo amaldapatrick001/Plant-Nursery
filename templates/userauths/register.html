@@ -83,13 +83,7 @@
                         <h4 class="card-title text-center mb-4">Create Your Account</h4>
                         <form id="registerForm" action="" method="post">
                             {% csrf_token %}
-                            {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+                            
 
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -129,24 +123,44 @@
         </div>
     </div>
 </section>
+
+
+<!-- Bootstrap Modal for Messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
-   document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registerForm');
     const fields = {
-        first_name: {
-            element: document.getElementById('id_first_name'),
-            errorElement: document.getElementById('firstNameError'),
-            pattern: /^[a-zA-Z]+$/,
-            message: 'First name must contain only letters.',
-            placeholder: 'First Name'
-        },
-        last_name: {
-            element: document.getElementById('id_last_name'),
-            errorElement: document.getElementById('lastNameError'),
-            pattern: /^[a-zA-Z]+$/,
-            message: 'Last name must contain only letters.',
-            placeholder: 'Last Name'
-        },
+    first_name: {
+        element: document.getElementById('id_first_name'),
+        errorElement: document.getElementById('firstNameError'),
+        pattern: /^[A-Z][a-z]*$/, // First letter capitalized, followed by lowercase letters
+        message: 'First name must start with a capital letter and contain only lowercase letters afterwards.',
+        placeholder: 'First Name'
+    },
+    last_name: {
+        element: document.getElementById('id_last_name'),
+        errorElement: document.getElementById('lastNameError'),
+        pattern: /^[A-Z][a-z]*$/, // First letter capitalized, followed by lowercase letters
+        message: 'Last name must start with a capital letter and contain only lowercase letters afterwards.',
+        placeholder: 'Last Name'
+    },
         email: {
             element: document.getElementById('id_email'),
             errorElement: document.getElementById('emailError'),
@@ -155,12 +169,12 @@
             placeholder: 'Email Address'
         },
         phoneno: {
-        element: document.getElementById('id_phoneno'),
-        errorElement: document.getElementById('phonenoError'),
-        pattern: /^\d{10,15}$/,
-        message: 'Enter a valid phone number with 10 digits.',
-        placeholder: 'Phone Number'
-    },
+            element: document.getElementById('id_phoneno'),
+            errorElement: document.getElementById('phonenoError'),
+            pattern: /^[6-9]\d{9}$/, // Starts with 6-9 and has a total of 10 digits
+            message: 'Phone number must be 10 digits long and start with a digit between 6 and 9.',
+            placeholder: 'Phone Number'
+        },
 
 
         password1: {
@@ -240,6 +254,20 @@
 
     setPlaceholders();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+        const status = '{{ status }}';
+
+        if (status === 'success' || status === 'error') {
+            $('#messageModal').modal('show');
+
+            $('#messageModal').on('hidden.bs.modal', function () {
+                if (status === 'success') {
+                    window.location.href = "{% url 'userauths:login' %}";  // Redirect to login page on success
+                }
+            });
+        }
+    });
 
 </script>
 

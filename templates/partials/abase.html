@@ -190,8 +190,12 @@
                         <a class="nav-link" href="">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Settings</a>
-                    </li>
+                        {% if request.session.is_authenticated %}
+                          <a href="{% url 'userauths:logout' %}" class="nav-link">Logout</a>
+                        {% else %}
+                          <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
+                        {% endif %}
+                      </li>
                 </ul>
             </nav>
 

@@ -15,7 +15,13 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from .models import Login, User_Reg, UserType
+from django.views.decorators.cache import cache_control
 from .forms import RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import RegistrationForm
+from .models import Login, UserType
 
 def register(request):
     if request.method == 'POST':
@@ -26,7 +32,7 @@ def register(request):
 
             if Login.objects.filter(email=email).exists():
                 messages.error(request, 'This email is already registered. Please use a different email address.')
-                return redirect('userauths:register')
+                return render(request, 'userauths/register.html', {'form': form, 'status': 'error'})
 
             # Save the user
             user = form.save(commit=False)
@@ -44,19 +50,20 @@ def register(request):
 
             # Set the password using the model's method
             user_login.set_password(password1)
+            user_login.save()
 
             messages.success(request, 'Registration successful. You can now log in.')
-            return redirect('userauths:login')
+            return render(request, 'userauths/register.html', {'form': form, 'status': 'success'})
         else:
             messages.error(request, 'Registration failed. Please correct the errors below.')
+            return render(request, 'userauths/register.html', {'form': form, 'status': 'error'})
     else:
         form = RegistrationForm()
 
     return render(request, 'userauths/register.html', {'form': form})
 
 
-
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -83,15 +90,19 @@ def login(request):
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
                 if user_type == 1:
-                    return redirect('admin_dashboard')
+                    request.session['redirect_url'] = 'userauths:adminindex'
                 elif user_type == 2:
-                    return redirect('userauths:index')
+                    request.session['redirect_url'] = 'userauths:index'
                 elif user_type == 3:
-                    return redirect('delivery_dashboard')
+                    request.session['redirect_url'] = 'delivery_dashboard'
                 elif user_type == 4:
-                    return redirect('expert_dashboard')
+                    request.session['redirect_url'] = 'expert_dashboard'
                 else:
                     messages.error(request, 'User type is not recognized.')
+                    return redirect('userauths:login')
+
+                messages.success(request, 'Login successful.')
+                return redirect('userauths:login')  # To show the modal on the same page
             else:
                 messages.error(request, 'Incorrect password.')
         except Login.DoesNotExist:
@@ -100,11 +111,25 @@ def login(request):
     return render(request, 'userauths/login.html')
 
 from django.contrib.auth import logout as auth_logout
+from django.db import transaction
+from django.views.decorators.cache import never_cache
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import cache_control
 
-from django.contrib.auth import logout as auth_logout
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @transaction.atomic
+@never_cache
 def logout(request):
+    # Get the current page URL to redirect back to it after logout
+    redirect_url = request.META.get('HTTP_REFERER', reverse('userauths:index'))  # Fallback to index if referer is not available
+    
+    # Ensure the redirect URL is safe
+    if not url_has_allowed_host_and_scheme(redirect_url, allowed_hosts={request.get_host()}):
+        redirect_url = reverse('userauths:index')
+
     if 'is_authenticated' in request.session and request.session['is_authenticated']:
         try:
             # Fetch the user registration and login entries
@@ -114,13 +139,9 @@ def logout(request):
             )
             login_entry = Login.objects.get(uid=user_reg)
 
-            # Debugging: Ensure you are correctly fetching user and login entry
-            print(f"Logging out user: {user_reg.first_name} {user_reg.last_name}")
-
             # Update last_logout and status
             login_entry.logout()  # This sets status to False and updates last_logout
-            print(f"Updated last_logout to: {login_entry.last_logout}")
-
+            messages.success(request, 'You have been successfully logged out.')
         except User_Reg.DoesNotExist:
             messages.error(request, 'User registration record not found.')
         except Login.DoesNotExist:
@@ -128,25 +149,32 @@ def logout(request):
         except Exception as e:
             messages.error(request, f'Error occurred: {str(e)}')
 
-        # Now, perform logout and flush the session after updating the login entry
+        # Perform logout and flush the session
         auth_logout(request)
         request.session.flush()
 
-        # Notify the user
-        messages.info(request, 'You have been logged out.')
-
-    return redirect('userauths:index')
+    # Redirect back to the page where the logout request was made, with the logout message
+    return redirect(redirect_url)
 
 
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 from django.views.generic import TemplateView
+
+# Apply cache control to the class-based view
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class IndexView(TemplateView):
     template_name = 'core/index.html'
+
     
 from django.db.models import Count
 from django.shortcuts import render
 from .models import User_Reg # Assuming these are in the current app
 from products.models import Product  # Import Product from the 'product' app
 
+
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class adminindex(TemplateView):
     template_name = "core/adminindex.html"
     
@@ -196,41 +224,48 @@ def password_reset_request(request):
     return render(request, 'userauths/password_reset_form.html', {'form': form})
 
 
-
 def password_reset_confirm(request, uidb64=None, token=None, *args, **kwargs):
     error_message = None
+    validlink = False  # Default to False
 
     try:
-        # Decode the uid from base64 to retrieve the user ID
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+        user = Login.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Login.DoesNotExist) as e:
         user = None
         error_message = str(e)
 
     if user is not None and default_token_generator.check_token(user, token):
+        validlink = True  # Set validlink to True if token and user are valid
+
         if request.method == 'POST':
-            # If it's a POST request, process the form submission
             form = CustomSetPasswordForm(user=user, data=request.POST)
             if form.is_valid():
                 form.save()  # Save the new password
-                return redirect('password_reset_complete')  # Redirect after success
+                return redirect('userauths:password_reset_complete')
+
         else:
-            # If it's a GET request, display the form
             form = CustomSetPasswordForm(user=user)
         
-        return TemplateResponse(request, 'userauths/password_reset_confirm.html', {
+        return render(request, 'userauths/password_reset_confirm.html', {
             'form': form,
+            'validlink': validlink,
             'uid': uidb64,
             'token': token,
         })
     else:
-        # If the user is None or the token is invalid, display the error message
         if not error_message:
             error_message = "The reset link is invalid or has expired. Please try resetting your password again."
-        return TemplateResponse(request, 'userauths/password_reset_confirm.html', {
+        return render(request, 'userauths/password_reset_confirm.html', {
             'error_message': error_message,
+            'validlink': validlink
         })
+
+
+
+
+
+
     
 # myproject/userauths/views.py
 from django.shortcuts import render

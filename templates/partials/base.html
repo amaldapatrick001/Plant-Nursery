@@ -93,6 +93,32 @@
             </div>
         </div>
     </nav>
+    <div id="message-box" style="display:none;" class="alert"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#logout-btn').click(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: "{% url 'userauths:logout' %}",  // Ensure this is the correct URL for your logout view
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },  // Include CSRF token for security
+            success: function(response) {
+                $('#message-box').show().html('You have been logged out.').addClass('alert-info');
+                
+                // Optionally, redirect after showing the message
+                setTimeout(function() {
+                    window.location.href = "{% url 'userauths:index' %}";
+                }, 3000);  // Redirect after 3 seconds
+            },
+            error: function(response) {
+                $('#message-box').show().html('Error occurred during logout.').addClass('alert-danger');
+            }
+        });
+    });
+</script>
+
         <!-- END nav -->
 
     {% block content %}

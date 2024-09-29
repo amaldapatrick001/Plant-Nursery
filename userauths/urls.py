@@ -13,8 +13,9 @@ urlpatterns = [
     path('adminindex/', adminindex.as_view(), name='adminindex'),
     path('password_reset/', password_reset_request, name='password_reset'),
     path('reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
-    path('password_reset/done/', TemplateView.as_view(template_name="userauths/password_reset_done.html"), name='password_reset_done'),
+    path('password_reset/done/', TemplateView.as_view(template_name="userauths/password_reset_done.html"), name='password_reset_done'), 
     path('reset/done/', TemplateView.as_view(template_name="userauths/password_reset_complete.html"), name='password_reset_complete'),
+
     
     path('user-details/', user_details, name='user_details'),
 

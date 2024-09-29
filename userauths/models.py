@@ -32,6 +32,9 @@ class Login(models.Model):
     last_logout = models.DateTimeField(null=True, blank=True)
     login_count = models.IntegerField(default=0)
 
+    def get_email_field_name(self):
+        return 'email'
+    
     def set_password(self, raw_password):
         """ Hashes the password before storing it """
         self.password = make_password(raw_password)

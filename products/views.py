@@ -2,18 +2,44 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CategoryForm
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import CategoryForm
+from .models import Category
+from django.db import IntegrityError
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.db import IntegrityError
+from .models import Category
+from .forms import CategoryForm
+
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new category to the database
-            messages.success(request, 'Category added successfully!')  # Add success message
-            return redirect('products:category_list')  # Redirect to the category list page
+            category_name = form.cleaned_data.get('category_name')
+            description = form.cleaned_data.get('description')
+            
+            try:
+                # Check if category already exists
+                category, created = Category.objects.get_or_create(
+                    category_name=category_name,
+                    defaults={'description': description}
+                )
+                if created:
+                    messages.success(request, 'Category added successfully!')
+                    return redirect('products:category_list')
+                else:
+                    messages.warning(request, 'Duplicate entry: This category already exists.')
+            except IntegrityError:
+                messages.error(request, 'An error occurred while adding the category. Please try again.')
+        else:
+            messages.error(request, 'Duplicate entry: This category already exists.')
     else:
         form = CategoryForm()
 
     return render(request, 'products/add_category.html', {'form': form})
-
 
 from .models import Category
 
@@ -84,10 +110,12 @@ def product_list(request):
     return render(request, 'products/product_list.html', context)
 
 
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ProductForm  # Make sure you import your form
 
 def add_product(request):
-    status = True  # Initialize the status to False
+    status = True  # Initialize the status to True
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         
@@ -97,8 +125,10 @@ def add_product(request):
                 messages.success(request, 'Product added successfully!')
                 return redirect('products:aproduct_list')  # Ensure this matches the URL pattern
             except Exception as e:
+                # Log the error but keep status True
                 messages.error(request, f"An error occurred while uploading the file: {str(e)}")
         else:
+            # Log form errors but keep status True
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"{field.label}: {error}")
@@ -109,7 +139,6 @@ def add_product(request):
         form = ProductForm()
 
     return render(request, 'products/add_product.html', {'form': form, 'status': status})
-
 
 from django.shortcuts import render, get_object_or_404
 from .models import Product
