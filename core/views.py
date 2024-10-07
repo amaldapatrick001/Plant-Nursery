@@ -22,3 +22,29 @@ def adminindex(request):
 
     # Pass context to the template
     return render(request, 'core/adminindex.html', context)
+
+def about(request):
+    return render(request, 'core/about.html') 
+
+from django.shortcuts import render, redirect
+from .models import Contact
+from django.contrib import messages
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('contactName')
+        email = request.POST.get('contactEmail')
+        subject = request.POST.get('contactSubject')
+        message = request.POST.get('contactMessage')
+
+        if name and email and subject and message:
+            # Create and save the Contact model
+            contact = Contact(name=name, email=email, subject=subject, message=message)
+            contact.save()
+            
+            # Display success message
+            messages.success(request, 'Your message has been sent!')
+            return redirect('contact')
+        else:
+            messages.error(request, 'All fields are required.')
+    return render(request, 'core/contact.html')

@@ -67,7 +67,7 @@
     .logo {
         display: block;
         margin: 0 auto 20px;
-        width: 200px; /* Adjust the width as needed */
+        width: 200px;
     }
 
     .separator {
@@ -87,33 +87,6 @@
     .separator span {
         padding: 0 10px;
         color: #6c757d;
-    }
-
-    .google-signin-button {
-        display: block;
-        margin: 0 auto;
-        padding: 10px 15px;
-        background-color: #ffffff; /* White background */
-        color: #757575; /* Text color */
-        border: 1px solid #dadce0; /* Border color */
-        border-radius: 25px; /* Rounded corners */
-        text-decoration: none; /* Remove underline from link */
-        font-size: 18px; /* Medium font size */
-        font-weight: 500; /* Font weight */
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
-        transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
-        width: 60%; /* Adjust size to medium */
-    }
-
-    .google-signin-button:hover {
-        background-color: #f7f7f7; /* Slightly darker background on hover */
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
-    }
-
-    .google-logo {
-        width: 20px; /* Google logo size */
-        height: 20px; /* Google logo size */
-        margin-right: 10px; /* Space between logo and text */
     }
 </style>
 
@@ -148,11 +121,25 @@
                         <div class="separator">
                             <span>or</span>
                         </div>
-                        
-                        <a href="#" class="google-signin-button">
-                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="google-logo">
-                            <span>Sign in with Google</span>
-                        </a>
+
+                        <!-- Google Sign-In Button -->
+                        <div id="g_id_onload"
+                            data-client_id="130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.googleusercontent.com"
+                            data-context="signin"
+                            data-ux_mode="redirect"
+                            data-login_uri="http://localhost:8000/userauths/auth_receiver/"
+                            data-itp_support="true">
+                        </div>
+
+                        <div class="g_id_signin" 
+                             data-type="standard" 
+                             data-shape="pill" 
+                             data-theme="outline" 
+                             data-text="continue_with" 
+                             data-size="large" 
+                             data-logo_alignment="left">
+                        </div>
+
                         <div class="form-group text-center mt-4">
                             <p class="text-muted">
                                 <a href="{% url 'userauths:password_reset' %}" class="text-primary font-weight-bold">Forgot Your Password?</a>
@@ -169,98 +156,20 @@
     </div>
 </section>
 
-<!-- Bootstrap Modal for Messages -->
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="messageModalLabel">Login Status</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="modalCloseButton">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
+<!-- Script to manage modal, form validation, and session redirection -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Form validation logic
-        const form = document.getElementById('loginForm');
-        const fields = {
-            email: {
-                element: document.getElementById('id_email'),
-                errorElement: document.getElementById('emailError'),
-                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Enter a valid email address.',
-                placeholder: 'Email address'
-            },
-            password: {
-                element: document.getElementById('id_password'),
-                errorElement: document.getElementById('passwordError'),
-                pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/,
-                message: 'Password must be at least 8 characters long and contain letters and numbers.',
-                placeholder: 'Password'
-            }
-        };
-    
-        function setPlaceholders() {
-            Object.values(fields).forEach(({ element, placeholder }) => {
-                element.setAttribute('placeholder', placeholder);
-            });
-        }
-    
-        function validateField(name) {
-            const { element, errorElement, pattern, message } = fields[name];
-            const value = element.value;
-            const isValid = pattern.test(value);
-            errorElement.textContent = isValid ? '' : message;
-            return isValid;
-        }
-    
-        function validateForm() {
-            return Object.keys(fields).every(name => validateField(name));
-        }
-    
-        Object.values(fields).forEach(({ element }) => {
-            element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
-        });
-    
-        form.addEventListener('submit', (event) => {
-            const isValid = validateForm();
-            const formErrors = document.getElementById('formErrors');
-    
-            if (!isValid) {
-                event.preventDefault();
-                formErrors.classList.remove('d-none');
-            } else {
-                formErrors.classList.add('d-none');
-            }
-        });
-    
-        // Set placeholders initially
-        setPlaceholders();
-    
-        // Modal and redirection logic
+        // Your form validation and modal logic
+
         const messagesExist = {% if messages %}true{% else %}false{% endif %};
         const redirectUrl = "{% if request.session.redirect_url %}{% url request.session.redirect_url %}{% endif %}";
-    
+
         if (messagesExist) {
             $('#messageModal').modal('show');
         }
-    
+
         document.getElementById('modalCloseButton').addEventListener('click', function() {
             if (redirectUrl) {
                 window.location.href = redirectUrl;
