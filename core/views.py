@@ -48,3 +48,37 @@ def contact(request):
         else:
             messages.error(request, 'All fields are required.')
     return render(request, 'core/contact.html')
+# views.py
+from django.shortcuts import render, redirect
+from .models import Contact
+from django.core.mail import send_mail
+from django.contrib import messages
+
+def contact_list(request):
+    # Fetch contacts sorted by is_responded: False first, True last
+    contacts = Contact.objects.all().order_by('is_responded')
+
+    if request.method == 'POST':
+        contact_id = request.POST.get('contact_id')
+        response_message = request.POST.get('response_message')
+
+        # Fetch the contact entry to send a response
+        contact = Contact.objects.get(id=contact_id)
+
+        # Set the email subject as a response to the inquiry
+        subject = f'Response to your inquiry: {contact.subject}'
+        
+        message = response_message
+        from_email = 'your_email@example.com'  # Replace with your email
+
+        # Send the email
+        send_mail(subject, message, from_email, [contact.email])
+
+        # Mark the contact as responded
+        contact.is_responded = True
+        contact.save()
+
+        messages.success(request, 'Response sent successfully!')
+        return redirect('contact_list')
+
+    return render(request, 'core/contact_list.html', {'contacts': contacts})
