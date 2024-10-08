@@ -11,6 +11,10 @@
             border-radius: 8px;
             margin-bottom: 20px; 
         }
+        .ftco-section {
+    padding: 0;
+    position: relative;
+}
         .category-nav a {
             text-decoration: none;
             color: #333;
@@ -111,18 +115,83 @@
     </style>
 
     <section class="ftco-section">
+        
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static 'images\nur3.jpeg' %}');">
         <div class="container">
-            
-            <h2 class="product-heading">Products</h2>
+          <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Products</span></p>
+              <h1 class="mb-0 bread">Products</h1>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
         </div>
-            <div class="category-nav">
-                <!-- Category Navigation Links -->
-                {% for category in categories %}
-                    <a href="?category={{ category.id }}">{{ category.category_name }}</a>
-                {% endfor %}
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 mb-5 text-center">
+                    <ul class="product-category list-inline" style="margin-top: 20px; padding: 0; list-style: none;">
+                        <li class="list-inline-item">
+                            <a href="?category=" class="category-link {% if not request.GET.category %}active{% endif %}">
+                                All
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li class="list-inline-item">
+                            <a href="?category={{ category.id }}" class="category-link {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
+                                {{ category.category_name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
+        </div>
+
+
+
+
+        
+        <style>
+            .product-category {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .product-category .list-inline-item {
+                margin: 10px 15px;
+            }
+            .category-link {
+                display: block;
+                padding: 10px 20px;
+                border-radius: 30px;
+                background-color: #f8f9fa; /* Light background */
+                color: #333;
+                font-weight: 500;
+                text-decoration: none;
+                transition: background-color 0.3s, color 0.3s;
+            }
+            .category-link:hover {
+                background-color: #6a8544; /* Hover effect */
+                color: #fff;
+            }
+            .category-link.active {
+                background-color: #82ae46; /* Active category */
+                color: #fff;
+            }
+            .category-link:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
+            }
+            .icon-large {
+                font-size: 1.5rem; }
+        </style>
+                
+        
+    </div>
+
         <div class="container">
             <div class="row">
                 <div class="col-md-3 mb-5">
@@ -242,16 +311,55 @@
                         </form>
                     </div>
 
+
+
+                    <style>
+                        /* Style for the product card */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Hover effect for product card */
+.product-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style for the icons */
+.icon-hover {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.icon-hover:hover {
+    transform: scale(1.2); /* Increase size slightly */
+    color: #53c317; /* Change color on hover (optional) */
+}
+
+                    </style>
+
                     <div class="row">
                         {% for product in products %}
                         <div class="col-md-4 mb-4">
                             <div class="product-card">
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="overlay">
                                 <div class="product-card-body">
                                     <h5>{{ product.product_name }}</h5>
-                                    <p>Price: Rs. {{ product.price }}</p>
-                                    <a href="" class="btn btn-primary">Add to Cart</a>
-                                    <a href="{% url 'products:product_details' product.id %}">View details</a>
+                                    <p>Rs. {{ product.price }}</p>
+                                    <div class="bottom-area d-flex px-3">
+                                        <div class="m-auto d-flex">
+                                            <a href="{% url 'products:product_details' product.id %}" class="add-to-cart d-flex justify-content-center align-items-center text-center icon-hover" style="font-size: 21px;">
+                                                <span><i class="ion-ios-menu"></i></span>
+                                            </a>
+                                            <a href="{% url 'products:product_details' product.id %}" class="buy-now d-flex justify-content-center align-items-center mx-1 icon-hover" style="font-size: 21px;">
+                                                <span><i class="ion-ios-cart"></i></span>
+                                            </a>
+                                            <a href="#" class="heart d-flex justify-content-center align-items-center icon-hover" style="font-size: 21px;">
+                                                <span><i class="ion-ios-heart"></i></span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -259,6 +367,7 @@
                         <p>No products available.</p>
                         {% endfor %}
                     </div>
+                    
                 </div>
             </div>
         </div>

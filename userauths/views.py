@@ -62,6 +62,10 @@ def register(request):
 
     return render(request, 'userauths/register.html', {'form': form})
 
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.views.decorators.cache import cache_control
+from .models import Login  # Adjust the import based on your project structure
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
@@ -90,25 +94,25 @@ def login(request):
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
                 if user_type == 1:
-                    request.session['redirect_url'] = 'userauths:adminindex'
+                    return redirect('userauths:adminindex')  # Admin dashboard
                 elif user_type == 2:
-                    request.session['redirect_url'] = 'userauths:index'
+                    return redirect('userauths:index')  # Redirect to index in core app
                 elif user_type == 3:
-                    request.session['redirect_url'] = 'delivery_dashboard'
+                    return redirect('delivery_dashboard')  # Delivery dashboard
                 elif user_type == 4:
-                    request.session['redirect_url'] = 'expert_dashboard'
+                    return redirect('expert_dashboard')  # Expert dashboard
                 else:
                     messages.error(request, 'User type is not recognized.')
                     return redirect('userauths:login')
 
                 messages.success(request, 'Login successful.')
-                return redirect('userauths:login')  # To show the modal on the same page
             else:
                 messages.error(request, 'Incorrect password.')
         except Login.DoesNotExist:
             messages.error(request, 'No account found with this email.')
 
     return render(request, 'userauths/login.html')
+
 
 from django.contrib.auth import logout as auth_logout
 from django.db import transaction

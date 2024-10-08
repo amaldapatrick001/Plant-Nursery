@@ -30,6 +30,12 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+      .icon-shopping_cart {
+    font-size: 240px; /* Adjust this value to increase/decrease size */
+}
+
+    </style>
   </head>
   <body class="goto-here">
 		<div class="py-1 bg-primary">
@@ -82,17 +88,39 @@
 
                     <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
                     <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-                    <li class="nav-item">
+                    <li class="nav-item dropdown">
                       {% if request.session.is_authenticated %}
-                        <a href="{% url 'userauths:logout' %}" class="nav-link">Logout</a>
+                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fas fa-user fa-2x"></i> <!-- User icon -->
+                          </a>
+                          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <li><a class="dropdown-item" href="">My Profile</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="{% url 'userauths:logout' %}">Logout</a></li>
+                          </ul>
                       {% else %}
-                        <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
+                          <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
                       {% endif %}
-                    </li>
-                    
+                  </li>
                   
-                    <li class="nav-item cta cta-colored"><a href="cart.html" class="nav-link"><span class="icon-shopping_cart"></span>[0]</a></li>
-                </ul>
+                  <li class="nav-item cta cta-colored">
+                      <a href="" class="nav-link">
+                          <span class="fas fa-shopping-cart fa-2x"></span> <!-- Changed to fa-2x to match the user icon -->
+                          [0]
+                      </a>
+                  </li>
+<style>
+  .nav-link {
+    display: flex;
+    align-items: center; /* Centers the icon and text vertically */
+}
+
+.fa-shopping-cart, .fa-user {
+    margin-right: 5px; /* Adds some space between the icon and the text */
+}
+
+</style>                  
+                  </ul>
             </div>
         </div>
     </nav>
@@ -229,3 +257,5 @@
       
     </body>
   </html>
+  <script>
+  </script>
