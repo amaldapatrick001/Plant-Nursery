@@ -149,49 +149,66 @@
                 </div>
             </div>
         </div>
-
-
-
-
-        
         <style>
-            .product-category {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
+            /* Custom styles for the filter sidebar */
+            .filter-sidebar {
+                background-color: #f8f9fa;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
-            .product-category .list-inline-item {
-                margin: 10px 15px;
-            }
-            .category-link {
-                display: block;
-                padding: 10px 20px;
-                border-radius: 30px;
-                background-color: #f8f9fa; /* Light background */
-                color: #333;
-                font-weight: 500;
-                text-decoration: none;
-                transition: background-color 0.3s, color 0.3s;
-            }
-            .category-link:hover {
-                background-color: #6a8544; /* Hover effect */
-                color: #fff;
-            }
-            .category-link.active {
-                background-color: #82ae46; /* Active category */
-                color: #fff;
-            }
-            .category-link:focus {
-                outline: none;
-                box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
-            }
-            .icon-large {
-                font-size: 1.5rem; }
-        </style>
-                
         
-    </div>
-
+            .filter-sidebar h3 {
+                font-size: 1.5rem;
+                color: #82ae46;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        
+            .filter-form .form-group {
+                margin-bottom: 20px;
+            }
+        
+            .form-check-label {
+                font-size: 0.95rem;
+                color: #555;
+                cursor: pointer;
+            }
+        
+            .form-check-input {
+                margin-right: 10px;
+            }
+        
+            /* Styling radio buttons */
+            .form-check-input:checked ~ .form-check-label {
+                font-weight: bold;
+                color: #82ae46;
+            }
+        
+            /* Hover effect on labels */
+            .form-check-label:hover {
+                color: #6a8544;
+            }
+        
+            /* Custom submit button styling */
+            .submit-btn {
+                background-color: #82ae46;
+                color: #fff;
+                font-weight: 500;
+                border-radius: 25px;
+                padding: 10px 20px;
+                display: block;
+                text-align: center;
+                transition: background-color 0.3s ease;
+            }
+        
+            .submit-btn:hover {
+                background-color: #6a8544;
+                color: #fff;
+            }
+        </style>
+        
         <div class="container">
             <div class="row">
                 <div class="col-md-3 mb-5">
@@ -200,33 +217,33 @@
                         <form method="get" action="" class="filter-form">
                             
                             <!-- Filter by Price Range -->
-<div class="form-group">
-    <label>Price Range</label><br>
-    <div class="form-check">
-        <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
-               {% if request.GET.price == "0-500" %}checked{% endif %}>
-        <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
-    </div>
-    <div class="form-check">
-        <input type="radio" id="price_500_1000" name="price" value="500-1000" class="form-check-input"
-               {% if request.GET.price == "500-1000" %}checked{% endif %}>
-        <label class="form-check-label" for="price_500_1000">Rs. 500 - 1000</label>
-    </div>
-    <div class="form-check">
-        <input type="radio" id="price_1000_1500" name="price" value="1000-1500" class="form-check-input"
-               {% if request.GET.price == "1000-1500" %}checked{% endif %}>
-        <label class="form-check-label" for="price_1000_1500">Rs. 1000 - 1500</label>
-    </div>
-    <div class="form-check">
-        <input type="radio" id="price_above_1500" name="price" value="above_1500" class="form-check-input"
-               {% if request.GET.price == "above_1500" %}checked{% endif %}>
-        <label class="form-check-label" for="price_above_1500">Above Rs. 1500</label>
-    </div>
-</div>
-
+                            <div class="form-group">
+                                <label>Price Range</label>
+                                <div class="form-check">
+                                    <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
+                                           {% if request.GET.price == "0-500" %}checked{% endif %}>
+                                    <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="price_500_1000" name="price" value="500-1000" class="form-check-input"
+                                           {% if request.GET.price == "500-1000" %}checked{% endif %}>
+                                    <label class="form-check-label" for="price_500_1000">Rs. 500 - 1000</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="price_1000_1500" name="price" value="1000-1500" class="form-check-input"
+                                           {% if request.GET.price == "1000-1500" %}checked{% endif %}>
+                                    <label class="form-check-label" for="price_1000_1500">Rs. 1000 - 1500</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="price_above_1500" name="price" value="above_1500" class="form-check-input"
+                                           {% if request.GET.price == "above_1500" %}checked{% endif %}>
+                                    <label class="form-check-label" for="price_above_1500">Above Rs. 1500</label>
+                                </div>
+                            </div>
+        
                             <!-- Filter by Sunlight Requirement -->
                             <div class="form-group">
-                                <label>Sunlight Requirement</label><br>
+                                <label>Sunlight Requirement</label>
                                 <div class="form-check">
                                     <input type="radio" id="sunlight_full_sun" name="sunlight" value="Full Sun" class="form-check-input"
                                            {% if request.GET.sunlight == "Full Sun" %}checked{% endif %}>
@@ -243,10 +260,10 @@
                                     <label class="form-check-label" for="sunlight_full_shade">Full Shade</label>
                                 </div>
                             </div>
-
+        
                             <!-- Filter by Water Need -->
                             <div class="form-group">
-                                <label>Water Need</label><br>
+                                <label>Water Need</label>
                                 <div class="form-check">
                                     <input type="radio" id="water_low" name="water" value="Low" class="form-check-input"
                                            {% if request.GET.water == "Low" %}checked{% endif %}>
@@ -263,10 +280,10 @@
                                     <label class="form-check-label" for="water_high">High</label>
                                 </div>
                             </div>
-
+        
                             <!-- Filter by Climate Compatibility -->
                             <div class="form-group">
-                                <label>Climate Compatibility</label><br>
+                                <label>Climate Compatibility</label>
                                 <div class="form-check">
                                     <input type="radio" id="climate_tropical" name="climate" value="Tropical" class="form-check-input"
                                            {% if request.GET.climate == "Tropical" %}checked{% endif %}>
@@ -288,8 +305,13 @@
                                     <label class="form-check-label" for="climate_arid">Arid</label>
                                 </div>
                             </div>
-                            
+        
+                            <!-- Submit Button -->
+                             <button type="submit" class="submit-btn">
+    <a href="{% url 'products:product_list' %}" style="color: white;">Clear Filters</a>
+</button>
 
+        
                             <!-- JavaScript to automatically submit the form on change -->
                             <script>
                                 document.querySelectorAll('.filter-form input').forEach(element => {
@@ -301,6 +323,7 @@
                         </form>
                     </div>
                 </div>
+        
                 <div class="col-md-9">
                     <!-- Add heading for products -->
                     <!-- Place the search bar below the category filter -->
@@ -339,37 +362,113 @@
 
                     </style>
 
-                    <div class="row">
-                        {% for product in products %}
-                        <div class="col-md-4 mb-4">
-                            <div class="product-card">
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="overlay">
-                                <div class="product-card-body">
-                                    <h5>{{ product.product_name }}</h5>
-                                    <p>Rs. {{ product.price }}</p>
-                                    <div class="bottom-area d-flex px-3">
-                                        <div class="m-auto d-flex">
-                                            <a href="{% url 'products:product_details' product.id %}" class="add-to-cart d-flex justify-content-center align-items-center text-center icon-hover" style="font-size: 21px;">
-                                                <span><i class="ion-ios-menu"></i></span>
-                                            </a>
-                                            <a href="{% url 'products:product_details' product.id %}" class="buy-now d-flex justify-content-center align-items-center mx-1 icon-hover" style="font-size: 21px;">
-                                                <span><i class="ion-ios-cart"></i></span>
-                                            </a>
-                                            <a href="#" class="heart d-flex justify-content-center align-items-center icon-hover" style="font-size: 21px;">
-                                                <span><i class="ion-ios-heart"></i></span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p>No products available.</p>
-                        {% endfor %}
-                    </div>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="product-card shadow-lg rounded-lg overflow-hidden">
+            <a href="{% url 'products:product_details' product.id %}">
+                <!-- Product Image -->
+                <div class="product-image position-relative">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid overlay" style="transition: transform 0.3s ease;">
+                </div>
+                
+                <!-- Product Info -->
+                <div class="product-card-body p-3 text-center">
+                    <h5 class="product-name font-weight-bold mb-2">{{ product.product_name }}</h5>
+                    <p class="product-price text-primary font-weight-bold">Rs. {{ product.price }}</p>
+                </div>
+            </a>
+    
+            <!-- Action Buttons -->
+            <div class="bottom-area d-flex justify-content-center py-3">
+                <a href="{% url 'products:product_details' product.id %}" class="add-to-cart d-flex justify-content-center align-items-center mx-2 icon-hovera btn btn-outline-primary rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <i class="ion-ios-menu"></i>
+                </a>
+                <a href="{% url 'products:product_details' product.id %}" class="buy-now d-flex justify-content-center align-items-center mx-2 icon-hoverb btn btn-outline-success rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <i class="ion-ios-cart"></i>
+                </a>
+                <a href="#" class="heart d-flex justify-content-center align-items-center mx-2 icon-hoverc btn btn-outline-danger rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <i class="ion-ios-heart"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {% empty %}
+    <p>No products available.</p>
+    {% endfor %}
+</div>
+
+<!-- Add custom styles -->
+<style>
+    .product-card {
+        border: 1px solid #ddd;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+    }
+
+    .product-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .product-image img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .product-image:hover img {
+        transform: scale(1.1);
+    }
+
+    .product-card-body {
+        background-color: #ffffff;
+        padding: 15px;
+    }
+
+    .product-name {
+        color: #333;
+        font-size: 1.25rem;
+    }
+
+    .product-price {
+        color: #27ae60;
+        font-size: 1.1rem;
+    }
+
+    .icon-hover:hover {
+        background-color: #007bff !important;
+    }.icon-hover:hover {
+        background-color: #28a745 !important;
+    }.icon-hover:hover {
+        background-color: #dc3545 !important;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: #fff;
+    }
+</style>
+
                     
                 </div>
             </div>
         </div>
     </section>
 {% endblock %}
+

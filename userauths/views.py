@@ -85,7 +85,7 @@ def login(request):
                 user_login.login()  # This updates last_login, status, and login_count
 
                 # Set user information in session
-                request.session['user_id'] = user_login.login_id
+                request.session['user_id'] = user_login.login_id 
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
                 request.session['email'] = user_login.email
@@ -104,8 +104,6 @@ def login(request):
                 else:
                     messages.error(request, 'User type is not recognized.')
                     return redirect('userauths:login')
-
-                messages.success(request, 'Login successful.')
             else:
                 messages.error(request, 'Incorrect password.')
         except Login.DoesNotExist:
@@ -159,6 +157,66 @@ def logout(request):
 
     # Redirect back to the page where the logout request was made, with the logout message
     return redirect(redirect_url)
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User_Reg, Login
+from .forms import UpdateProfileForm, UpdatePasswordForm
+
+def update_profile(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('userauths:login')
+
+    try:
+        user_login = Login.objects.get(login_id=request.session['user_id'])
+        user = user_login.uid
+    except Login.DoesNotExist:
+        messages.error(request, 'User not found.')
+        return redirect('userauths:login')
+
+    # Initialize the forms
+    profile_form = UpdateProfileForm(instance=user)
+    password_form = UpdatePasswordForm()
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        print("Action:", action)  # Log action
+        print("POST Data:", request.POST)  # Log all POST data
+
+        if action == 'update_profile':
+            # Handle profile update
+            profile_form = UpdateProfileForm(request.POST, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                print("Profile form saved successfully")
+                messages.success(request, 'Profile updated successfully!')
+            else:
+                print("Profile form validation failed", profile_form.errors)
+
+
+        elif action == 'update_password':
+            # Handle password update
+            password_form = UpdatePasswordForm(request.POST)
+            if password_form.is_valid():
+                new_password = password_form.cleaned_data['new_password']
+                user_login.set_password(new_password)
+                user_login.save()
+                print("Password updated in the database")  # Log success
+                messages.success(request, 'Password updated successfully!')
+            else:
+                print("Password form validation failed", password_form.errors)
+
+    context = {
+        'profile_form': profile_form,
+        'password_form': password_form,
+    }
+    return render(request, 'userauths/update_profile.html', context)
+
+
+
 
 
 
@@ -329,3 +387,4 @@ def undo_delete_view(request, uid):
     user.status = True
     user.save()
     return redirect('userauths:user_details_view')  # Redirect back to the user details page
+

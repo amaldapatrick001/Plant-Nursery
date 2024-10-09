@@ -15,6 +15,7 @@ class User_Reg(models.Model):
     last_name = models.CharField(max_length=100)
     phoneno = models.CharField(max_length=15)
     date_time_reg = models.DateTimeField(auto_now_add=True)
+    
     status = models.BooleanField(default=True)  # Automatically set status to True upon registration
 
     def __str__(self):
