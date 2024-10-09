@@ -1,3 +1,4 @@
+from venv import logger
 from django.utils.deprecation import MiddlewareMixin
 
 class NoCacheMiddleware(MiddlewareMixin):

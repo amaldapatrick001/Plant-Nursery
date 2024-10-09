@@ -129,3 +129,35 @@ class CustomSetPasswordForm(SetPasswordForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords do not match.")
         return password2
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = User_Reg
+        fields = ['first_name', 'last_name', 'phoneno']
+
+
+class UpdatePasswordForm(forms.Form):
+    new_password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="New Password",
+        max_length=128,
+        min_length=8,
+        help_text="Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special symbols."
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="Confirm Password",
+        max_length=128,
+        min_length=8
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if new_password and confirm_password and new_password != confirm_password:
+            raise forms.ValidationError("Passwords do not match.")
+
+        return cleaned_data

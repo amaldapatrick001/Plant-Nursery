@@ -94,7 +94,7 @@
                               <i class="fas fa-user fa-2x"></i> <!-- User icon -->
                           </a>
                           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <li><a class="dropdown-item" href="">My Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'userauths:update_profile' %}">My Profile</a></li>
                               <li><hr class="dropdown-divider"></li>
                               <li><a class="dropdown-item" href="{% url 'userauths:logout' %}">Logout</a></li>
                           </ul>
