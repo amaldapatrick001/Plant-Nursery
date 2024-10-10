@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CategoryForm
+from rapidfuzz import fuzz
+
 
 def add_category(request):
     if request.method == 'POST':

@@ -1,24 +1,21 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Access environment variables
-DATABASE_URL = os.getenv('DATABASE_URL')
+# Define environment variables directly
+GOOGLE_OAUTH_CLIENT_ID = '130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.googleusercontent.com'
+SECRET_KEY = 'django-insecure-_&b(9(a%^7)t%%&9ctl$)bb8t2mo1djy8#kc_szj7ss6v!ahpk'
+DEBUG = True
+DATABASE_NAME = 'Enchanted_Eden'
+DATABASE_USER = 'postgres'
+DATABASE_PASSWORD = 'Amalda@123'
+EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'  # Add your email host user here
+EMAIL_HOST_PASSWORD = 'Amalda@MCA'
 
 # Security settings
-SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')  # Replace with your actual default
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Convert string to boolean
-
-# Additional settings...
-
-# Allowed hosts (add more if needed for production)
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1').split()
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Installed applications
 INSTALLED_APPS = [
@@ -43,7 +40,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'userauths.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching
-
 ]
 
 # URL configurations
@@ -73,9 +69,9 @@ WSGI_APPLICATION = 'PlantNursery.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'Enchanted_Eden'),
-        'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -95,17 +91,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = EMAIL_HOST_USER  # Use the defined EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+
 # Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_AGE = 1800  # 30 minutes
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Set to True for expiry on browser close
-
-
 
 # Security settings for production
 if not DEBUG:
@@ -143,6 +137,6 @@ LOGIN_URL = '/userauths/login/'
 # Cross-Origin and Referrer settings (for Google sign-in)
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
-GOOGLE_OAUTH_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
 if not GOOGLE_OAUTH_CLIENT_ID:
     raise ValueError('GOOGLE_OAUTH_CLIENT_ID is missing. Please add it to your .env file.')
+
