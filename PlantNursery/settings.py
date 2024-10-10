@@ -1,18 +1,19 @@
 import os
 from pathlib import Path
+from decouple import config  # Import config from python-decouple
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Define environment variables directly
-GOOGLE_OAUTH_CLIENT_ID = '130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.googleusercontent.com'
-SECRET_KEY = 'django-insecure-_&b(9(a%^7)t%%&9ctl$)bb8t2mo1djy8#kc_szj7ss6v!ahpk'
-DEBUG = True
-DATABASE_NAME = 'Enchanted_Eden'
-DATABASE_USER = 'postgres'
-DATABASE_PASSWORD = 'Amalda@123'
-EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'  # Add your email host user here
-EMAIL_HOST_PASSWORD = 'Amalda@MCA'
+GOOGLE_OAUTH_CLIENT_ID = config('GOOGLE_OAUTH_CLIENT_ID')
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+DATABASE_NAME = config('DATABASE_NAME')
+DATABASE_USER = config('DATABASE_USER')
+DATABASE_PASSWORD = config('DATABASE_PASSWORD')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Add your email host user here
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Security settings
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -137,6 +138,7 @@ LOGIN_URL = '/userauths/login/'
 # Cross-Origin and Referrer settings (for Google sign-in)
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+# Ensure GOOGLE_OAUTH_CLIENT_ID is set
 if not GOOGLE_OAUTH_CLIENT_ID:
     raise ValueError('GOOGLE_OAUTH_CLIENT_ID is missing. Please add it to your .env file.')
-
