@@ -2,7 +2,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.template.response import TemplateResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -13,6 +13,9 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.urls import reverse_lazy
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from rapidfuzz import fuzz
+
+from PlantNursery import settings
 
 from .models import Login, User_Reg, UserType
 from django.views.decorators.cache import cache_control
@@ -22,6 +25,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import RegistrationForm
 from .models import Login, UserType
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 def register(request):
     if request.method == 'POST':
@@ -52,6 +58,9 @@ def register(request):
             user_login.set_password(password1)
             user_login.save()
 
+            # Send registration email
+            send_registration_email(user_login)
+
             messages.success(request, 'Registration successful. You can now log in.')
             return render(request, 'userauths/register.html', {'form': form, 'status': 'success'})
         else:
@@ -62,11 +71,24 @@ def register(request):
 
     return render(request, 'userauths/register.html', {'form': form})
 
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.views.decorators.cache import cache_control
-from .models import Login  # Adjust the import based on your project structure
-
+def send_registration_email(user_login):
+    """Send an email notification upon successful registration."""
+    subject = "Welcome to Enchanted Eden!"
+    message = (
+        f"Dear {user_login.uid.first_name},\n\n"
+        "Thank you for registering with Enchanted Eden. Your account has been successfully created.\n\n"
+        "You can now log in and explore our services.\n\n"
+        "Best Regards,\n"
+        "The Enchanted Eden Team\n"
+        "For further details, please contact us at support@enchantededen.com."
+    )
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user_login.email],
+        fail_silently=False,
+    )
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
     if request.method == 'POST':
@@ -91,6 +113,9 @@ def login(request):
                 request.session['email'] = user_login.email
                 request.session['is_authenticated'] = True
 
+                # Send login notification email
+                send_login_email(user_login)
+
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
                 if user_type == 1:
@@ -110,6 +135,25 @@ def login(request):
             messages.error(request, 'No account found with this email.')
 
     return render(request, 'userauths/login.html')
+
+def send_login_email(user_login):
+    """Send an email notification upon successful login."""
+    subject = "Login Notification - Enchanted Eden"
+    message = (
+        f"Dear {user_login.uid.first_name},\n\n"
+        "You have successfully logged into your Enchanted Eden account. If this wasn't you, please contact our support team immediately.\n\n"
+        "Best Regards,\n"
+        "The Enchanted Eden Team\n"
+        "For further details, please contact us at support@enchantededen.com."
+    )
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user_login.email],
+        fail_silently=False,
+    )
+
 
 
 from django.contrib.auth import logout as auth_logout
@@ -356,9 +400,6 @@ def user_details(request):
 
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import User_Reg
-from .models import Login  # Import the related Login model
 
 def user_details_view(request):
     # Fetch active users with related login data
@@ -374,11 +415,53 @@ def user_details_view(request):
         'logins': logins
     })
 
+def send_activation_email(user, action):
+    """Send an email notification to the user regarding activation/deactivation."""
+    try:
+        subject = f"Your account with Enchanted Eden has been {action}"
+
+        if action == 'deactivated':
+            message = (
+                "Dear User,\n\n"
+                "We regret to inform you that your account with Enchanted Eden has been deactivated. "
+                "If you believe this is a mistake, or if you have any questions, please contact our support team.\n\n"
+                "Thank you for being a valued member of the Enchanted Eden community!\n\n"
+                "Best Regards,\n"
+                "The Enchanted Eden Team\n"
+                "For further details, please contact us at support@enchantededen.com."
+            )
+        else:  # For activation
+            message = (
+                "Dear User,\n\n"
+                "Great news! Your account with Enchanted Eden has been reactivated. "
+                "You can now log in and enjoy our services once again. If you have any questions, please reach out to our support team.\n\n"
+                "Thank you for being a valued member of the Enchanted Eden community!\n\n"
+                "Best Regards,\n"
+                "The Enchanted Eden Team\n"
+                "For further details, please contact us at support@enchantededen.com."
+            )
+
+        # Send email
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.login_set.first().email],  # Assumes there's a related login entry with an email
+            fail_silently=False,
+        )
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+
 def delete_user_view(request, uid):
     # Soft delete user by setting status to False
     user = get_object_or_404(User_Reg, uid=uid)
     user.status = False
     user.save()
+
+    # Send deactivation email
+    send_activation_email(user, action='deactivated')
+
     return redirect('userauths:user_details_view')  # Redirect back to the user details page
 
 def undo_delete_view(request, uid):
@@ -386,5 +469,8 @@ def undo_delete_view(request, uid):
     user = get_object_or_404(User_Reg, uid=uid)
     user.status = True
     user.save()
-    return redirect('userauths:user_details_view')  # Redirect back to the user details page
 
+    # Send activation email
+    send_activation_email(user, action='activated')
+
+    return redirect('userauths:user_details_view')  # Redirect back to the user details page
