@@ -188,6 +188,12 @@ class Batch(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.size} - Height: {self.current_height}"
+    def get_discounted_price(self):
+        """Returns the price after applying the discount, if any."""
+        if self.discount:
+            discount_amount = (self.discount / 100) * self.price
+            return self.price - discount_amount
+        return self.price
 
 
 
@@ -227,31 +233,10 @@ class NonPlantProduct(models.Model):
 
 
 
-from django.db import models
-from django.core.exceptions import ValidationError
-from userauths.models import Login  # Ensure you're importing from models.py
-# Import your Login model
-from products.models import Product  # Assuming the Product model is in products app
-
 class Wishlist(models.Model):
-    user_email = models.ForeignKey(
-        Login, 
-        on_delete=models.CASCADE, 
-        related_name='wishlists',
-        help_text="The user who added the product to the wishlist.",
-        to_field='email'  # Reference to the email field
-    )
-    product = models.ForeignKey(
-        Product, 
-        on_delete=models.CASCADE, 
-        related_name='wishlisted_by',
-        help_text="The product that is added to the wishlist."
-    )
-    added_on = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = "Wishlists"
-        unique_together = ('user_email', 'product')  # To prevent duplicate entries
+    email = models.ForeignKey('userauths.Login', on_delete=models.CASCADE, null=True, blank=True)  # Referencing Login model
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, null=True, blank=True)  # Nullable foreign key
+    added_on = models.DateTimeField(auto_now_add=True)  # When the item was added
 
     def __str__(self):
-        return f"{self.user_email.email} - {self.product.name}"
+        return f"{self.email.email} - {self.batch.product.name if self.batch else 'No Batch'} - {self.batch.price if self.batch else 'No Price'}"

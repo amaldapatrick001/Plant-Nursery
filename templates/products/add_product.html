@@ -106,6 +106,13 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
+    /* Error Styles */
+    .error-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .card-body {
@@ -130,44 +137,150 @@
                     <div class="card-body">
                         <h2 class="category-list-heading">Add New Product</h2>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="error-list">
-                            <ul>
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn-submit">Add Product</button>
-        </form>
+                        <form method="post" enctype="multipart/form-data" id="product-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="form-group">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="error-list">
+                                            <ul>
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                    <div class="error-message" id="{{ field.id_for_label }}-error"></div>
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </form>
 
-        {% if form.errors %}
-            <div class="error-list">
-                <p>Please correct the errors below:</p>
-                <ul>
-                    {% for field in form %}
-                        {% if field.errors %}
-                            <li>{{ field.label }}: {{ field.errors }}</li>
+                        {% if form.errors %}
+                            <div class="error-list">
+                                <p>Please correct the errors below:</p>
+                                <ul>
+                                    {% for field in form %}
+                                        {% if field.errors %}
+                                            <li>{{ field.label }}: {{ field.errors }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         {% endif %}
-                    {% endfor %}
-                </ul>
+                    </div>
+                </div>
             </div>
-        {% endif %}
+        </div>
     </div>
-                </div>
-                </div>
-                </div>
-                </div>
-                </section>
-</body>
-</html>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('product-form');
+
+        // Function to validate name field
+        function validateName() {
+            const nameField = document.querySelector('input[name="name"]');
+            const errorMessage = document.getElementById('id_name-error');
+            const nameValue = nameField.value.trim();
+
+            if (!/^[A-Z][a-zA-Z]{2,}$/.test(nameValue)) {
+                errorMessage.textContent = "Name must start with a capital letter and contain at least 3 characters.";
+                return false;
+            }
+            errorMessage.textContent = ""; // Clear the error message if valid
+            return true;
+        }
+
+        // Function to validate description field
+        function validateDescription() {
+            const descriptionField = document.querySelector('textarea[name="description"]');
+            const errorMessage = document.getElementById('id_description-error');
+            const descriptionValue = descriptionField.value.trim();
+
+            // Check if it starts with a capital letter and sentences start with a capital letter
+            const sentences = descriptionValue.split('.');
+            for (let sentence of sentences) {
+                if (sentence.trim() && !/^[A-Z]/.test(sentence.trim())) {
+                    errorMessage.textContent = "Each sentence must start with a capital letter.";
+                    return false;
+                }
+            }
+
+            // Check length
+            if (descriptionValue.length < 10 || descriptionValue.length > 500) {
+                errorMessage.textContent = "Description must be between 10 and 500 characters.";
+                return false;
+            }
+
+            errorMessage.textContent = ""; // Clear the error message if valid
+            return true;
+        }
+
+        // Function to validate dropdown fields
+        function validateDropdowns() {
+            const dropdowns = ['plant_type', 'plant_category'];
+            let isValid = true;
+
+            dropdowns.forEach(function(dropdownName) {
+                const dropdown = document.querySelector(`select[name="${dropdownName}"]`);
+                const errorMessage = document.getElementById(`id_${dropdownName}-error`);
+                
+                if (dropdown.value === "") {
+                    errorMessage.textContent = "Please select a field.";
+                    isValid = false;
+                } else {
+                    errorMessage.textContent = ""; // Clear the error message if valid
+                }
+            });
+
+            return isValid;
+        }
+
+        // Function to validate image uploads
+        function validateImages() {
+            const imageFields = document.querySelectorAll('input[type="file"]');
+            let isValid = true;
+
+            imageFields.forEach(function(imageField) {
+                const errorMessage = document.getElementById(`id_${imageField.name}-error`);
+                const file = imageField.files[0];
+                
+                if (file) {
+                    const validExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+                    if (!validExtensions.test(file.name)) {
+                        errorMessage.textContent = "Image must be in JPG, JPEG, or PNG format.";
+                        isValid = false;
+                    } else {
+                        errorMessage.textContent = ""; // Clear the error message if valid
+                    }
+                }
+            });
+
+            return isValid;
+        }
+
+        // Validate fields on input
+        document.querySelector('input[name="name"]').addEventListener('input', validateName);
+        document.querySelector('textarea[name="description"]').addEventListener('input', validateDescription);
+        document.querySelectorAll('select').forEach(select => select.addEventListener('change', validateDropdowns));
+        document.querySelectorAll('input[type="file"]').forEach(fileInput => fileInput.addEventListener('change', validateImages));
+
+        // Form submission validation
+        form.addEventListener('submit', function(event) {
+            const nameValid = validateName();
+            const descriptionValid = validateDescription();
+            const dropdownsValid = validateDropdowns();
+            const imagesValid = validateImages();
+
+            if (!(nameValid && descriptionValid && dropdownsValid && imagesValid)) {
+                event.preventDefault(); // Prevent form submission if validation fails
+                alert("Please correct the errors before submitting the form.");
+            }
+        });
+    });
+</script>
 {% endblock %}

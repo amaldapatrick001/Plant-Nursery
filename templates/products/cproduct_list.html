@@ -469,10 +469,10 @@
     <i class="ion-ios-menu"></i>
 </a>
 
-                    <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-2 icon-hoverb btn btn-outline-success rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <a href="{% url 'purchase:add_to_cart' batch.id %}" class="buy-now d-flex justify-content-center align-items-center mx-2 icon-hoverb btn btn-outline-success rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
                         <i class="ion-ios-cart"></i>
                     </a>
-                    <a href="#" class="heart d-flex justify-content-center align-items-center mx-2 icon-hoverc btn btn-outline-danger rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <a href="{% url 'products:add_to_wishlist' batch.id %}" class="heart d-flex justify-content-center align-items-center mx-2 icon-hoverc btn btn-outline-danger rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
                         <i class="ion-ios-heart"></i>
                     </a>
                     </div>

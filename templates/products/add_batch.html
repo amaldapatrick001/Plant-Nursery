@@ -130,7 +130,7 @@
                     <div class="card-body">
                         <h2 class="category-list-heading">Add New Batch</h2>
 
-                        <form method="POST">
+                        <form method="POST" id="batchForm">
                             {% csrf_token %}
                             <div class="form-group">
                                 {{ form.product.label_tag }}
@@ -143,48 +143,36 @@
                             <div class="form-group">
                                 {{ form.current_height.label_tag }}
                                 {{ form.current_height }}
-                                {% if form.current_height.errors %}
-                                    <div class="text-danger">{{ form.current_height.errors }}</div>
-                                {% endif %}
+                                <div id="currentHeightError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
                                 {{ form.price.label_tag }}
                                 {{ form.price }}
-                                {% if form.price.errors %}
-                                    <div class="text-danger">{{ form.price.errors }}</div>
-                                {% endif %}
+                                <div id="priceError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
                                 {{ form.stock_quantity.label_tag }}
                                 {{ form.stock_quantity }}
-                                {% if form.stock_quantity.errors %}
-                                    <div class="text-danger">{{ form.stock_quantity.errors }}</div>
-                                {% endif %}
+                                <div id="stockError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
                                 {{ form.discount.label_tag }}
                                 {{ form.discount }}
-                                {% if form.discount.errors %}
-                                    <div class="text-danger">{{ form.discount.errors }}</div>
-                                {% endif %}
+                                <div id="discountError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
                                 {{ form.no_of_plants.label_tag }}
                                 {{ form.no_of_plants }}
-                                {% if form.no_of_plants.errors %}
-                                    <div class="text-danger">{{ form.no_of_plants.errors }}</div>
-                                {% endif %}
+                                <div id="plantsError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
                                 {{ form.short_description.label_tag }}
                                 {{ form.short_description }}
-                                {% if form.short_description.errors %}
-                                    <div class="text-danger">{{ form.short_description.errors }}</div>
-                                {% endif %}
+                                <div id="descriptionError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group text-center">
@@ -198,4 +186,75 @@
     </div>
 </section>
 
+<script>
+    // Validation Functions
+    function validateCurrentHeight() {
+        const currentHeight = document.getElementById('{{ form.current_height.id_for_label }}').value;
+        const error = document.getElementById('currentHeightError');
+        if (isNaN(currentHeight) || currentHeight < 2) {
+            error.innerText = "Current height must be a number and greater than 2.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validatePrice() {
+        const price = document.getElementById('{{ form.price.id_for_label }}').value;
+        const error = document.getElementById('priceError');
+        if (isNaN(price) || price < 1 || price > 1000) {
+            error.innerText = "Price must be between 1 and 1000.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateStock() {
+        const stockQuantity = document.getElementById('{{ form.stock_quantity.id_for_label }}').value;
+        const error = document.getElementById('stockError');
+        if (isNaN(stockQuantity) || stockQuantity < 0 || stockQuantity > 10000) {
+            error.innerText = "Stock quantity must be between 0 and 10,000.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateDiscount() {
+        const discount = document.getElementById('{{ form.discount.id_for_label }}').value;
+        const error = document.getElementById('discountError');
+        if (isNaN(discount) || discount < 0 || discount > 85) {
+            error.innerText = "Discount must be between 0 and 85%.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validatePlants() {
+        const noOfPlants = document.getElementById('{{ form.no_of_plants.id_for_label }}').value;
+        const error = document.getElementById('plantsError');
+        if (isNaN(noOfPlants) || noOfPlants < 1 || noOfPlants > 12) {
+            error.innerText = "Number of plants must be between 1 and 12.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateDescription() {
+        const description = document.getElementById('{{ form.short_description.id_for_label }}').value;
+        const error = document.getElementById('descriptionError');
+        const regex = /^[A-Z][\s\S]*\.$/; // Starts with capital and ends with period
+        if (!regex.test(description) || description.length < 5) {
+            error.innerText = "Description must start with a capital letter, end with a period, and contain at least 5 characters.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    // Event Listeners for Real-time Validation
+    document.getElementById('{{ form.current_height.id_for_label }}').addEventListener('input', validateCurrentHeight);
+    document.getElementById('{{ form.price.id_for_label }}').addEventListener('input', validatePrice);
+    document.getElementById('{{ form.stock_quantity.id_for_label }}').addEventListener('input', validateStock);
+    document.getElementById('{{ form.discount.id_for_label }}').addEventListener('input', validateDiscount);
+    document.getElementById('{{ form.no_of_plants.id_for_label }}').addEventListener('input', validatePlants);
+    document.getElementById('{{ form.short_description.id_for_label }}').addEventListener('input', validateDescription);
+</script>
 {% endblock %}

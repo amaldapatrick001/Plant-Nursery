@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages  # Make sure to import messages for notifications
-from .models import Batch, Category, CultivationMethod, PlantCategory, Product, PlantType
+from .models import Batch, Category, CultivationMethod, PlantCategory, Product, PlantType, Wishlist
 from .forms import BatchForm, CategoryForm, CultivationMethodForm, PlantCategoryForm, ProductForm, PlantTypeForm
 
 # View to list only active categories
@@ -309,7 +309,7 @@ def batch_list_view(request):
 
 
 
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Q
 from .models import Batch
@@ -450,54 +450,58 @@ def cproduct_details(request, product_id):
 
 
 
-
-
-
-
-
-
-
-
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from products.models import Product
-from .models import Wishlist
+from .models import Wishlist, Batch
+from userauths.models import Login
 
-# Add product to wishlist
-@login_required
-def add_to_wishlist(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+# View to handle displaying the wishlist
+def wishlist_view(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to access the wishlist.')
+        return redirect('userauths:login')
+
+    # Fetch the user from the Login model based on session user_id
+    user_login = get_object_or_404(Login, login_id=request.session['user_id'])
     
-    wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+    # Fetch all wishlist items for the logged-in user
+    wishlist_items = Wishlist.objects.filter(email=user_login)
+    
+    context = {
+        'wishlist_items': wishlist_items,
+    }
+    return render(request, 'products/wishlist.html', context)
+
+# View to add an item to the wishlist
+def add_to_wishlist(request, batch_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the wishlist.')
+        return redirect('userauths:login')
+
+    user_login = get_object_or_404(Login, login_id=request.session['user_id'])
+    batch = get_object_or_404(Batch, pk=batch_id)
+    
+    # Check if the item is already in the wishlist
+    wishlist_item, created = Wishlist.objects.get_or_create(email=user_login, batch=batch)
     
     if created:
-        messages.success(request, f"{product.name} has been added to your wishlist.")
+        messages.success(request, 'Item added to your wishlist!')
     else:
-        messages.info(request, f"{product.name} is already in your wishlist.")
-    
-    return redirect('product_detail', product_id=product_id)
+        messages.info(request, 'This item is already in your wishlist.')
 
-# Remove product from wishlist
-@login_required
-def remove_from_wishlist(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    wishlist_item = Wishlist.objects.filter(user=request.user, product=product).first()
-    
-    if wishlist_item:
-        wishlist_item.delete()
-        messages.success(request, f"{product.name} has been removed from your wishlist.")
-    else:
-        messages.info(request, f"{product.name} is not in your wishlist.")
-    
-    return redirect('wishlist')  # Redirect to wishlist page
+    return redirect('products:wishlist')
 
-# Display wishlist
-@login_required
-def wishlist(request):
-    wishlist_items = Wishlist.objects.filter(user=request.user)
-    context = {
-        'wishlist_items': wishlist_items
-    }
-    return render(request, 'wishlist/wishlist.html', context)
+# View to remove an item from the wishlist
+def remove_from_wishlist(request, batch_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to remove items from the wishlist.')
+        return redirect('userauths:login')
 
+    user_login = get_object_or_404(Login, login_id=request.session['user_id'])
+    batch = get_object_or_404(Batch, pk=batch_id)
+    
+    # Try to delete the item from the wishlist
+    Wishlist.objects.filter(email=user_login, batch=batch).delete()
+    
+    messages.success(request, 'Item removed from your wishlist.')
+    return redirect('products:wishlist')

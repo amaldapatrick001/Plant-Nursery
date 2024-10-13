@@ -24,7 +24,7 @@ from .views import (
     add_plant_category,
     plant_category_list,
     edit_plant_category,
-    wishlist,
+    wishlist_view,
 )
 
 app_name = 'products'
@@ -70,10 +70,7 @@ path('cproducts/', cproduct_list, name='cproduct_list'),
  path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
  path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
 
-
-
-
-    path('', wishlist, name='wishlist'),  # Display wishlist
-    path('add/<int:product_id>/', add_to_wishlist, name='add_to_wishlist'),  # Add to wishlist
-    path('remove/<int:product_id>/', remove_from_wishlist, name='remove_from_wishlist'),  # Remove from wishlist
+path('wishlist/', wishlist_view, name='wishlist'),
+    path('wishlist/add/<int:batch_id>/', add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:batch_id>/', remove_from_wishlist, name='remove_from_wishlist'),
 ]
