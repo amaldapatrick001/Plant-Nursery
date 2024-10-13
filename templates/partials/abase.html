@@ -31,27 +31,27 @@
             background-color: #558b2f;
             color: #fff;
         }
+
         .dropdown-menu {
-    width: 250px; /* Set a fixed width */
-    height: auto; /* Ensure height adjusts based on content */
-    background-color: #82ae46;
-    border: none;
-    border-radius: 0.5rem;
-    margin-top: 0.5rem;
-}
+            width: 250px; /* Set a fixed width */
+            height: auto; /* Ensure height adjusts based on content */
+            background-color: #82ae46;
+            border: none;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
 
-.dropdown-item {
-    color: #fff;
-    transition: background-color 0.2s ease;
-    padding: 10px; /* Adjust padding for uniform height */
-    font-size: 1rem; /* Consistent font size */
-}
+        .dropdown-item {
+            color: #fff;
+            transition: background-color 0.2s ease;
+            padding: 10px; /* Adjust padding for uniform height */
+            font-size: 1rem; /* Consistent font size */
+        }
 
-.dropdown-item:hover {
-    background-color: #558b2f;
-    color: #fff;
-}
-
+        .dropdown-item:hover {
+            background-color: #558b2f;
+            color: #fff;
+        }
 
         #page-content-wrapper {
             width: 100vw;
@@ -113,54 +113,100 @@
         .dropdown-toggle::after {
             color: #fff;
         }
+
         @media (max-width: 768px) {
-    .dropdown-menu {
-        width: 100%; /* Adjust width for smaller screens */
-    }
-}
+            .dropdown-menu {
+                width: 100%; /* Adjust width for smaller screens */
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="d-flex" id="wrapper">
-        <div id="sidebar-wrapper">
-            <div class="sidebar-heading">
-                <a href="{% url 'userauths:adminindex' %}" style="color: #fff; text-decoration: none;">
-                    Enchanted Eden Admin
-                </a>
+    <!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            
-            <div class="list-group list-group-flush">
-                <!-- Manage Categories -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="categoryDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-th-large mr-2"></i> Manage Categories
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="categoryDropdown">
-                        <a class="dropdown-item" href="{% url 'products:add_category' %}">Add Category</a>
-                        <a class="dropdown-item" href="{% url 'products:category_list' %}">View Categories</a>
-                    </div>
-                </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <!-- Manage Products -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="productsDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-seedling mr-2"></i> Manage Products
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="productsDropdown">
-                        <a class="dropdown-item" href="{% url 'products:add_product' %}">Add Product</a>
-                        <a class="dropdown-item" href="{% url 'products:aproduct_list' %}">View Products</a>
-                        <a class="dropdown-item" href="{% url 'products:update_stocks' %}">Update Stock and Status</a>
-                    </div>
+<div class="d-flex" id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <a href="{% url 'userauths:adminindex' %}" style="color: #fff; text-decoration: none;">Enchanted Eden Admin</a>
+        </div>
+
+        <div class="list-group list-group-flush">
+            <!-- Manage Categories -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-th-large mr-2"></i> Manage Categories
+                </a>
+                <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <h6 class="dropdown-header">Categories</h6>
+                    <a class="dropdown-item" href="{% url 'products:category-list' %}"><i class="fas fa-list mr-2"></i> Category List</a>
+                    <a class="dropdown-item" href="{% url 'products:add-category' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Category</a>
+                    <a class="dropdown-item" href="{% url 'products:category-update' %}"><i class="fas fa-edit mr-2"></i> Update Categories</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <h6 class="dropdown-header">Plant Types</h6>
+                    <a class="dropdown-item" href="{% url 'products:plant-type-list' %}"><i class="fas fa-list mr-2"></i> Plant Type List</a>
+                    <a class="dropdown-item" href="{% url 'products:add-plant-type' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Plant Type</a>
+                    <a class="dropdown-item" href="{% url 'products:plant-type-update' %}"><i class="fas fa-edit mr-2"></i> Update Plant Types</a>
                 </div>
+            </div>
+<!-- Manage Plants Dropdown -->
+<div class="dropdown">
+    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="productsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-seedling mr-2"></i> Manage Plants
+    </a>
+    
+    <div class="dropdown-menu" aria-labelledby="productsDropdown">
+        <!-- Plant Categories Section -->
+        <h6 class="dropdown-header">Plant Categories</h6>
+        <a class="dropdown-item" href="{% url 'products:plant-category-list' %}">
+            <i class="fas fa-list mr-2"></i> Category List
+        </a>
+        <a class="dropdown-item" href="{% url 'products:add-plant-category' %}">
+            <i class="fas fa-plus-circle mr-2"></i> Add New Category
+        </a>
+        
+
+        <!-- Product Section -->
+        <h6 class="dropdown-header">Product</h6>
+        <a class="dropdown-item" href="{% url 'products:product_list' %}">
+            <i class="fas fa-list mr-2"></i> Product List
+        </a>
+        <a class="dropdown-item" href="{% url 'products:add_product' %}">
+            <i class="fas fa-plus-circle mr-2"></i> Add New Product
+        </a>
+
+        <!-- Branch Section -->
+        <h6 class="dropdown-header">Branch</h6>
+        <a class="dropdown-item" href="{% url 'products:batch_list' %}">
+            <i class="fas fa-list mr-2"></i> Branch List
+        </a>
+        <a class="dropdown-item" href="{% url 'products:add_batch' %}">
+            <i class="fas fa-plus-circle mr-2"></i> Add New Branch
+        </a>
+    </div>
+</div>
 
                 <!-- Manage Users -->
                 <div class="dropdown">
                     <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="usersDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-users mr-2"></i> Manage Users
                     </a>
                     <div class="dropdown-menu" aria-labelledby="usersDropdown">
@@ -173,7 +219,7 @@
                 <!-- Manage Orders -->
                 <div class="dropdown">
                     <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="ordersDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-shopping-cart mr-2"></i> Manage Orders
                     </a>
                     <div class="dropdown-menu" aria-labelledby="ordersDropdown">
@@ -186,7 +232,7 @@
                 <!-- Inventory Reports -->
                 <div class="dropdown">
                     <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="reportsDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-chart-line mr-2"></i> Inventory Reports
                     </a>
                     <div class="dropdown-menu" aria-labelledby="reportsDropdown">
@@ -197,7 +243,7 @@
 
                 <!-- View Contact Us Submissions -->
                 <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
-                    <i class="fas fa-envelope mr-2"></i>Contact Us
+                    <i class="fas fa-envelope mr-2"></i> Contact Us
                 </a>
 
                 <!-- Logout -->
@@ -232,7 +278,7 @@
             <!-- Add dynamic content here -->
             {% endblock %}
         </div>
-    </div>
+
 
     <!-- JS and JQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -241,3 +287,4 @@
 </body>
 
 </html>
+

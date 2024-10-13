@@ -1,82 +1,257 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(null=True, blank=True)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField()
+    is_plant = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.category_name
+        return self.name
 
-class Product(models.Model):
-    class SunlightRequirement(models.TextChoices):
-        FULL_SUN = 'Full Sun', 'Full Sun'
-        PARTIAL_SHADE = 'Partial Shade', 'Partial Shade'
-        FULL_SHADE = 'Full Shade', 'Full Shade'
+class PlantType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField()
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, limit_choices_to={'is_plant': True})
 
-    class WaterNeed(models.TextChoices):
-        LOW = 'Low', 'Low'
-        MEDIUM = 'Medium', 'Medium'
-        HIGH = 'High', 'High'
+    class Meta:
+        verbose_name_plural = "Plant Types"
 
-    class ClimateCompatibility(models.TextChoices):
-        TROPICAL = 'Tropical', 'Tropical'
-        SUBTROPICAL = 'Subtropical', 'Subtropical'
-        TEMPERATE = 'Temperate', 'Temperate'
-        ARID = 'Arid', 'Arid'
+    def __str__(self):
+        return self.name
 
-    class GrowthRate(models.TextChoices):
-        SLOW = 'Slow', 'Slow'
-        MODERATE = 'Moderate', 'Moderate'
-        FAST = 'Fast', 'Fast'
 
-    class SoilType(models.TextChoices):
-        SANDY = 'Sandy', 'Sandy'
-        LOAMY = 'Loamy', 'Loamy'
-        CLAY = 'Clay', 'Clay'
-        PEATY = 'Peaty', 'Peaty'
-        SILTY = 'Silty', 'Silty'
+# PlantCategory Model
+class PlantCategory(models.Model):
+    SUNLIGHT_REQUIREMENT_CHOICES = [
+        ('full_sun', 'Full Sun (6+ hours of direct sunlight)'),
+        ('partial_sun', 'Partial Sun (4-6 hours of direct sunlight)'),
+        ('partial_shade', 'Partial Shade (2-4 hours of direct sunlight)'),
+        ('full_shade', 'Full Shade (less than 2 hours of direct sunlight)'),
+    ]
 
-    class FloweringSeason(models.TextChoices):
-        SPRING = 'Spring', 'Spring'
-        SUMMER = 'Summer', 'Summer'
-        AUTUMN = 'Autumn', 'Autumn'
-        WINTER = 'Winter', 'Winter'
+    WATER_REQUIREMENT_CHOICES = [
+        ('low', 'Low (water every 1-2 weeks)'),
+        ('medium', 'Medium (water weekly)'),
+        ('high', 'High (water multiple times a week)'),
+    ]
 
-    class HeightRange(models.TextChoices):
-        SHORT = 'Short', 'Short'
-        MEDIUM = 'Medium', 'Medium'
-        TALL = 'Tall', 'Tall'
+    SOIL_TYPE_CHOICES = [
+        ('loamy', 'Loamy (well-draining, nutrient-rich)'),
+        ('sandy', 'Sandy (well-draining but nutrient-poor)'),
+        ('clay', 'Clay (holds moisture but can be compacted)'),
+        ('peat', 'Peat (rich in organic matter, retains moisture)'),
+        ('silt', 'Silt (holds moisture and nutrients well)'),
+    ]
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    product_name = models.CharField(max_length=100, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock_quantity = models.IntegerField()
+    GROWTH_RATE_CHOICES = [
+        ('slow', 'Slow (takes longer to mature)'),
+        ('medium', 'Medium (average growth rate)'),
+        ('fast', 'Fast (grows quickly)'),
+    ]
+
+    CLIMATE_SUITABILITY_CHOICES = [
+        ('tropical', 'Tropical (hot and humid conditions)'),
+        ('subtropical', 'Subtropical (warm with cooler winters)'),
+        ('temperate', 'Temperate (moderate temperatures)'),
+    ]
+
+    SEASON_CHOICES = [
+        ('spring', 'Spring'),
+        ('summer', 'Summer'),
+        ('autumn', 'Autumn'),
+        ('winter', 'Winter'),
+    ]
+    POT_SOIL_CHOICES = [
+        ('pot', 'Select Pot'),
+        ('soil', 'Select Soil'),
+        ('both', 'Both'),
+    ]
+
+    plant_type = models.ForeignKey(
+        PlantType, 
+        on_delete=models.CASCADE, 
+        related_name="categories", 
+        blank=True, null=True  # Optional dropdown
+    )
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    pot_soil = models.CharField(
+        max_length=10, choices=POT_SOIL_CHOICES, blank=True, null=True
+    )
     sunlight_requirement = models.CharField(
-        max_length=20, choices=SunlightRequirement.choices
+        max_length=20, choices=SUNLIGHT_REQUIREMENT_CHOICES, blank=True, null=True
     )
-    water_need = models.CharField(
-        max_length=10, choices=WaterNeed.choices
-    )
-    climate_compatibility = models.CharField(
-        max_length=15, choices=ClimateCompatibility.choices
-    )
-    growth_rate = models.CharField(
-        max_length=10, choices=GrowthRate.choices
+    water_requirement = models.CharField(
+        max_length=20, choices=WATER_REQUIREMENT_CHOICES, blank=True, null=True
     )
     soil_type = models.CharField(
-        max_length=10, choices=SoilType.choices
+        max_length=20, choices=SOIL_TYPE_CHOICES, blank=True, null=True
     )
-    flowering_season = models.CharField(
-        max_length=10, choices=FloweringSeason.choices
+    growth_rate = models.CharField(
+        max_length=20, choices=GROWTH_RATE_CHOICES, blank=True, null=True
     )
-    height_range = models.CharField(
-        max_length=10, choices=HeightRange.choices
+    climate_suitability = models.CharField(
+        max_length=20, choices=CLIMATE_SUITABILITY_CHOICES, blank=True, null=True
     )
-    description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='products/images', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default=True)
+    best_time_to_plant = models.CharField(
+        max_length=20, choices=SEASON_CHOICES, blank=True, null=True
+    )
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Plant Categories"
 
     def __str__(self):
-        return self.product_name
+        return self.name
+
+
+
+# Cultivation Method Model
+class CultivationMethod(models.Model):
+    plant_category = models.ForeignKey(
+        PlantCategory, on_delete=models.CASCADE, related_name="cultivation_methods", 
+        blank=True, null=True  # Optional dropdown
+    )
+    title = models.CharField(max_length=100)
+    desc = models.TextField()
+    steps = models.TextField()
+    recommended_tools = models.TextField(blank=True, null=True)
+    pit_size_height = models.DecimalField(
+        max_digits=5, decimal_places=2, help_text="Height of the pit in meters", default=1.0
+    )
+    pit_size_width = models.DecimalField(
+        max_digits=5, decimal_places=2, help_text="Width of the pit in meters", default=1.0
+    )
+    distance_between_plants = models.DecimalField(
+        max_digits=5, decimal_places=2, help_text="Distance between plants in meters", default=1.0
+    )
+    watering_frequency = models.CharField(max_length=50)
+    fertilization_guidelines = models.TextField(blank=True, null=True)
+    common_issues = models.TextField(blank=True, null=True)
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Cultivation Methods"
+
+    def __str__(self):
+        return f"Cultivation Method for {self.plant_category.name if self.plant_category else 'No Category'}: {self.title}"
+
+
+
+# Product Model
+class Product(models.Model):
+    plant_type = models.ForeignKey(PlantType, on_delete=models.CASCADE, blank=True, null=True)
+    plant_category = models.ForeignKey(PlantCategory, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    image_1 = models.ImageField(upload_to='products/', blank=True, null=True)
+    image_2 = models.ImageField(upload_to='products/', blank=True, null=True)
+    image_3 = models.ImageField(upload_to='products/', blank=True, null=True)
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Products"
+
+    def __str__(self):
+        return f"{self.name} ({self.plant_category.name if self.plant_category else 'No Category'})"
+
+
+# Batch Model
+class Batch(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="batches")
+
+    current_height = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock_quantity = models.PositiveIntegerField()
+    no_of_plants=models.PositiveIntegerField(default=1)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    short_description = models.TextField(blank=True, null=True)
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Batches"
+
+    def __str__(self):
+        return f"{self.product.name} - {self.size} - Height: {self.current_height}"
+
+
+
+# NonPlantProduct Model
+class NonPlantProduct(models.Model):
+    category = models.ForeignKey(
+        Category, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'is_plant': False}, 
+        related_name='non_plant_products'
+    )
+    brand = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock_quantity = models.PositiveIntegerField()
+    is_organic = models.BooleanField(default=False)
+    usage = models.TextField()
+    suitable_for_plants = models.TextField()
+    image_1 = models.ImageField(upload_to='non_plant_products/')
+    image_2 = models.ImageField(upload_to='non_plant_products/', blank=True, null=True)
+    image_3 = models.ImageField(upload_to='non_plant_products/', blank=True, null=True)
+    status = models.BooleanField(default=True, help_text="Set to active or inactive.")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Non-Plant Products"
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if self.category.is_plant:
+            raise ValidationError("Category for Non-Plant Product cannot be a plant category.")
+
+
+
+from django.db import models
+from django.conf import settings
+from userauth.models import reg_user  # Import your custom user model
+from products.models import Product  # Assuming the Product model is in products app
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(
+        reg_user, 
+        on_delete=models.CASCADE, 
+        related_name='wishlists',
+        help_text="The user who added the product to the wishlist."
+    )
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE, 
+        related_name='wishlisted_by',
+        help_text="The product that is added to the wishlist."
+    )
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Wishlists"
+        unique_together = ('user', 'product')  # To prevent duplicate entries
+
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name}"
+
+
+

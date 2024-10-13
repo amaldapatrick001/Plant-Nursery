@@ -56,12 +56,9 @@
                 <th>User ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Phone Number</th>
+                
                 <th>Email</th>
-                <th>Registration Date</th>
-                <th>Status</th>
-                <th>Last Login</th>
-                <th>Login Count</th>
+                
                 <th>Actions</th>
             </tr>
         </thead>
@@ -71,7 +68,7 @@
                     <td>{{ user.uid }}</td>
                     <td>{{ user.first_name }}</td>
                     <td>{{ user.last_name }}</td>
-                    <td>{{ user.phoneno }}</td>
+                   
                     <td>
                         {% for login in logins %}
                             {% if login.uid.uid == user.uid %}
@@ -79,22 +76,8 @@
                             {% endif %}
                         {% endfor %}
                     </td>
-                    <td>{{ user.date_time_reg }}</td>
-                    <td>{{ user.status }}</td>
-                    <td>
-                        {% for login in logins %}
-                            {% if login.uid.uid == user.uid %}
-                                {{ login.last_login }}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for login in logins %}
-                            {% if login.uid.uid == user.uid %}
-                                {{ login.login_count }}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
+                   
+                    
                     <td>
                         <a href="{% url 'userauths:delete_user_view' user.uid %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to deactivate this user?');">Delete</a>
                     </td>

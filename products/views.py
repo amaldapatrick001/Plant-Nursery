@@ -1,265 +1,452 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import CategoryForm
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages  # Make sure to import messages for notifications
+from .models import Batch, Category, CultivationMethod, PlantCategory, Product, PlantType
+from .forms import BatchForm, CategoryForm, CultivationMethodForm, PlantCategoryForm, ProductForm, PlantTypeForm
 
+# View to list only active categories
+def category_list(request):
+    active_categories = Category.objects.filter(status=True)
+    return render(request, 'products/category_list.html', {'categories': active_categories})
+
+# View to list all categories (both active and inactive)
+def category_update(request):
+    categories = Category.objects.all().order_by('-status')  # Show active categories on top
+    return render(request, 'products/category_update.html', {'categories': categories})
+from django.shortcuts import render, redirect
+from django.contrib import messages  # Import messages framework
+from .forms import CategoryForm
+from .models import Category  # Make sure to import the Category model
+
+# View to add a new category (status set to active by default)
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new category to the database
-            messages.success(request, 'Category added successfully!')  # Add success message
-            return render(request, 'products/add_category.html', {
-                'form': form,
-                'status': 'success'  # Set status to 'success' for modal to trigger
-            })
-        else:
-            # If form is invalid, display error messages and pass 'error' status for modal
-            messages.error(request, 'Please correct the errors below.')
-            status = 'error'
+            try:
+                category = form.save(commit=False)
+                category.status = True  # Ensure that all new categories are active
+                category.save()
+                messages.success(request, 'Category added successfully!')
+                return redirect('products:category-list')
+            except IntegrityError:
+                messages.error(request, 'Category with this name already exists. Please choose a different name.')
     else:
         form = CategoryForm()
-        status = None  # No status if it's a GET request (initial form load)
-    
 
-    # Pass form and status to the template
-    return render(request, 'products/add_category.html', {
+    return render(request, 'products/add_category.html', {'form': form})
+
+# View to toggle category status (activate/deactivate)
+def update_category_status(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.status = not category.status  # Toggle the status
+    category.save()
+    messages.success(request, 'Category status updated successfully!')
+    return redirect('products:category-update')
+
+def edit_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        category.description = request.POST.get('description', category.description)
+        category.save()  # Save the changes
+        messages.success(request, 'Category updated successfully!')
+        return redirect('products:category-update')
+
+    return render(request, 'products/edit_category.html', {'category': category})
+
+# View to list only active plant types
+def plant_type_list(request):
+    active_plant_types = PlantType.objects.filter(status=True)
+    return render(request, 'products/plant_type_list.html', {'plant_types': active_plant_types})
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import PlantTypeForm
+from .models import Category
+
+# View to add a new plant type (status set to active by default)
+def add_plant_type(request):
+    categories = Category.objects.filter(is_plant=True)
+    
+    if request.method == 'POST':
+        form = PlantTypeForm(request.POST)
+        if form.is_valid():
+            plant_type = form.save(commit=False)
+            plant_type.status = True  # Ensure that all new plant types are active
+            plant_type.save()
+            messages.success(request, 'Plant type added successfully!')
+            return redirect('products:plant-type-list')  # Redirect to plant type list after saving
+        else:
+            messages.error(request, 'There were errors in your form submission. Please check and try again.')  # Inform user of errors
+    else:
+        form = PlantTypeForm()
+    
+    return render(request, 'products/add_plant_type.html', {
         'form': form,
-        'status': status  # Pass status to control modal behavior in the template
+        'categories': categories  # Pass categories to the template
     })
 
 
-from .models import Category
 
-def category_list(request):
-    categories = Category.objects.all()
-    return render(request, 'products/category_list.html', {'categories': categories})
+def plant_type_update(request):
+    plant_types = PlantType.objects.all().order_by('-status')  # Show active plant types on top
+    return render(request, 'products/plant_type_update.html', {'plant_types': plant_types})
+
+def update_plant_type_status(request, plant_type_id):
+    plant_type = get_object_or_404(PlantType, id=plant_type_id)
+    plant_type.status = not plant_type.status  # Toggle the status
+    plant_type.save()
+    messages.success(request, 'Plant type status updated successfully!')
+    return redirect('products:plant-type-update')
+
+def edit_plant_type(request, plant_type_id):
+    plant_type = get_object_or_404(PlantType, id=plant_type_id)
+    
+    if request.method == 'POST':
+        plant_type.description = request.POST.get('description', plant_type.description)
+        plant_type.save()  # Save the changes
+        messages.success(request, 'Plant type updated successfully!')
+        return redirect('products:plant-type-update')
+
+    return render(request, 'products/edit_plant_type.html', {'plant_type': plant_type})
+
+from django.db import IntegrityError
+
+def add_plant_category(request):
+    if request.method == 'POST':
+        form1 = PlantCategoryForm(request.POST)
+        form2 = CultivationMethodForm(request.POST)
+
+        if form1.is_valid():
+            # Check for existing plant category with the same name
+            name = form1.cleaned_data.get('name')
+            if PlantCategory.objects.filter(name=name).exists():
+                form1.add_error('name', 'A plant category with this name already exists.')
+            else:
+                plant_category = form1.save()  # Save PlantCategory
+                if form2.is_valid():  # Check if CultivationMethodForm is valid
+                    cultivation_method = form2.save(commit=False)  # Don't save yet
+                    cultivation_method.plant_category = plant_category  # Link to the new category
+                    cultivation_method.save()  # Now save CultivationMethod
+                return redirect('products:add_plant_category')
+
+    else:
+        form1 = PlantCategoryForm()
+        form2 = CultivationMethodForm()
+    
+    return render(request, 'products/add_plant_category.html', {'form1': form1, 'form2': form2})
 
 
-from fuzzywuzzy import fuzz
-from django.db.models import Q
+
 from django.shortcuts import render
+from .models import PlantCategory
 
-def product_list(request):
-    categories = Category.objects.all()
-    products = Product.objects.filter(status=True)
-
-    # Apply filters based on request.GET parameters
-    if request.GET.get('category'):
-        products = products.filter(category_id=request.GET['category'])
-    if request.GET.get('sunlight'):
-        products = products.filter(sunlight_requirement=request.GET['sunlight'])
-    if request.GET.get('water'):
-        products = products.filter(water_need=request.GET['water'])
-    if request.GET.get('climate'):
-        products = products.filter(climate_compatibility=request.GET['climate'])
-
-    # Filter by Price Range
-    if request.GET.get('price'):
-        price_range = request.GET['price']
-        if price_range == "0-500":
-            products = products.filter(price__gte=0, price__lte=500)
-        elif price_range == "500-1000":
-            products = products.filter(price__gte=500, price__lte=1000)
-        elif price_range == "1000-1500":
-            products = products.filter(price__gte=1000, price__lte=1500)
-        elif price_range == "above_1500":
-            products = products.filter(price__gt=1500)  # Use gt for above Rs. 1500
-
-    # Search functionality
-    search_query = request.GET.get('q', '')
-    if search_query:
-        search_query_clean = search_query.strip().lower()  # Clean and normalize query
-
-        # Basic case-insensitive search using icontains
-        basic_matches = products.filter(
-            Q(product_name__icontains=search_query_clean) |
-            Q(description__icontains=search_query_clean)
-        )
-
-        if basic_matches.exists():
-            # If there are basic matches, use them
-            products = basic_matches
-        else:
-            # If no basic matches, perform fuzzy matching
-            fuzzy_filtered_products = []
-            for product in products:
-                ratio = fuzz.partial_ratio(search_query_clean, product.product_name.lower())
-                if ratio > 60:  # Threshold for fuzzy matching
-                    fuzzy_filtered_products.append(product)
-
-            # Update products to show fuzzy matches or set to empty list
-            products = fuzzy_filtered_products if fuzzy_filtered_products else []
-
-    context = {
-        'categories': categories,
-        'products': products
-    }
-    return render(request, 'products/product_list.html', context)
+def plant_category_list(request):
+    # Fetch all Plant Categories with status=True
+    plant_categories = PlantCategory.objects.filter(status=True)  
+    return render(request, 'products/plant_category_list.html', {'plant_categories': plant_categories})
 
 
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from .models import PlantCategory, CultivationMethod
+def get_cultivation_methods(request, category_id):
+    cultivation_methods = CultivationMethod.objects.filter(plant_category_id=category_id)
+
+    if not cultivation_methods.exists():
+        return HttpResponse('No Cultivation Methods found for this category.')
+
+    response_html = "<h2>Cultivation Methods</h2><ul>"
+    for method in cultivation_methods:
+        response_html += f"""
+        <li>
+            <h4>{method.title}</h4>
+            <p><strong>Description:</strong> {method.desc}</p>
+            <p><strong>Steps:</strong> {method.steps}</p>
+            <p><strong>Recommended Tools:</strong> {method.recommended_tools}</p>
+            <p><strong>Pit Size:</strong> {method.pit_size_height}m x {method.pit_size_width}m</p>
+            <p><strong>Distance Between Plants:</strong> {method.distance_between_plants}m</p>
+            <p><strong>Watering Frequency:</strong> {method.watering_frequency}</p>
+            <p><strong>Fertilization Guidelines:</strong> {method.fertilization_guidelines}</p>
+            <p><strong>Common Issues:</strong> {method.common_issues}</p>
+        </li>
+        """
+    response_html += "</ul>"
+
+    return HttpResponse(response_html)
+
+
+# View to update PlantCategory
+def edit_plant_category(request, category_id):
+    category = get_object_or_404(PlantCategory, id=category_id)
+    if request.method == 'POST':
+        form = PlantCategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Plant category updated successfully!')
+            return redirect('products:category-update')
+    else:
+        form = PlantCategoryForm(instance=category)
+    
+    return render(request, 'products/edit_plant_category.html', {'form': form, 'category': category})
+
+# View to update CultivationMethod
+def edit_cultivation_method(request, category_id):
+    category = get_object_or_404(PlantCategory, id=category_id)
+    try:
+        cultivation_method = category.cultivation_methods.get()
+    except CultivationMethod.DoesNotExist:
+        cultivation_method = CultivationMethod(plant_category=category)
+    
+    if request.method == 'POST':
+        form = CultivationMethodForm(request.POST, instance=cultivation_method)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cultivation method updated successfully!')
+            return redirect('products:category-update')
+    else:
+        form = CultivationMethodForm(instance=cultivation_method)
+    
+    return render(request, 'products/edit_cultivation_method.html', {'form': form, 'category': category})
+
+
+
+
+
+
+
+
+
+# AJAX View to Load Plant Types
+def load_plant_types(request):
+    plant_category_id = request.GET.get('plant_category')
+    plant_types = PlantType.objects.filter(category_id=plant_category_id).order_by('name')
+    return JsonResponse(list(plant_types.values('id', 'name')), safe=False)
 from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import ProductForm  # Make sure you import your form
+from django.http import JsonResponse
+from django.contrib import messages  # Import messages framework
+from .forms import ProductForm
+from .models import PlantCategory, PlantType, Product  # Make sure to import the Product model
 
+# View to handle adding a product
 def add_product(request):
-    status = True  # Initialize the status to True
+    plant_types = PlantType.objects.all()  # Fetch all plant types
+    
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
-        
         if form.is_valid():
-            try:
+            product_name = form.cleaned_data['name']  # Assuming 'name' is the field for product name
+            
+            # Check for duplicate product name
+            if Product.objects.filter(name=product_name).exists():
+                messages.error(request, 'Product with this name already exists. Please choose a different name.')
+            else:
                 form.save()
-                messages.success(request, 'Product added successfully!')
-                return redirect('products:aproduct_list')  # Ensure this matches the URL pattern
-            except Exception as e:
-                # Log the error but keep status True
-                messages.error(request, f"An error occurred while uploading the file: {str(e)}")
-        else:
-            # Log form errors but keep status True
-            for field in form:
-                for error in field.errors:
-                    messages.error(request, f"{field.label}: {error}")
-            if form.non_field_errors():
-                for error in form.non_field_errors():
-                    messages.error(request, f"Non-field error: {error}")
+                return redirect('products:product_list')
     else:
         form = ProductForm()
 
-    return render(request, 'products/add_product.html', {'form': form, 'status': status})
-
-from django.shortcuts import render, get_object_or_404
-from .models import Product
-
-def product_details(request, id):
-    product = get_object_or_404(Product, id=id)
-    return render(request, 'products/product_details.html', {'product': product})
-
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Product, Category
-from .forms import ProductForm
-
-def update_product(request, id):
-    product = get_object_or_404(Product, id=id)
-    categories = Category.objects.all()
-    
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            # Set the product status to True before saving
-            product.status = True  # Adjust based on your model's field name
-            form.save()  # Save the form data
-            return redirect('products:aproduct_list')
-    else:
-        form = ProductForm(instance=product)
-
-    return render(request, 'products/update_product.html', {
+    context = {
         'form': form,
-        'product': product,
-        'categories': categories
-    })
+        'plant_types': plant_types,
+    }
+    return render(request, 'products/add_product.html', context)
 
+# AJAX view to fetch plant categories based on the selected plant type
+from django.http import JsonResponse
+from .models import PlantCategory
 
-
-
-from django.contrib import messages
-
-def aproduct_list(request):
-    categories = Category.objects.all()
-    products = Product.objects.filter(status=True)  # Filter products with status=True
-
-    # Apply additional filters based on request.GET parameters
-    if request.GET.get('category'):
-        products = products.filter(category_id=request.GET['category'])
-    if request.GET.get('sunlight'):
-        products = products.filter(sunlight_requirement=request.GET['sunlight'])
-    if request.GET.get('water'):
-        products = products.filter(water_need=request.GET['water'])
-    if request.GET.get('climate'):
-        products = products.filter(climate_compatibility=request.GET['climate'])
-    if request.GET.get('price'):
+def get_plant_category(request):
+    plant_type_id = request.GET.get('plant_type_id')
+    if plant_type_id:
         try:
-            price_range = request.GET['price'].split('-')
-            min_price, max_price = float(price_range[0]), float(price_range[1])
-            products = products.filter(price__gte=min_price, price__lte=max_price)
-        except ValueError:
-            pass  # Handle invalid price range input
+            # Get the plant categories related to the selected plant type
+            categories = PlantCategory.objects.filter(plant_type_id=plant_type_id).values('id', 'name')
+            return JsonResponse({'categories': list(categories)}, safe=False)
+        except PlantCategory.DoesNotExist:
+            return JsonResponse({'error': 'No plant categories found'}, status=404)
+    else:
+        return JsonResponse({'error': 'No plant type selected'}, status=400)
+
+def product_list(request):
+    # Fetch all active products (status=True)
+    active_products = Product.objects.filter(status=True).select_related('plant_category', 'plant_type')
+    
+    context = {
+        'active_products': active_products
+    }
+    
+    return render(request, 'products/product_list.html', context)
+
+
+
+
+
+def add_batch(request):
+    if request.method == "POST":
+        form = BatchForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Batch added successfully.")
+            return redirect('products:batch_list')  # Redirect to batch list after saving
+    else:
+        form = BatchForm()
+
+    return render(request, 'products/add_batch.html', {'form': form})
+
+def batch_list_view(request):
+    batches = Batch.objects.filter(status=True).select_related(
+        'product__plant_category', 'product__plant_type'
+    ).prefetch_related('product__plant_category__cultivation_methods')
+
+    context = {'batches': batches}
+    return render(request, 'products/batch_list.html', context)
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Batch
+
+def cproduct_list(request):
+    # Retrieve all GET parameters
+    query = request.GET.get('q')
+    price = request.GET.get('price')
+    sunlight = request.GET.get('sunlight')
+    water = request.GET.get('water')
+    soil = request.GET.get('soil')
+    growth_rate = request.GET.get('growth_rate')
+    climate = request.GET.get('climate')
+    best_time_to_plant = request.GET.get('best_time_to_plant')
+
+    # Start with all active batches
+    products = Batch.objects.filter(status=True).select_related('product', 'product__plant_category')
+
+    # Search functionality: Product Name and Plant Category Name
+    if query:
+        products = products.filter(
+            Q(product__name__icontains=query) |
+            Q(product__plant_category__name__icontains=query)
+        )
+
+    # Filtering by Price Range
+    if price:
+        if price == '0-500':
+            products = products.filter(price__gte=0, price__lte=500)
+        elif price == '500-1000':
+            products = products.filter(price__gte=500, price__lte=1000)
+        elif price == '1000-1500':
+            products = products.filter(price__gte=1000, price__lte=1500)
+        elif price == 'above_1500':
+            products = products.filter(price__gt=1500)
+
+    # Filtering by Sunlight Requirement
+    if sunlight:
+        products = products.filter(product__plant_category__sunlight_requirement=sunlight)
+
+    # Filtering by Water Need
+    if water:
+        products = products.filter(product__plant_category__water_requirement=water)
+
+    # Filtering by Soil Type
+    if soil:
+        products = products.filter(product__plant_category__soil_type=soil)
+
+    # Filtering by Growth Rate
+    if growth_rate:
+        products = products.filter(product__plant_category__growth_rate=growth_rate)
+
+    # Filtering by Climate Compatibility
+    if climate:
+        products = products.filter(product__plant_category__climate_suitability=climate)
+
+    # Filtering by Best Time to Plant (Season)
+    if best_time_to_plant:
+        products = products.filter(product__plant_category__best_time_to_plant=best_time_to_plant)
+
+    # Optional: Implement pagination
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    paginator = Paginator(products, 9)  # Show 9 products per page
+    page = request.GET.get('page')
+    try:
+        products_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        products_paginated = paginator.page(1)
+    except EmptyPage:
+        products_paginated = paginator.page(paginator.num_pages)
 
     context = {
-        'categories': categories,
-        'products': products,
-        'messages': messages.get_messages(request),  # Get messages
+        'products': products_paginated,
+        'query': query,
+        'price': price,
+        'sunlight': sunlight,
+        'water': water,
+        'soil': soil,
+        'growth_rate': growth_rate,
+        'climate': climate,
+        'best_time_to_plant': best_time_to_plant,
     }
-    return render(request, 'products/aproduct_list.html', context)
+    return render(request, 'products/cproduct_list.html', context)
 
 
-def delete_product(request, id):
-    product = get_object_or_404(Product, id=id)
-    product.status = False  # Soft delete
-    product.save()
-    messages.success(request, f"Product '{product.product_name}' deleted successfully.")
-    return redirect('products:aproduct_list')
+from django.shortcuts import render, get_object_or_404
+from .models import Product, Batch, CultivationMethod
+
+def cproduct_details(request, product_id):
+    # Fetch the product details
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Fetch related PlantCategory details (if available)
+    plant_category = product.plant_category
+    plant_category_data = {
+        'name': plant_category.name if plant_category else 'N/A',
+        'sunlight_requirement': plant_category.get_sunlight_requirement_display() if plant_category else 'N/A',
+        'water_requirement': plant_category.get_water_requirement_display() if plant_category else 'N/A',
+        'soil_type': plant_category.get_soil_type_display() if plant_category else 'N/A',
+        'growth_rate': plant_category.get_growth_rate_display() if plant_category else 'N/A',
+        'climate_suitability': plant_category.get_climate_suitability_display() if plant_category else 'N/A',
+        'best_time_to_plant': plant_category.get_best_time_to_plant_display() if plant_category else 'N/A',
+    } if plant_category else None
+    
+    # Fetch related Batch details (if available)
+    batch = product.batches.first()  # Assuming you're showing details of the first batch
+    batch_data = {
+        'current_height': batch.current_height if batch else 'N/A',
+        'price': batch.price if batch else 'N/A',
+        'stock_quantity': batch.stock_quantity if batch else 'N/A',
+        'discount': batch.discount if batch else 'N/A',
+    } if batch else None
+    
+    # Fetch related CultivationMethod details (if available)
+    cultivation_method = plant_category.cultivation_methods.first() if plant_category else None
+    cultivation_method_data = {
+        'title': cultivation_method.title if cultivation_method else 'N/A',
+        'desc': cultivation_method.desc if cultivation_method else 'N/A',
+        'steps': cultivation_method.steps if cultivation_method else 'N/A',
+        'recommended_tools': cultivation_method.recommended_tools if cultivation_method else 'N/A',
+        'pit_size': f"{cultivation_method.pit_size_height}m x {cultivation_method.pit_size_width}m" if cultivation_method else 'N/A',
+        'distance_between_plants': cultivation_method.distance_between_plants if cultivation_method else 'N/A',
+        'watering_frequency': cultivation_method.watering_frequency if cultivation_method else 'N/A',
+        'fertilization_guidelines': cultivation_method.fertilization_guidelines if cultivation_method else 'N/A',
+        'common_issues': cultivation_method.common_issues if cultivation_method else 'N/A',
+    } if cultivation_method else None
+
+    # Combine all data into context
+    context = {
+        'product': product,
+        'plant_category': plant_category_data,
+        'batch': batch_data,
+        'cultivation_method': cultivation_method_data,
+    }
+
+    # Render the details page
+    return render(request, 'products/cproduct_details.html', context)
 
 
 
-
-def update_stocks(request):
-    products = Product.objects.order_by('product_name')
-
-    if request.method == 'POST':
-        for product in products:
-            if f'update_{product.id}' in request.POST:
-                stock_quantity = request.POST.get(f'stock_quantity_{product.id}')
-                status = request.POST.get(f'status_{product.id}')  # Checkbox for status
-
-                # Check if both fields are empty
-                current_status = product.status
-                if not stock_quantity and status is None:
-                    messages.error(request, f"Please provide either a new stock quantity or change the status for '{product.product_name}' (current status: {'active' if current_status else 'inactive'}).")
-                    continue
-
-                updated = False
-
-                # Process stock quantity if provided
-                if stock_quantity:
-                    try:
-                        stock_quantity = int(stock_quantity)
-
-                        # Allow decreasing stock, check that we don't go below zero
-                        if stock_quantity < 0:
-                            if product.stock_quantity + stock_quantity < 0:
-                                messages.error(request, f"Cannot decrease stock for '{product.product_name}' below zero.")
-                            else:
-                                product.stock_quantity += stock_quantity
-                                updated = True
-                                messages.success(request, f"Stock decreased successfully for '{product.product_name}'.")
-                        else:
-                            if product.stock_quantity + stock_quantity > 1000:
-                                messages.error(request, f"Cannot exceed maximum stock of 1000 for '{product.product_name}'.")
-                            else:
-                                product.stock_quantity += stock_quantity
-                                updated = True
-                                messages.success(request, f"Stock updated successfully for '{product.product_name}'.")
-
-                    except ValueError:
-                        messages.error(request, f"Invalid input for '{product.product_name}'. Please enter a valid integer for stock.")
-
-                # Process status if provided (checkbox for active/inactive)
-                if status is not None:
-                    new_status = True if status == 'on' else False  # Determine new status
-                    if product.status != new_status:  # Only update if there's a change
-                        product.status = new_status
-                        updated = True
-                        if new_status:
-                            messages.success(request, f"Status updated successfully for '{product.product_name}' to 'active'.")
-                        else:
-                            messages.success(request, f"Status updated successfully for '{product.product_name}' to 'inactive'.")
-
-                # Save changes if any updates were made
-                if updated:
-                    product.save()
-                else:
-                    messages.error(request, f"No changes were made for '{product.product_name}'. Please ensure stock or status is updated.")
-
-        return redirect('products:update_stocks')
-
-    return render(request, 'products/update_stock.html', {'products': products})

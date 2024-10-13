@@ -47,15 +47,6 @@
         font-size: 0.9rem;
     }
 
-    .form-icon {
-        position: absolute;
-        top: 50%;
-        left: 15px;
-        transform: translateY(-50%);
-        font-size: 1.25rem;
-        color: #82ae46;
-    }
-
     /* Card Styling */
     .card {
         border: none;
@@ -99,7 +90,7 @@
         border-color: #6d8a2e;
         box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
     }
-    
+
     /* H2 Styling */
     .category-list-heading {
         font-family: 'Roboto', sans-serif;
@@ -143,13 +134,59 @@
         .btn {
             font-size: 1rem;
         }
-        
+
         .category-list-heading {
             font-size: 1.3rem; /* Adjust heading for mobile */
         }
     }
-</style>
 
+    /* Custom Toggle Switch Styles */
+    .custom-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-control-input {
+        display: none; /* Hide the default checkbox */
+    }
+
+    .custom-label {
+        position: relative;
+        display: inline-block;
+        width: 50px; /* Width of the switch */
+        height: 26px; /* Height of the switch */
+        background-color: #ddd; /* Background color when unchecked */
+        border-radius: 50px; /* Rounded corners */
+        cursor: pointer; /* Change cursor to pointer */
+        transition: background-color 0.3s; /* Smooth transition */
+    }
+
+    .custom-control-input:checked + .custom-label {
+        background-color: #82ae46; /* Background color when checked */
+    }
+
+    .custom-control-input:checked + .custom-label::before {
+        transform: translateX(24px); /* Move the switch knob to the right */
+    }
+
+    .custom-label::before {
+        content: '';
+        position: absolute;
+        width: 22px; /* Width of the switch knob */
+        height: 22px; /* Height of the switch knob */
+        background-color: white; /* Color of the switch knob */
+        border-radius: 50%; /* Rounded knob */
+        top: 2px; /* Center it vertically */
+        left: 2px; /* Center it horizontally */
+        transition: transform 0.3s; /* Smooth transition for moving knob */
+    }
+
+    /* Optional: Styling for the switch label */
+    .switch-label {
+        margin-left: 10px; /* Space between switch and label */
+        font-weight: bold;
+    }
+</style>
 
 <section class="ftco-section py-5">
     <div class="container">
@@ -159,13 +196,11 @@
                     <div class="card-body">
                         <h2 class="category-list-heading">Add New Category</h2>
 
-                        
-
                         <form method="post" id="categoryForm">
                             {% csrf_token %}
                             <div class="form-group">
-                                {{ form.category_name.label_tag }}
-                                {{ form.category_name }}
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
                                 <div id="categoryNameError" class="text-danger"></div> <!-- Error message for category name -->
                             </div>
                             <div class="form-group">
@@ -173,6 +208,15 @@
                                 {{ form.description }}
                                 <div id="descriptionError" class="text-danger"></div> <!-- Error message for description -->
                             </div>
+                            <div class="form-group">
+                                <label class="form-label" for="{{ form.is_plant.id_for_label }}">{{ form.is_plant.label }}</label>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="{{ form.is_plant.id_for_label }}" name="{{ form.is_plant.name }}" {% if form.is_plant.value %}checked{% endif %}>
+                                    <label class="custom-label" for="{{ form.is_plant.id_for_label }}"></label> <!-- Custom switch background -->
+                                    <span class="switch-label">{{ form.is_plant.value|yesno:"Yes,No" }}</span> <!-- Label for the switch -->
+                                </div>
+                            </div>
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
                             </div>
@@ -198,7 +242,7 @@
                 {% if status == 'success' %}
                     <p>Category added successfully!</p>
                 {% elif status == 'error' %}
-                    <p>A category with the name '{category_name}' already exists.</p>
+                    <p>A category with the name '{{ form.name.value }}' already exists.</p>
                 {% endif %}
             </div>
             <div class="modal-footer">
@@ -210,6 +254,21 @@
 
 <!-- JavaScript for handling validation and modal display -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkbox = document.getElementById('{{ form.is_plant.id_for_label }}');
+        const switchLabel = document.querySelector('.switch-label');
+
+        // Update switch label text based on the checkbox state
+        function updateSwitchLabel() {
+            switchLabel.textContent = checkbox.checked ? 'Yes' : 'No';
+        }
+
+        // Initial label text
+        updateSwitchLabel();
+
+        // Update the label text when the checkbox state changes
+        checkbox.addEventListener('change', updateSwitchLabel);
+    });
      document.addEventListener('DOMContentLoaded', function () {
         const status = '{{ status }}';
 
@@ -219,13 +278,13 @@
 
             $('#messageModal').on('hidden.bs.modal', function () {
                 if (status === 'success') {
-                    window.location.href = "{% url 'products:category_list' %}"; // Redirect to category list page on success
+                    window.location.href = "{% url 'products:category-list' %}"; // Redirect to category list page on success
                 }
             });
         }
 
         // Form validation
-        const categoryNameField = document.getElementById('id_category_name');
+        const categoryNameField = document.getElementById('id_name'); // Adjusted ID
         const descriptionField = document.getElementById('id_description');
         const submitBtn = document.getElementById('submitBtn');
         
@@ -240,11 +299,10 @@
             // Check order: Uppercase -> Min Length -> Max Length
             if (categoryName[0] !== categoryName[0].toUpperCase()) {
                 errorMessage = 'Category name must start with a capital letter.';
-            } else if (categoryName.length < 3) 
-            {
+            } else if (categoryName.length < 3) {
                 errorMessage = 'Category name must be at least 3 characters long.';
-            } else if (categoryName.length > 20) {
-                errorMessage = 'Category name must be less than 20 characters.';
+            } else if (categoryName.length > 100) { // Adjusted to match max_length in model
+                errorMessage = 'Category name must be less than 100 characters.';
             }
 
             categoryNameError.textContent = errorMessage;
@@ -262,8 +320,8 @@
                 errorMessage = 'Description must be at least 20 characters long.';
             } else if (!description.endsWith('.')) {
                 errorMessage = 'Description must end with a full stop (.)';
-            } else if (description.length > 100) {
-                errorMessage = 'Description must be less than 100 characters.';
+            } else if (description.length > 500) { // Adjusted to match max_length in model
+                errorMessage = 'Description must be less than 500 characters.';
             } else {
                 // Check if each sentence starts with a capital letter
                 const sentences = description.split('.');
