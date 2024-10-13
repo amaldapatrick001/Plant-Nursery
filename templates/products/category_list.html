@@ -22,9 +22,8 @@
     }
 
     .category-list {
-        list-style-type: none;
+        list-style: none;
         padding: 0;
-        margin: 0;
     }
 
     .category-item {
@@ -40,10 +39,6 @@
     .category-item:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .category-item:nth-child(odd) {
-        background-color: #f7faf8;
     }
 
     .category-item h4 {
@@ -80,7 +75,7 @@
         <ul class="category-list">
             {% for category in categories %}
                 <li class="category-item">
-                    <h4>{{ category.category_name }}</h4>
+                    <h4>{{ category.name }}</h4>
                     <p>{{ category.description }}</p>
                 </li>
             {% empty %}

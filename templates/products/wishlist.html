@@ -1,0 +1,108 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images\nur3.jpeg' %}');">
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+            <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>About us</span></p>
+          <h1 class="mb-0 bread">Wishlist</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="ftco-section ftco-cart">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-12 ftco-animate">
+                  <div class="cart-list">
+                      <table class="table">
+                          <thead class="thead-primary">
+                              <tr class="text-center">
+                                  <th>Image</th>
+                                  <th>Product</th>
+                                  <th>Price</th>
+                                  <th>Added On</th>
+                                  <th>Actions</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for item in wishlist_items %}
+                              <tr class="text-center">
+                                  <td class="image-prod">
+                                      {% if item.batch.product.image_1 %}
+                                          <img src="{{ item.batch.product.image_1.url }}" alt="{{ item.batch.product.name }}" style="max-width: 100px;" class="img">
+                                      {% else %}
+                                          <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" style="max-width: 100px;">
+                                      {% endif %}
+                                  </td>
+                                  <td class="product-name">
+                                      <h3>{{ item.batch.product.name }}</h3>
+                                  </td>
+                                  <td class="price">${{ item.batch.price }}</td>
+                                  <td>{{ item.added_on }}</td>
+                                  <td>
+                                      <a href="{% url 'products:remove_from_wishlist' item.batch.id %}" class="remove-btn">Remove</a>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                      {% if not wishlist_items %}
+                          <p>Your wishlist is empty.</p>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  
+  <section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+      <div class="container py-4">
+          <div class="row d-flex justify-content-center py-5">
+              <div class="col-md-6">
+                  <h2 style="font-size: 22px;" class="mb-0">Subscribe to our Newsletter</h2>
+                  <span>Get e-mail updates about our latest shops and special offers</span>
+              </div>
+              <div class="col-md-6 d-flex align-items-center">
+                  <form action="#" class="subscribe-form">
+                      <div class="form-group d-flex">
+                          <input type="text" class="form-control" placeholder="Enter email address">
+                          <input type="submit" value="Subscribe" class="submit px-3">
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </section>
+  {% endblock %}
+  
+  {% block styles %}
+  <style>
+      .remove-btn {
+          background-color: #ff4c4c; /* Red color */
+          color: white; /* White text */
+          padding: 8px 12px; /* Padding */
+          border: none; /* Remove border */
+          border-radius: 5px; /* Rounded corners */
+          text-decoration: none; /* Remove underline */
+          font-weight: bold; /* Bold text */
+          transition: background-color 0.3s; /* Smooth transition */
+      }
+  
+      .remove-btn:hover {
+          background-color: #ff1a1a; /* Darker red on hover */
+      }
+  
+      .cart-list .table {
+          width: 100%; /* Full width table */
+          margin-bottom: 20px; /* Spacing below table */
+      }
+  
+      .cart-list .table th, .cart-list .table td {
+          padding: 15px; /* Padding for cells */
+          vertical-align: middle; /* Center align cells */
+      }
+  </style>
+  {% endblock %}

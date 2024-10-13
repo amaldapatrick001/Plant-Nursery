@@ -1,0 +1,176 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Custom Styles for Product Detail */
+    .product-detail-container {
+        display: flex;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .product-image {
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-info {
+        flex: 1;
+        max-width: 700px;
+    }
+
+    .product-info h1 {
+        margin: 0;
+        font-size: 2em;
+        color: #333;
+    }
+
+    .product-info p {
+        margin: 10px 0;
+        color: #666;
+    }
+
+    .product-info .price {
+        font-size: 1.5em;
+        color: #e74c3c;
+    }
+
+    .product-info .description {
+        margin-top: 20px;
+    }
+
+    .product-info .details {
+        margin-top: 20px;
+    }
+
+    .details-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .details-list li {
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .details-list li span {
+        font-weight: bold;
+    }
+
+    .card {
+        border: 1px solid #e0e0e0;
+    }
+
+    .card-body {
+        border-radius: 15px;
+        background-color: #f9f9f9;
+    }
+
+    /* Cultivation Method Dropdown Styles */
+    .cultivation-method {
+        margin-top: 20px;
+    }
+
+    .collapse-header {
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    .collapse-header:hover {
+        text-decoration: underline;
+    }
+    /* Cultivation Method Button Styles */
+.btn-cultivation {
+    display: inline-block;
+    background-color: #007bff; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px 15px; /* Padding for button-like feel */
+    border-radius: 55%; /* Rounded corners */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+    margin-top: 20px; /* Margin to separate from previous content */
+}
+
+.btn-cultivation:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.02); /* Slightly scale up on hover */
+}
+
+.cultivation-method {
+    margin-top: 20px;
+}
+
+</style>
+<body>
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <div class="product-detail-container">
+                            <!-- Product Image -->
+                            <div class="product-image">
+                                <img src="{{ product.image_1.url }}" alt="{{ product.name }}">
+                            </div>
+
+                            <!-- Product Information -->
+                            <div class="product-info">
+                                <h1>{{ product.name }}</h1>
+                                <p class="price">Rs. {{ batch.price }}</p>
+                                {% if batch.discount %}
+                    <p>Discount: {{ batch.discount }}%</p>
+                {% endif %}
+                                <div class="details">
+                                    <h3>Product Details</h3>
+                                    <ul class="details-list">
+                                        <p class="description">{{ product.description }}</p>
+                                        <li><span>Category:</span> {{ plant_category.name }}</li>
+                                        <li><span>Sunlight Requirement:</span> {{ plant_category.sunlight_requirement }}</li>
+                                        <li><span>Water Requirement:</span> {{ plant_category.water_requirement }}</li>
+                                        <li><span>Climate Suitability:</span> {{ plant_category.climate_suitability }}</li>
+                                        <li><span>Growth Rate:</span> {{ plant_category.growth_rate }}</li>
+                                        <li><span>Soil Type:</span> {{ plant_category.soil_type }}</li>
+                                        <li><span>Best Time to Plant:</span> {{ plant_category.best_time_to_plant }}</li>
+                                        <li><span>Stock Quantity:</span> {{ batch.stock_quantity }}</li>
+                                        <li><center><a href="" class="btn btn-primary">Add to Cart</a>
+                                       <a href="{% url 'products:cproduct_list'  %}"class="btn btn-primary">Back to Product</a>
+                                       </center> </li> </ul>
+                                </div>
+                                <!-- Cultivation Method Details Button -->
+{% if cultivation_method %}
+<div class="cultivation-method">
+    <h3 class="collapse-header btn-cultivation" data-toggle="collapse" data-target="#cultivationDetails" aria-expanded="false" aria-controls="cultivationDetails">
+        Cultivation Method Details
+    </h3>
+    <div class="collapse" id="cultivationDetails">
+        <ul class="details-list">
+            <li><span>Title:</span> {{ cultivation_method.title }}</li>
+            <li><span>Description:</span> {{ cultivation_method.desc }}</li>
+            <li><span>Steps:</span> {{ cultivation_method.steps }}</li>
+            <li><span>Recommended Tools:</span> {{ cultivation_method.recommended_tools }}</li>
+            <li><span>Pit Size:</span> {{ cultivation_method.pit_size }}</li>
+            <li><span>Distance Between Plants:</span> {{ cultivation_method.distance_between_plants }}</li>
+            <li><span>Watering Frequency:</span> {{ cultivation_method.watering_frequency }}</li>
+            <li><span>Fertilization Guidelines:</span> {{ cultivation_method.fertilization_guidelines }}</li>
+            <li><span>Common Issues:</span> {{ cultivation_method.common_issues }}</li>
+        </ul>
+    </div>
+</div> <!-- End of Cultivation Method Details -->
+{% else %}
+<p>No cultivation method details available.</p>
+{% endif %}
+</body>
+{% endblock %}
