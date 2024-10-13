@@ -29,7 +29,11 @@ INSTALLED_APPS = [
     'core',
     'userauths',
     'products',
+    'purchase',
 ]
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 # Middleware configurations
 MIDDLEWARE = [
@@ -98,10 +102,8 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
 # Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_AGE = 1800  # 30 minutes
-SESSION_SAVE_EVERY_REQUEST = False
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Set to True for expiry on browser close
-
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_SAVE_EVERY_REQUEST = True  # Refresh session expiry on every request
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
