@@ -226,17 +226,20 @@ class NonPlantProduct(models.Model):
 
 
 
+
 from django.db import models
-from django.conf import settings
-from userauth.models import reg_user  # Import your custom user model
+from django.core.exceptions import ValidationError
+from userauths.models import Login  # Ensure you're importing from models.py
+# Import your Login model
 from products.models import Product  # Assuming the Product model is in products app
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(
-        reg_user, 
+    user_email = models.ForeignKey(
+        Login, 
         on_delete=models.CASCADE, 
         related_name='wishlists',
-        help_text="The user who added the product to the wishlist."
+        help_text="The user who added the product to the wishlist.",
+        to_field='email'  # Reference to the email field
     )
     product = models.ForeignKey(
         Product, 
@@ -248,10 +251,7 @@ class Wishlist(models.Model):
 
     class Meta:
         verbose_name_plural = "Wishlists"
-        unique_together = ('user', 'product')  # To prevent duplicate entries
+        unique_together = ('user_email', 'product')  # To prevent duplicate entries
 
     def __str__(self):
-        return f"{self.user.email} - {self.product.name}"
-
-
-
+        return f"{self.user_email.email} - {self.product.name}"
