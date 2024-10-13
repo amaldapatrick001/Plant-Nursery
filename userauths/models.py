@@ -60,3 +60,6 @@ class Login(models.Model):
 
     def __str__(self):
         return f'Login entry for {self.email}'
+
+
+

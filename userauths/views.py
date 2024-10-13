@@ -104,13 +104,13 @@ def login(request):
 
             if user_login.check_password(password):
                 # Successful authentication
-                user_login.login()  # This updates last_login, status, and login_count
+                user_login.login()
 
                 # Set user information in session
                 request.session['user_id'] = user_login.login_id 
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
-                request.session['email'] = user_login.email
+                request.session['email'] = user_login.email  # Save email in session
                 request.session['is_authenticated'] = True
 
                 # Send login notification email
@@ -119,13 +119,13 @@ def login(request):
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
                 if user_type == 1:
-                    return redirect('userauths:adminindex')  # Admin dashboard
+                    return redirect('userauths:adminindex')
                 elif user_type == 2:
-                    return redirect('userauths:index')  # Redirect to index in core app
+                    return redirect('userauths:index')
                 elif user_type == 3:
-                    return redirect('delivery_dashboard')  # Delivery dashboard
+                    return redirect('delivery_dashboard')
                 elif user_type == 4:
-                    return redirect('expert_dashboard')  # Expert dashboard
+                    return redirect('expert_dashboard')
                 else:
                     messages.error(request, 'User type is not recognized.')
                     return redirect('userauths:login')
