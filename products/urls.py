@@ -3,6 +3,7 @@ from .views import (
     add_batch,
     add_category,
     add_product,
+    add_to_wishlist,
     batch_list_view,
     category_list,
     category_update,
@@ -13,6 +14,7 @@ from .views import (
     get_plant_category,
     load_plant_types,
     product_list,
+    remove_from_wishlist,
     update_category_status,
     plant_type_list,
     add_plant_type,
@@ -22,6 +24,7 @@ from .views import (
     add_plant_category,
     plant_category_list,
     edit_plant_category,
+    wishlist,
 )
 
 app_name = 'products'
@@ -66,4 +69,11 @@ path('add-product/', add_product, name='add_product'),  # URL to add a product
 path('cproducts/', cproduct_list, name='cproduct_list'),
  path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
  path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
+
+
+
+
+    path('', wishlist, name='wishlist'),  # Display wishlist
+    path('add/<int:product_id>/', add_to_wishlist, name='add_to_wishlist'),  # Add to wishlist
+    path('remove/<int:product_id>/', remove_from_wishlist, name='remove_from_wishlist'),  # Remove from wishlist
 ]

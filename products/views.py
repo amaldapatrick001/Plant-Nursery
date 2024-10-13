@@ -450,3 +450,54 @@ def cproduct_details(request, product_id):
 
 
 
+
+
+
+
+
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from products.models import Product
+from .models import Wishlist
+
+# Add product to wishlist
+@login_required
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    
+    wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+    
+    if created:
+        messages.success(request, f"{product.name} has been added to your wishlist.")
+    else:
+        messages.info(request, f"{product.name} is already in your wishlist.")
+    
+    return redirect('product_detail', product_id=product_id)
+
+# Remove product from wishlist
+@login_required
+def remove_from_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    wishlist_item = Wishlist.objects.filter(user=request.user, product=product).first()
+    
+    if wishlist_item:
+        wishlist_item.delete()
+        messages.success(request, f"{product.name} has been removed from your wishlist.")
+    else:
+        messages.info(request, f"{product.name} is not in your wishlist.")
+    
+    return redirect('wishlist')  # Redirect to wishlist page
+
+# Display wishlist
+@login_required
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    context = {
+        'wishlist_items': wishlist_items
+    }
+    return render(request, 'wishlist/wishlist.html', context)
+
