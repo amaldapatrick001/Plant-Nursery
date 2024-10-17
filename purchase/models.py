@@ -1,15 +1,16 @@
 from django.db import models
-from django.conf import settings
-from userauths.models import Login
+from userauths.models import Login,User_Reg
 from products.models import Batch, Product
+
 
 class Cart(models.Model):
     user = models.ForeignKey(Login, on_delete=models.CASCADE, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+    is_completed = models.BooleanField(default=False)  # New field
 
     def __str__(self):
-        return f"Cart of {self.user.email}"
+        return f"Cart of {self.user.email} - Completed: {self.is_completed}"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
@@ -24,7 +25,6 @@ class CartItem(models.Model):
         return self.batch.price * self.quantity
 
     def get_discount_amount(self):
-        # Assuming discount is a percentage, adjust if it's a flat amount.
         discount = self.batch.discount if hasattr(self.batch, 'discount') else 0
         return (self.get_total_price() * discount) / 100
 
@@ -34,25 +34,22 @@ class CartItem(models.Model):
     def get_discount(self):
         return self.batch.discount_amount if hasattr(self.batch, 'discount_amount') else 0
 
-
-
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models import Count
+from products.models import Batch
 
-# Permanent delivery charges based on districts
-DELIVERY_CHARGES = {
-    'kottayam': 50.00,
-    'idukki': 70.00,
-    'alappuzha': 60.00,
-    'pathanamthitta': 80.00,
+districts = {
+    'kottayam': 'Kottayam',
+    'pathanamthitta': 'Pathanamthitta',
+    'idukki': 'Idukki',
+    'thodupuzha': 'Thodupuzha',
+    'ernakulam': 'Ernakulam',
 }
 
 class Billing(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    district = models.CharField(max_length=50)
+    district = models.CharField(max_length=50, choices=[(key, value) for key, value in districts.items()])
     street_address = models.CharField(max_length=255)
     town_city = models.CharField(max_length=50)
     postcode_zip = models.CharField(max_length=10)
@@ -63,38 +60,47 @@ class Billing(models.Model):
         return f"{self.first_name} {self.last_name}, {self.district}"
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)  # Linking to cart
-    payment_method = models.CharField(max_length=20)  # e.g., Direct Bank Transfer, PayPal
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    payment_method = models.CharField(max_length=20)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     total_discount = models.DecimalField(max_digits=10, decimal_places=2)
-    delivery_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     order_date = models.DateTimeField(auto_now_add=True)
 
-    # New fields for order tracking
-    first_order_date = models.DateTimeField(null=True, blank=True)
-    last_order_date = models.DateTimeField(null=True, blank=True)
-    total_orders = models.PositiveIntegerField(default=0)
+    def calculate_totals(self):
+        cart_items = self.cart.items.all()
+        subtotal = sum(item.get_total_price() for item in cart_items)
+        total_discount = sum(item.get_discount_amount() for item in cart_items)
+        total_price = subtotal - total_discount
+        return subtotal, total_discount, total_price
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # If the order is being created (not updated)
-            self.update_order_stats()
+        subtotal, total_discount, total_price = self.calculate_totals()
+        self.subtotal = subtotal
+        self.total_discount = total_discount
+        self.total_price = total_price
         super().save(*args, **kwargs)
 
-    def update_order_stats(self):
-        # Get all orders for the user
-        orders = Order.objects.filter(user=self.user)
-        
-        if orders.exists():
-            self.first_order_date = orders.order_by('order_date').first().order_date
-            self.last_order_date = self.order_date
-            self.total_orders = orders.count() + 1  # +1 for the current order
-        else:
-            self.first_order_date = self.order_date
-            self.last_order_date = self.order_date
-            self.total_orders = 1  # First order
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def get_total_price(self):
+        return self.price * self.quantity
 
     def __str__(self):
-        return f"Order {self.id} by {self.user.username}"
+        return f"{self.batch.product.name} - Quantity: {self.quantity} - Price: {self.price}"
+
+class Payment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=20)  # e.g., 'stripe', 'paypal'
+    payment_status = models.CharField(max_length=20, default='Pending')  # e.g., 'Completed', 'Failed'
+    transaction_id = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"Payment {self.id} - {self.payment_status} - {self.amount}"

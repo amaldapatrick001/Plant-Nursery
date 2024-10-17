@@ -8,6 +8,8 @@ urlpatterns = [
     path('cart/', views.cart_detail, name='cart_detail'),
      path('cart/update/', views.update_cart, name='update_cart'),
     path('cart/remove/<int:cart_item_id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('checkout/', views.checkout, name='checkout'),  # Add this line for checkout
-    path('place_order/',views.place_order,name='place_order'),
+    path('checkout/', views.CheckoutView.as_view(), name='checkout'),
+    path('order_summary/<int:order_id>/', views.OrderSummaryView.as_view(), name='order_summary'),
+    path('order_confirmation/<int:order_id>/', views.OrderConfirmationView.as_view(), name='order_confirmation'),
+    path('payment_gateway/<int:order_id>/', views.PaymentGatewayView.as_view(), name='payment_gateway'),
 ]

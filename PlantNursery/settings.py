@@ -14,10 +14,14 @@ DATABASE_USER = config('DATABASE_USER')
 DATABASE_PASSWORD = config('DATABASE_PASSWORD')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Add your email host user here
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+CLIENT_SECRET = config('CLIENT_SECRET')
+SOCIAL_AUTH_USER_MODEL = 'userauths.User_Reg'
 
 # Security settings
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_OAUTH_CLIENT_ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CLIENT_SECRET
 # Installed applications
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,9 +34,12 @@ INSTALLED_APPS = [
     'userauths',
     'products',
     'purchase',
+    'social_django',
 ]
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+     'userauths.backends.CustomGoogleOAuth2',  # Use your custom backend
+    'django.contrib.auth.backends.ModelBackend',  # Keep this for admin or other Django auth
 )
 
 # Middleware configurations
@@ -43,12 +50,32 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'userauths.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching
 ]
 
 # URL configurations
 ROOT_URLCONF = 'PlantNursery.urls'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'userauths.pipeline.custom_create_user',  # Make sure this function returns the correct response
+    'userauths.pipeline.custom_login_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+
+    'userauths.auth_pipelines.set_user_session',
+)
+
+
 
 # Template settings
 TEMPLATES = [
@@ -144,3 +171,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 # Ensure GOOGLE_OAUTH_CLIENT_ID is set
 if not GOOGLE_OAUTH_CLIENT_ID:
     raise ValueError('GOOGLE_OAUTH_CLIENT_ID is missing. Please add it to your .env file.')
+
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
+
+SESSION_COOKIE_SECURE = False 

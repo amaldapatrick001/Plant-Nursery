@@ -287,12 +287,16 @@ class adminindex(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get the count of users, products, and orders, setting to 0 if no data exists
+        # Count users with uid = 2
+        context['user_count_with_uid_2'] = User_Reg.objects.filter(user_type=2).count()
+        
+        # Get the total count of users (with fallback to 0 if no data exists)
         context['user_count'] = User_Reg.objects.count() if User_Reg.objects.exists() else 0
+        
+        # Get the total count of products (assuming Product model is defined)
         context['product_count'] = Product.objects.count() if Product.objects.exists() else 0
         
         return context
-
 
 
 
@@ -474,3 +478,21 @@ def undo_delete_view(request, uid):
     send_activation_email(user, action='activated')
 
     return redirect('userauths:user_details_view')  # Redirect back to the user details page
+
+from .models import User_Reg
+
+def get_logged_in_user(request):
+    if 'user_id' in request.session:
+        return User_Reg.objects.get(uid=request.session['user_id'])
+    return None
+from django.shortcuts import redirect
+
+def custom_logout(request):
+    if 'user_id' in request.session:
+        del request.session['user_id']
+    return redirect('login_page')  # Redirect to your login page
+from django.shortcuts import redirect
+
+def oauth_complete(request):
+    # After processing the social auth, make sure to redirect or return a proper HTTP response
+    return redirect('desired_redirect_url')  # Ensure you redirect after the process

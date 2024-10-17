@@ -247,9 +247,16 @@
                 </a>
 
                 <!-- Logout -->
-                <a href="" class="list-group-item list-group-item-action">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
+                {% if request.session.is_authenticated %}
+    <a href="{% url 'userauths:logout' %}" class="list-group-item list-group-item-action">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+    </a>
+{% else %}
+    <a href="{% url 'userauths:login' %}" class="list-group-item list-group-item-action">
+        <i class="fas fa-sign-in-alt mr-2"></i> Login
+    </a>
+{% endif %}
+
             </div>
         </div>
 

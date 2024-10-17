@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from .views import adminindex, delete_user_view, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, update_profile, user_details, user_details_view
 from django.contrib.auth import views 
 from django.views.generic import TemplateView 
@@ -24,7 +24,5 @@ urlpatterns = [
     path('delete-user/<int:uid>/', delete_user_view, name='delete_user_view'),  # Soft delete user
     path('undo-delete/<int:uid>/', undo_delete_view, name='undo_delete_view'),  # Restore user
  path('profile/update/', update_profile, name='update_profile'),  # Add this line for the update_profile view
+path('auth/', include('social_django.urls', namespace='social')),  # Social Auth URLs
 ]
-
-   
-

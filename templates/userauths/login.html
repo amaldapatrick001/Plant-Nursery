@@ -122,23 +122,8 @@
                             <span>or</span>
                         </div>
 
-                        <!-- Google Sign-In Button -->
-                        <div id="g_id_onload"
-                            data-client_id="130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.googleusercontent.com"
-                            data-context="signin"
-                            data-ux_mode="redirect"
-                            data-login_uri="http://localhost:8000/userauths/auth_receiver/"
-                            data-itp_support="true">
-                        </div>
+                        <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
 
-                        <div class="g_id_signin" 
-                             data-type="standard" 
-                             data-shape="pill" 
-                             data-theme="outline" 
-                             data-text="continue_with" 
-                             data-size="large" 
-                             data-logo_alignment="left">
-                        </div>
 
                         <div class="form-group text-center mt-4">
                             <p class="text-muted">

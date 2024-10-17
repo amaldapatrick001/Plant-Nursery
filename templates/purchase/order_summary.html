@@ -1,0 +1,14 @@
+<h1>Order Summary</h1>
+<p>Items in your cart:</p>
+<ul>
+    {% for item in order.cart.items.all %}
+    <li>{{ item.batch.product.name }} - {{ item.quantity }} x ₹{{ item.batch.price }}</li>
+    {% endfor %}
+</ul>
+<p>Subtotal: ₹{{ order.subtotal }}</p>
+<p>Total Discount: ₹{{ order.total_discount }}</p>
+<p>Total Price: ₹{{ order.total_price }}</p>
+
+<form action="{% url 'purchase:payment_gateway' order.id %}" method="GET">
+    <button type="submit">Proceed to Payment</button>
+</form>

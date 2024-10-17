@@ -65,9 +65,9 @@
                         {% if cart_items %}
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <strong>Total: </strong>
-                            <span class="total-price">${{ total_price }}</span>
+                            <span class="total-price">Rs. {{ total_after_discount }}</span>
                         </div>
-
+                        
                         <!-- Submit button for updating quantities -->
                         <div class="d-flex justify-content-end mt-4"">
                             <button type="submit" class="btn btn-primary">Update Cart</button>
@@ -85,7 +85,7 @@
                         <h3>Cart Totals</h3>
                         <p class="d-flex">
                             <span>Subtotal (Before Discount)</span>
-                            <span>${{ actual_subtotal }}</span> <!-- Display the actual subtotal without discount -->
+                            <span>Rs. {{ actual_subtotal }}</span> <!-- Display the actual subtotal without discount -->
                         </p>
                         <p class="d-flex">
                             <span>Discount</span>

@@ -2,291 +2,187 @@
 {% load static %}
 
 {% block content %}
-<!-- Hero Section with Cart Title -->
-<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
-    <div class="container">
-        <div class="row no-gutters slider-text align-items-center justify-content-center">
-            <div class="col-md-9 ftco-animate text-center">
-                <p class="breadcrumbs">
-                    <span class="mr-2"><a href="index.html">Home</a></span>
-                    <span>Cart</span>
-                </p>
-                <h1 class="mb-0 bread">Checkout</h1>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Cart Section --><section class="ftco-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 ftco-animate">
-                <form action="{% url 'purchase:place_order' %}" method="POST" class="billing-form">
-                    {% csrf_token %}
-                    <h3 class="mb-4 billing-heading">Billing Details</h3>
-                    <div class="row align-items-end">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="firstname">First Name</label>
-                                <input type="text" class="form-control" id="firstname" placeholder="Enter your first name" onkeyup="validateName(this)">
-                                <small id="fnameError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="lastname">Last Name</label>
-                                <input type="text" class="form-control" id="lastname" placeholder="Enter your last name" onkeyup="validateName(this)">
-                                <small id="lnameError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="district">Select Delivery District</label>
-                                <div class="select-wrap">
-                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="district" id="district" class="form-control">
-                                        <option value="">Select District</option>
-                                        <option value="kottayam">Kottayam</option>
-                                        <option value="idukki">Idukki</option>
-                                        <option value="alappuzha">Alappuzha</option>
-                                        <option value="pathanamthitta">Pathanamthitta</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="streetaddress">Street Address</label>
-                                <input type="text" class="form-control" id="streetaddress" placeholder="House number and street name" onkeyup="validateStreetAddress(this)">
-                                <small id="streetError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="towncity">Town / City</label>
-                                <input type="text" class="form-control" id="towncity" placeholder="Enter your town/city" onkeyup="validateTownCity(this)">
-                                <small id="cityError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="postcodezip">Postcode / ZIP *</label>
-                                <input type="text" class="form-control" id="postcodezip" placeholder="Enter your postcode/ZIP" onkeyup="validatePostcode(this)">
-                                <small id="postcodeError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input type="text" class="form-control" id="phone" placeholder="Enter your phone number" onkeyup="validatePhone(this)">
-                                <small id="phoneError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="emailaddress">Email Address</label>
-                                <input type="email" class="form-control" id="emailaddress" placeholder="Enter your email address" onkeyup="validateEmail(this)">
-                                <small id="emailError" class="text-danger"></small>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                    </div>
-                    <div class="d-flex justify-content-end mt-4">
-                        <button type="submit" class="btn btn-primary">Place Order</button>
-                    </div>
-                </form>
-            </div>
-            <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
-                <div class="cart-total mb-3">
-                    <h3>Cart Totals</h3>
-                    <p class="d-flex">
-                        <span>Subtotal (Before Discount)</span>
-                        <span>Rs. {{ actual_subtotal }}</span>
-                    </p>
-                    <p class="d-flex">
-                        <span>Discount</span>
-                        <span>Rs. {{ total_discount }}</span>
-                    </p>
-                    <p class="d-flex">
-                        <span>Delivery</span>
-                        <span>Rs. {{ delivery_price }}</span>
-                    </p>
-                    <hr>
-                    <p class="d-flex total-price">
-                        <span>Total</span>
-                        <span>Rs. {{ total_price_with_delivery_and_discount }}</span>
-                    </p>
-                </div>
-                <div class="cart-detail p-3 p-md-4">
-                    <h3 class="billing-heading mb-4">Payment Method</h3>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="radio">
-                                <label><input type="radio" name="optradio" class="mr-2"> Direct Bank Transfer</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="radio">
-                                <label><input type="radio" name="optradio" class="mr-2"> Check Payment</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="radio">
-                                <label><input type="radio" name="optradio" class="mr-2"> Paypal</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="radio">
-                                <label><input type="radio" name="optradio" class="mr-2"> Credit Card</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="radio">
-                                <label><input type="radio" name="optradio" class="mr-2"> Cash on Delivery</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-                <script>
-                    // Validate first and last name
-                    function validateName(input) {
-                        const nameRegex = /^[A-Z][a-zA-Z]*$/;
-                        const errorField = input.id === "firstname" ? "fnameError" : "lnameError";
-                        const value = input.value.trim();
-                        
-                        if (!nameRegex.test(value)) {
-                            document.getElementById(errorField).innerText = "Must start with a capital letter and contain only letters.";
-                        } else {
-                            document.getElementById(errorField).innerText = "";
-                        }
-                    }
-                
-                    // Validate street address
-                    function validateStreetAddress(input) {
-                        const value = input.value.trim();
-                        if (value.length < 5 || !/^[A-Z]/.test(value)) {
-                            document.getElementById('streetError').innerText = "Must start with a capital letter and be greater than 5 characters.";
-                        } else {
-                            document.getElementById('streetError').innerText = "";
-                        }
-                    }
-                
-                    // Validate town/city
-                    function validateTownCity(input) {
-                        const value = input.value.trim();
-                        if (value.length < 3 || !/^[A-Z]/.test(value)) {
-                            document.getElementById('cityError').innerText = "Must start with a capital letter and be longer than 3 characters.";
-                        } else {
-                            document.getElementById('cityError').innerText = "";
-                        }
-                    }
-                
-                    // Validate postcode/ZIP
-                    function validatePostcode(input) {
-                        const value = input.value.trim();
-                        const postcodeRegex = /^(67|68|69)\d{4}$/;
-                        if (!postcodeRegex.test(value)) {
-                            document.getElementById('postcodeError').innerText = "Postcode must start with 67-69 and contain 7 digits.";
-                        } else {
-                            document.getElementById('postcodeError').innerText = "";
-                        }
-                    }
-                
-                    // Validate phone number
-                    function validatePhone(input) {
-                        const value = input.value.trim();
-                        const phoneRegex = /^[6-9]\d{9}$/;
-                        if (!phoneRegex.test(value)) {
-                            document.getElementById('phoneError').innerText = "Phone number must be 10 digits and start with 6-9.";
-                        } else {
-                            document.getElementById('phoneError').innerText = "";
-                        }
-                    }
-                
-                    // Validate email address
-                    function validateEmail(input) {
-                        const value = input.value.trim();
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(value)) {
-                            document.getElementById('emailError').innerText = "Enter a valid email address.";
-                        } else {
-                            document.getElementById('emailError').innerText = "";
-                        }
-                    }
-                </script>
-                
-{% endblock %}
-
-{% block styles %}<style>
-    .remove-btn {
-        background-color: #ff4c4c;
-        color: white;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .remove-btn:hover {
-        background-color: #ff1a1a;
-    }
-
-    .cart-list .table th, 
-    .cart-list .table td {
-        padding: 20px;
-        vertical-align: middle;
-    }
-
-    .cart-list .table .image-prod img {
-        border-radius: 8px;
-    }
-
-    .total-price {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .btn-primary {
-        padding: 10px 20px;
-        font-size: 1rem;
-        font-weight: bold;
-    }
-
-    .d-flex.justify-content-between {
-        margin-top: 20px;
-    }
-
-    .d-flex.justify-content-end {
-        margin-top: 10px;
-    }
-
-    @media (max-width: 768px) {
-        .total-price {
-            font-size: 1.2rem;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-    }
-</style>
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .text-danger {
+            color: red;
+            font-size: 0.875rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #82ae46;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #82ae46;
+        }
+    </style>
+</head>
+<body>
+    <h1>Billing Details</h1>
+    <form method="POST" id="checkoutForm">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div>
+            <label for="first_name">First Name:</label>
+            {{ form.first_name }}
+            <small id="fnameError" class="text-danger"></small>
+            {{ form.first_name.errors }}
+        </div>
+        
+        <div>
+            <label for="last_name">Last Name:</label>
+            {{ form.last_name }}
+            <small id="lnameError" class="text-danger"></small>
+            {{ form.last_name.errors }}
+        </div>
+        
+        <div>
+            <label for="district">District:</label>
+            {{ form.district }}
+            {{ form.district.errors }}
+        </div>
+        
+        <div>
+            <label for="street_address">Street Address:</label>
+            {{ form.street_address }}
+            <small id="streetError" class="text-danger"></small>
+            {{ form.street_address.errors }}
+        </div>
+        
+        <div>
+            <label for="town_city">Town/City:</label>
+            {{ form.town_city }}
+            <small id="cityError" class="text-danger"></small>
+            {{ form.town_city.errors }}
+        </div>
+        
+        <div>
+            <label for="postcode_zip">Postcode/Zip:</label>
+            {{ form.postcode_zip }}
+            <small id="postcodeError" class="text-danger"></small>
+            {{ form.postcode_zip.errors }}
+        </div>
+        
+        <div>
+            <label for="phone">Phone:</label>
+            {{ form.phone }}
+            <small id="phoneError" class="text-danger"></small>
+            {{ form.phone.errors }}
+        </div>
+        
+        <div>
+            <label for="email">Email:</label>
+            {{ form.email }}
+            <small id="emailError" class="text-danger"></small>
+            {{ form.email.errors }}
+        </div>
+        
+        <button type="submit">Proceed to Order Summary</button>
+    </form>
+
+    <script>
+        document.getElementById('checkoutForm').addEventListener('submit', function(event) {
+            // Prevent form submission until validation is complete
+            event.preventDefault();
+
+            // Validate fields
+            validateName(document.getElementById('{{ form.first_name.id_for_label }}'), 'fnameError');
+            validateName(document.getElementById('{{ form.last_name.id_for_label }}'), 'lnameError');
+            validateStreetAddress(document.getElementById('{{ form.street_address.id_for_label }}'), 'streetError');
+            validateTownCity(document.getElementById('{{ form.town_city.id_for_label }}'));
+            validatePostcode(document.getElementById('{{ form.postcode_zip.id_for_label }}'));
+            validatePhone(document.getElementById('{{ form.phone.id_for_label }}'));
+            validateEmail(document.getElementById('{{ form.email.id_for_label }}'));
+        });
+
+        // Validate first and last name
+        function validateName(input, errorFieldId) {
+            const nameRegex = /^[A-Z][a-zA-Z]*$/;
+            const value = input.value.trim();
+            document.getElementById(errorFieldId).innerText = nameRegex.test(value) ? "" : "Must start with a capital letter and contain only letters.";
+        }
+
+        // Validate street address
+        function validateStreetAddress(input, errorFieldId) {
+            const value = input.value.trim();
+            document.getElementById(errorFieldId).innerText = (value.length >= 5 && /^[A-Z]/.test(value)) ? "" : "Must start with a capital letter and be greater than 5 characters.";
+        }
+
+        // Validate town/city
+        function validateTownCity(input) {
+            const value = input.value.trim();
+            document.getElementById('cityError').innerText = (value.length >= 3 && /^[A-Z]/.test(value)) ? "" : "Must start with a capital letter and be longer than 3 characters.";
+        }
+
+        // Validate postcode/ZIP
+        function validatePostcode(input) {
+            const postcodeRegex = /^[0-9]{6}$/;
+            const value = input.value.trim();
+            document.getElementById('postcodeError').innerText = postcodeRegex.test(value) ? "" : "Must be exactly 6 digits.";
+        }
+
+        // Validate phone number
+        function validatePhone(input) {
+            const phoneRegex = /^[0-9]{10}$/;
+            const value = input.value.trim();
+            document.getElementById('phoneError').innerText = phoneRegex.test(value) ? "" : "Must be exactly 10 digits.";
+        }
+
+        // Validate email
+        function validateEmail(input) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const value = input.value.trim();
+            document.getElementById('emailError').innerText = emailRegex.test(value) ? "" : "Invalid email format.";
+        }
+    </script>
+</body>
+</html>
+
 {% endblock %}
