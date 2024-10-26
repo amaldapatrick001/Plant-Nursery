@@ -1,28 +1,27 @@
 import os
 from pathlib import Path
-from decouple import config  # Import config from python-decouple
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Define environment variables directly
-GOOGLE_OAUTH_CLIENT_ID = config('GOOGLE_OAUTH_CLIENT_ID')
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
-DATABASE_NAME = config('DATABASE_NAME')
-DATABASE_USER = config('DATABASE_USER')
-DATABASE_PASSWORD = config('DATABASE_PASSWORD')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Add your email host user here
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-CLIENT_SECRET = config('CLIENT_SECRET')
-SOCIAL_AUTH_USER_MODEL = 'userauths.User_Reg'
-
-# Security settings
+# Security and debug settings
+SECRET_KEY = 'django-insecure-_&b(9(a%^7)t%%&9ctl$)bb8t2mo1djy8#kc_szj7ss6v!ahpk'
+DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_OAUTH_CLIENT_ID
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CLIENT_SECRET
-# Installed applications
+# Database configuration using PostgreSQL
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Enchanted Eden',
+        'USER': 'postgres',
+        'PASSWORD': 'Amalda@2002',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -34,15 +33,14 @@ INSTALLED_APPS = [
     'userauths',
     'products',
     'purchase',
-    'social_django',
 ]
+
+# Authentication settings
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-     'userauths.backends.CustomGoogleOAuth2',  # Use your custom backend
-    'django.contrib.auth.backends.ModelBackend',  # Keep this for admin or other Django auth
+    'django.contrib.auth.backends.ModelBackend',
 )
 
-# Middleware configurations
+# Middleware configuration
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -50,34 +48,15 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'userauths.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching
 ]
 
-# URL configurations
+# URL and WSGI configurations
 ROOT_URLCONF = 'PlantNursery.urls'
+WSGI_APPLICATION = 'PlantNursery.wsgi.application'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'userauths.pipeline.custom_create_user',  # Make sure this function returns the correct response
-    'userauths.pipeline.custom_login_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-
-    'userauths.auth_pipelines.set_user_session',
-)
-
-
-
-# Template settings
+# Templates configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -94,27 +73,10 @@ TEMPLATES = [
     },
 ]
 
-# WSGI application
-WSGI_APPLICATION = 'PlantNursery.wsgi.application'
-
-# Database configuration using PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DATABASE_NAME,
-        'USER': DATABASE_USER,
-        'PASSWORD': DATABASE_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-# Static files configuration
+# Static and media files configuration
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -123,7 +85,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = EMAIL_HOST_USER  # Use the defined EMAIL_HOST_USER
+EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'
+EMAIL_HOST_PASSWORD = 'Amalda@MCA'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
 
 # Session settings
@@ -131,6 +94,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 SESSION_SAVE_EVERY_REQUEST = True  # Refresh session expiry on every request
+
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
@@ -161,17 +125,16 @@ SITE_NAME = 'Enchanted Eden'
 DOMAIN = 'localhost:8000'
 PASSWORD_RESET_EMAIL_TEMPLATE = 'userauths/password_reset_email.html'
 
-# Authentication settings
+# Custom login URL
 LOGIN_URL = '/userauths/login/'
 
-# Cross-Origin and Referrer settings (for Google sign-in)
+# Referrer policy and cross-origin settings
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
-# Ensure GOOGLE_OAUTH_CLIENT_ID is set
-if not GOOGLE_OAUTH_CLIENT_ID:
-    raise ValueError('GOOGLE_OAUTH_CLIENT_ID is missing. Please add it to your .env file.')
 
-SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 
-SESSION_COOKIE_SECURE = False 
+# settings.py
+
+RAZORPAY_KEY_ID = "rzp_test_DRyi6K0A68qkc4"
+RAZORPAY_KEY_SECRET = "3zvEn8RxuvCxgu8ATRny3g95"
