@@ -378,12 +378,12 @@ def password_reset_confirm(request, uidb64=None, token=None, *args, **kwargs):
 
     
 # myproject/userauths/views.py
-from django.shortcuts import render
-from .models import User_Reg
+from django.shortcuts import render, get_object_or_404
+from .models import User_Reg, UserType, Login
 
 def user_details(request):
-    # Fetch users with related login and usertype data
-    users = User_Reg.objects.select_related('user_type').prefetch_related('login_set').all()
+    # Fetch users with user_type 2 (customers) and related login and usertype data
+    users = User_Reg.objects.filter(user_type__utid=2).select_related('user_type').prefetch_related('login_set')
 
     # Prepare user data for template
     user_data = []
@@ -403,21 +403,22 @@ def user_details(request):
     return render(request, 'userauths/user_details.html', {'users': user_data})
 
 
-
-
 def user_details_view(request):
-    # Fetch active users with related login data
-    active_users = User_Reg.objects.filter(status=True).prefetch_related('login_set')
-    deleted_users = User_Reg.objects.filter(status=False).prefetch_related('login_set')
+    # Fetch active and deleted users with user_type=2 (customers) and related login data
+    active_users = User_Reg.objects.filter(status=True, user_type__utid=2).prefetch_related('login_set')
+    deleted_users = User_Reg.objects.filter(status=False, user_type__utid=2).prefetch_related('login_set')
 
     # Prepare user login info for both active and deleted users
-    logins = Login.objects.all()
+    logins = Login.objects.filter(uid__user_type__utid=2)
 
     return render(request, 'userauths/user_del_restor.html', {
         'active_users': active_users,
         'deleted_users': deleted_users,
         'logins': logins
     })
+
+
+
 
 def send_activation_email(user, action):
     """Send an email notification to the user regarding activation/deactivation."""
@@ -479,6 +480,9 @@ def undo_delete_view(request, uid):
 
     return redirect('userauths:user_details_view')  # Redirect back to the user details page
 
+
+
+
 from .models import User_Reg
 
 def get_logged_in_user(request):
@@ -491,8 +495,3 @@ def custom_logout(request):
     if 'user_id' in request.session:
         del request.session['user_id']
     return redirect('login_page')  # Redirect to your login page
-from django.shortcuts import redirect
-
-def oauth_complete(request):
-    # After processing the social auth, make sure to redirect or return a proper HTTP response
-    return redirect('desired_redirect_url')  # Ensure you redirect after the process

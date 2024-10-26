@@ -53,7 +53,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>User ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 
@@ -65,7 +64,6 @@
         <tbody>
             {% for user in active_users %}
                 <tr>
-                    <td>{{ user.uid }}</td>
                     <td>{{ user.first_name }}</td>
                     <td>{{ user.last_name }}</td>
                    
@@ -94,18 +92,24 @@
     <table class="table">
         <thead>
             <tr>
-                <th>User ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Email</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for user in deleted_users %}
                 <tr>
-                    <td>{{ user.uid }}</td>
                     <td>{{ user.first_name }}</td>
                     <td>{{ user.last_name }}</td>
+                    <td>
+                        {% for login in logins %}
+                            {% if login.uid.uid == user.uid %}
+                                {{ login.email }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
                     <td>
                         <a href="{% url 'userauths:undo_delete_view' user.uid %}" class="btn btn-success">Restore</a>
                     </td>
