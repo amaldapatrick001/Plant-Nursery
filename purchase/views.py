@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from django.views import View
-from .forms import CheckoutForm
+from purchase.forms import CheckoutForm
+from userauths.models import User_Reg
 from products.models import Batch
 from .models import  Billing, Cart, CartItem, Order, OrderItem  # Only import from purchase.models
 
@@ -39,7 +40,7 @@ def cart_detail(request):
     
     if not cart or not cart.items.exists():
         messages.info(request, 'Your cart is empty.')
-        return redirect('products:product_list')
+        return redirect('products:cproduct_list')
 
     # Calculate subtotal, total discount, and delivery price
     actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
@@ -106,78 +107,192 @@ def update_cart(request):
     messages.success(request, 'Cart updated successfully.')
     return redirect('purchase:cart_detail')
 
+
+
+
+
+
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
 from django.views import View
+from django.urls import reverse
+from .models import Cart, CartItem, Billing, User_Reg, Order
 from .forms import CheckoutForm
-from products.models import Batch
-from .models import Billing, Cart, Order  # Only import from purchase.models
-from userauths.models import User_Reg  # Adjust the import based on your project structure
 
 class CheckoutView(View):
     def get(self, request):
-        # Check if the user is logged in via the session
+        # Check if the user is logged in
         if 'user_id' not in request.session:
             messages.error(request, 'You must be logged in to proceed to checkout.')
             return redirect('userauths:login')
 
+        user_id = request.session['user_id']
+        user = get_object_or_404(User_Reg, uid=user_id)
+
+        # Fetch saved billing addresses for the user
+        addresses = Billing.objects.filter(user=user)
+
+        # Initialize the checkout form
         form = CheckoutForm()
-        return render(request, 'purchase/checkout.html', {'form': form})
+
+        # Retrieve the user's cart
+        cart = Cart.objects.filter(user_id=user_id).first()
+        cart_items = cart.items.all() if cart else []
+
+        # Check if cart is empty
+        if not cart_items:
+            messages.info(request, 'Your cart is empty.')
+            return redirect('products:cproduct_list')
+
+        # Calculate subtotal, discount, and delivery
+        actual_subtotal = sum(item.get_total_price() for item in cart_items)
+        total_discount = sum(item.get_discount_amount() for item in cart_items)
+        delivery_price = 50  # Set delivery price here
+
+        # Calculate total prices
+        total_after_discount = actual_subtotal - total_discount
+        total_price_with_delivery_and_discount = total_after_discount + delivery_price
+        total_price_with_delivery_and_discounts = int((total_after_discount + delivery_price) * 100)  # Convert to paise
+
+        # Pass all data to template
+        return render(request, 'purchase/checkout.html', {
+            'form': form,
+            'addresses': addresses,
+            'cart_items': cart_items,
+            'actual_subtotal': actual_subtotal,
+            'total_discount': total_discount,
+            'delivery_price': delivery_price,
+            'total_price_with_delivery_and_discount': total_price_with_delivery_and_discount,
+            'total_after_discount': total_after_discount,
+            'total_price_with_delivery_and_discounts': total_price_with_delivery_and_discounts,
+        })
 
     def post(self, request):
-        # Check if the user is logged in via the session
+        # Check if the user is logged in
         if 'user_id' not in request.session:
             messages.error(request, 'You must be logged in to proceed to checkout.')
             return redirect('userauths:login')
 
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
-            user_id = request.session['user_id']
-            # Retrieve the user instance using the correct field (assuming 'uid' is the primary key)
-            user = get_object_or_404(User_Reg, uid=user_id)  # Replace 'uid' with the actual primary key if different
+        user_id = request.session['user_id']
+        user = get_object_or_404(User_Reg, uid=user_id)
+        addresses = Billing.objects.filter(user=user)
 
-            # Check if a billing instance already exists for this user
-            billing, created = Billing.objects.get_or_create(user=user)
-
-            # If a billing instance already exists, update it
-            if not created:
-                # Update existing billing information
-                billing.first_name = form.cleaned_data['first_name']
-                billing.last_name = form.cleaned_data['last_name']
-                billing.district = form.cleaned_data['district']
-                billing.street_address = form.cleaned_data['street_address']
-                billing.town_city = form.cleaned_data['town_city']
-                billing.postcode_zip = form.cleaned_data['postcode_zip']
-                billing.phone = form.cleaned_data['phone']
-                billing.email = form.cleaned_data['email']
+        # Check if a saved billing address is selected
+        billing_address_id = request.POST.get('selected_address')
+        if billing_address_id:
+            billing_address = get_object_or_404(Billing, id=billing_address_id)
+        else:
+            # Process form submission if no address is selected
+            form = CheckoutForm(request.POST)
+            if form.is_valid():
+                billing_address = form.save(commit=False)
+                billing_address.user = user
+                billing_address.save()
             else:
-                # Create a new billing instance
-                billing.first_name = form.cleaned_data['first_name']
-                billing.last_name = form.cleaned_data['last_name']
-                billing.district = form.cleaned_data['district']
-                billing.street_address = form.cleaned_data['street_address']
-                billing.town_city = form.cleaned_data['town_city']
-                billing.postcode_zip = form.cleaned_data['postcode_zip']
-                billing.phone = form.cleaned_data['phone']
-                billing.email = form.cleaned_data['email']
+                # Re-render checkout with form errors
+                return self.get(request)
 
-            billing.save()
+        # Retrieve the user's cart
+        cart = Cart.objects.filter(user_id=user_id).first()
+        if not cart or not cart.items.exists():
+            messages.error(request, 'Your cart is empty. Please add items to your cart before proceeding.')
+            return redirect('products:cproduct_list')
 
-            # Retrieve the user's cart
-            cart = Cart.objects.filter(user_id=user_id).first()
-            if not cart:
-                messages.error(request, 'Your cart is empty. Please add items to your cart before proceeding.')
-                return redirect('purchase:cart_detail')
+        # Create the order and save the billing address
+        order = Order.objects.create(user=user, billing=billing_address, cart=cart)
+        messages.success(request, 'Order placed successfully!')
+        return redirect(reverse('purchase:order_summary', kwargs={'order_id': order.id}))
 
-            # Create the order
-            order = Order.objects.create(user=user, billing=billing, cart=cart)
 
-            messages.success(request, 'Order placed successfully!')
-            return redirect(reverse('purchase:order_summary', kwargs={'order_id': order.id}))
 
-        # If the form is not valid, render the checkout page with errors
-        return render(request, 'purchase/checkout.html', {'form': form})
+
+
+def delete_address(request, address_id):
+    address = get_object_or_404(Billing, id=address_id)
+    address.delete()
+    messages.success(request, 'Address deleted successfully.')
+    return redirect('purchase:checkout')  # Redirect to checkout after deletion
+
+# Ensure to import this in your urls.py file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render, redirect
+
+def set_delivery_address(request):
+    if request.method == 'POST':
+        # Logic to save or set the delivery address
+        pass
+    return redirect('purchase:checkout')
+
+
+
+
+
+
+
+# views.py
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import Order, Payment
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def initiate_payment(request, order_id):
+    order = Order.objects.get(id=order_id)
+    razorpay_order = razorpay_client.order.create({
+        "amount": int(order.amount * 100),  # Amount in paisa
+        "currency": "INR",
+        "payment_capture": "1"
+    })
+    order.razorpay_order_id = razorpay_order['id']
+    order.save()
+
+    context = {
+        "order": order,
+        "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+        "razorpay_order_id": razorpay_order['id'],
+        "amount": order.amount,
+        "currency": "INR"
+    }
+    return render(request, "payment.html", context)
+
+def payment_success(request):
+    if request.method == "POST":
+        data = request.POST
+        razorpay_payment_id = data['razorpay_payment_id']
+        razorpay_order_id = data['razorpay_order_id']
+        order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+        
+        # Update payment and order status
+        payment = Payment(order=order, payment_id=razorpay_payment_id, status="Success", amount=order.amount)
+        payment.save()
+        order.status = "Completed"
+        order.save()
+
+        return JsonResponse({"message": "Payment successful."})
+
+def payment_failure(request):
+    return JsonResponse({"message": "Payment failed. Please try again."})
 
 
 
@@ -212,3 +327,16 @@ class PaymentGatewayView(View):
         # Payment gateway logic goes here
         # Redirect to payment confirmation page
         return redirect(reverse('order_confirmation', kwargs={'order_id': order.id}))
+
+# In your views.py file
+from django.views.generic import TemplateView
+
+class PaymentMethodView(TemplateView):
+    template_name = 'purchase/payment_method.html'
+# purchase/views.py
+
+from django.shortcuts import render
+
+def payment_method(request):
+    # Your logic here
+    return render(request, 'purchase/payment_method.html')

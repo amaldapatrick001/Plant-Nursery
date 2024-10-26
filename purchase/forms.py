@@ -1,9 +1,11 @@
 from django import forms
 from .models import Billing
 
-from django import forms
-
-class CheckoutForm(forms.Form):
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Billing
+        fields = ['first_name', 'last_name', 'district', 'street_address', 'town_city', 'postcode_zip', 'phone', 'email']
+    
     first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'required': 'required'}))
     last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'required': 'required'}))
     district = forms.ChoiceField(choices=[('kottayam', 'Kottayam'), ('pathanamthitta', 'Pathanamthitta'),
