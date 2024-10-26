@@ -5,7 +5,7 @@ from django.views import View
 from purchase.forms import CheckoutForm
 from userauths.models import User_Reg
 from products.models import Batch
-from .models import  Billing, Cart, CartItem, Order, OrderItem  # Only import from purchase.models
+from .models import  Billing, Cart, CartItem, Order  # Only import from purchase.models
 
 # Add item to cart view
 def add_to_cart(request, batch_id):
@@ -112,15 +112,21 @@ def update_cart(request):
 
 
 
-
-
+from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views import View
 from django.urls import reverse
+from django.http import JsonResponse
+from django.conf import settings
+import razorpay
 from .models import Cart, CartItem, Billing, User_Reg, Order
 from .forms import CheckoutForm
 
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+# Checkout View
 class CheckoutView(View):
     def get(self, request):
         # Check if the user is logged in
@@ -177,7 +183,6 @@ class CheckoutView(View):
 
         user_id = request.session['user_id']
         user = get_object_or_404(User_Reg, uid=user_id)
-        addresses = Billing.objects.filter(user=user)
 
         # Check if a saved billing address is selected
         billing_address_id = request.POST.get('selected_address')
@@ -201,23 +206,111 @@ class CheckoutView(View):
             return redirect('products:cproduct_list')
 
         # Create the order and save the billing address
-        order = Order.objects.create(user=user, billing=billing_address, cart=cart)
+        total_amount = sum(item.get_total_price_with_discount() for item in cart.items.all()) + 50  # Add delivery charge
+
+        # Create the order and save the billing address
+        order = Order.objects.create(user=user, billing=billing_address, cart=cart, total_amount=total_amount)
         messages.success(request, 'Order placed successfully!')
-        return redirect(reverse('purchase:order_summary', kwargs={'order_id': order.id}))
+        return redirect(reverse('purchase:checkout'))
+
+
+# Payment Gateway View
+class PaymentGatewayView(View):
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        razorpay_order = razorpay_client.order.create({
+            "amount": int(order.total_amount * 100),  # Amount in paisa
+            "currency": "INR",
+            "payment_capture": "1"
+        })
+        order.razorpay_order_id = razorpay_order['id']
+        order.save()
+
+        context = {
+            "order": order,
+            "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+            "razorpay_order_id": razorpay_order['id'],
+            "amount": order.total_amount,
+            "currency": "INR"
+        }
+        return render(request, "purchase/checkout.html", context)
+
+# from django.contrib import messages
+from django.shortcuts import redirect, get_object_or_404
+from django.http import JsonResponse
+from .models import Order
+
+def payment_success(request):
+    # Check if the user is logged in using session
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to complete the payment.')
+        return redirect('userauths:login')
+
+    if request.method == "POST":
+        data = request.POST
+        razorpay_payment_id = data['razorpay_payment_id']
+        razorpay_order_id = data['razorpay_order_id']
+        
+        # Get the order associated with the Razorpay order ID
+        order = get_object_or_404(Order, razorpay_order_id=razorpay_order_id)
+        
+        # Update payment and order status
+        order.mark_payment_successful(razorpay_payment_id)
+        order.status = "Completed"
+        order.cart.is_completed = True  # Update the cart status
+        order.cart.save()  # Save the cart changes
+        order.save()
+
+        return JsonResponse({"message": "Payment successful."})
+
+# Payment Failure View
+def payment_failure(request):
+    return JsonResponse({"message": "Payment failed. Please try again."})
 
 
 
 
 
-def delete_address(request, address_id):
-    address = get_object_or_404(Billing, id=address_id)
+# Order Summary View
+class OrderSummaryView(View):
+    def get(self, request, order_id):
+        # Display the order summary page
+        order = get_object_or_404(Order, id=order_id)
+        return render(request, 'purchase/order_summary.html', {'order': order})
+
+# Order Confirmation View
+class OrderConfirmationView(View):
+    def get(self, request, order_id):
+        # Display order confirmation
+        order = get_object_or_404(Order, id=order_id)
+        return render(request, 'purchase/order_confirmation.html', {'order': order})
+from django.shortcuts import render, redirect
+
+
+
+
+
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from .models import Billing
+
+def delete_address_view(request, id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to delete an address.')
+        return redirect('userauths:login')
+
+    address = get_object_or_404(Billing, id=id)
+
+    # Optional: Check if the address belongs to the logged-in user
+    if address.user.uid != request.session['user_id']:
+        messages.error(request, 'You do not have permission to delete this address.')
+        return redirect('purchase:checkout')
+
     address.delete()
     messages.success(request, 'Address deleted successfully.')
-    return redirect('purchase:checkout')  # Redirect to checkout after deletion
-
-# Ensure to import this in your urls.py file
-
-
+    return redirect('purchase:checkout')  # Redirect back to the checkout page
 
 
 
@@ -239,104 +332,3 @@ def set_delivery_address(request):
         # Logic to save or set the delivery address
         pass
     return redirect('purchase:checkout')
-
-
-
-
-
-
-
-# views.py
-
-import razorpay
-from django.conf import settings
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from .models import Order, Payment
-
-# Initialize Razorpay client
-razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-
-def initiate_payment(request, order_id):
-    order = Order.objects.get(id=order_id)
-    razorpay_order = razorpay_client.order.create({
-        "amount": int(order.amount * 100),  # Amount in paisa
-        "currency": "INR",
-        "payment_capture": "1"
-    })
-    order.razorpay_order_id = razorpay_order['id']
-    order.save()
-
-    context = {
-        "order": order,
-        "razorpay_key_id": settings.RAZORPAY_KEY_ID,
-        "razorpay_order_id": razorpay_order['id'],
-        "amount": order.amount,
-        "currency": "INR"
-    }
-    return render(request, "payment.html", context)
-
-def payment_success(request):
-    if request.method == "POST":
-        data = request.POST
-        razorpay_payment_id = data['razorpay_payment_id']
-        razorpay_order_id = data['razorpay_order_id']
-        order = Order.objects.get(razorpay_order_id=razorpay_order_id)
-        
-        # Update payment and order status
-        payment = Payment(order=order, payment_id=razorpay_payment_id, status="Success", amount=order.amount)
-        payment.save()
-        order.status = "Completed"
-        order.save()
-
-        return JsonResponse({"message": "Payment successful."})
-
-def payment_failure(request):
-    return JsonResponse({"message": "Payment failed. Please try again."})
-
-
-
-
-
-
-
-
-
-
-
-
-    
-# Order Summary/Review Page View
-class OrderSummaryView(View):
-    def get(self, request, order_id):
-        # Display the order summary page
-        order = Order.objects.get(id=order_id)
-        return render(request, 'purchase/order_summary.html', {'order': order})
-
-# Order Confirmation Page View
-class OrderConfirmationView(View):
-    def get(self, request, order_id):
-        # Display order confirmation
-        order = Order.objects.get(id=order_id)
-        return render(request, 'order_confirmation.html', {'order': order})
-
-# Payment Gateway Integration (Dummy View)
-class PaymentGatewayView(View):
-    def get(self, request, order_id):
-        order = Order.objects.get(id=order_id)
-        # Payment gateway logic goes here
-        # Redirect to payment confirmation page
-        return redirect(reverse('order_confirmation', kwargs={'order_id': order.id}))
-
-# In your views.py file
-from django.views.generic import TemplateView
-
-class PaymentMethodView(TemplateView):
-    template_name = 'purchase/payment_method.html'
-# purchase/views.py
-
-from django.shortcuts import render
-
-def payment_method(request):
-    # Your logic here
-    return render(request, 'purchase/payment_method.html')

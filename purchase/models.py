@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.db import models
 from userauths.models import Login, User_Reg
 from products.models import Batch
@@ -36,7 +37,7 @@ class CartItem(models.Model):
 
 # Billing Model
 class Billing(models.Model):
-    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
+    user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)  # Changed to ForeignKey
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     district = models.CharField(max_length=50, choices=[
@@ -75,37 +76,36 @@ class Order(models.Model):
         choices=STATUS_CHOICES,
         default='Pending'
     )
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Success', 'Success'),
+        ('Failed', 'Failed')
+    ]
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Total amount for the order
     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)  # For Razorpay integration
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='Pending'
+    )
+    payment_date = models.DateTimeField(blank=True, null=True)
+
     order_date = models.DateTimeField(auto_now_add=True)
+    delivery_date = models.DateTimeField(blank=True, null=True)  # Set upon shipment or delivery
 
     def __str__(self):
         return f"Order {self.id} by {self.user.email} - Status: {self.status}"
 
+    def mark_payment_successful(self, payment_id):
+        """Mark payment as successful and log the payment date."""
+        self.payment_status = 'Success'
+        self.razorpay_order_id = payment_id
+        self.payment_date = timezone.now()
+        self.save()
 
-# OrderItem Model
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def get_total_price(self):
-        return self.price * self.quantity
-
-    def __str__(self):
-        return f"{self.batch.product.name} - Quantity: {self.quantity} - Price: {self.price}"
+    def set_delivery_date(self, delivery_date=None):
+        """Set delivery date; defaults to 5 days from now if not provided."""
+        self.delivery_date = delivery_date or timezone.now() + timedelta(days=5)
+        self.save()
 
 
-from django.db import models
-from django.utils import timezone
-
-class Payment(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=100, null=True)  # Allow null for existing rows
-    status = models.CharField(max_length=20, default='Pending')  # Status can be 'Success', 'Failed', etc.
-    amount = models.DecimalField(max_digits=10, decimal_places=2)  # Amount paid
-    created_at = models.DateTimeField(default=timezone.now)  # Use timezone.now to set default value
-
-    def __str__(self):
-        return f"Payment {self.payment_id} for Order {self.order.id}"

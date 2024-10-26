@@ -11,21 +11,12 @@ urlpatterns = [
     
     # Checkout and Order Related URLs
     path('checkout/', views.CheckoutView.as_view(), name='checkout'),  
-    path('place_order/', views.CheckoutView.as_view(), name='place_order'),  # Place order through CheckoutView post
+     path('payment/<int:order_id>/', views.PaymentGatewayView.as_view(), name='payment_gateway'),  # Payment gateway page
+    path('payment/success/', views.payment_success, name='payment_success'),  # Payment success callback
+    path('payment/failure/', views.payment_failure, name='payment_failure'),  # Payment failure callback
+    path('order/summary/<int:order_id>/', views.OrderSummaryView.as_view(), name='order_summary'),  # Order summary page
+    path('order/confirmation/<int:order_id>/', views.OrderConfirmationView.as_view(), name='order_confirmation'),  # Order confirmation page
+    path('set-delivery-address/', views.set_delivery_address, name='set_delivery_address'),
+    path('delete_address/<int:id>/', views.delete_address_view, name='delete_address'),  # Ensure this pattern exists
     
-    # Order Summary and Confirmation Pages
-    path('order_summary/<int:order_id>/', views.OrderSummaryView.as_view(), name='order_summary'),
-    path('order_confirmation/<int:order_id>/', views.OrderConfirmationView.as_view(), name='order_confirmation'),
-
-    # Payment Related URLs
-    path('payment/<int:order_id>/', views.PaymentGatewayView.as_view(), name='payment_gateway'),  # Payment gateway page
-    path('payment_method/', views.PaymentMethodView.as_view(), name='payment_method'),  # Display payment methods
-
-    # Address Related URLs
-    path('delete_address/<int:address_id>/', views.delete_address, name='delete_address'),  # Delete address
-    path('set_delivery_address/', views.set_delivery_address, name='set_delivery_address'),  # Set delivery address
-    
-    path("initiate-payment/<int:order_id>/", views.initiate_payment, name="initiate_payment"),
-    path("payment-success/", views.payment_success, name="payment_success"),
-    path("payment-failure/", views.payment_failure, name="payment_failure"),
 ]
