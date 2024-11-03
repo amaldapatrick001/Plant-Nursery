@@ -32,6 +32,7 @@ class Login(models.Model):
     last_login = models.DateTimeField(null=True, blank=True)
     last_logout = models.DateTimeField(null=True, blank=True)
     login_count = models.IntegerField(default=0)
+    is_google_user = models.BooleanField(default=False)
 
     def get_email_field_name(self):
         return 'email'

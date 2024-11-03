@@ -201,36 +201,82 @@
       </div>
     </div>
 
-    <section class="ftco-section">
-        <div class="row justify-content-center">
-          <div class="col-xl-7 ftco-animate">
-    {% if addresses %}
-        <h2>Select Your Billing Address</h2>
-        <form method="POST" action="{% url 'purchase:set_delivery_address' %}" id="address-form">
-            {% csrf_token %}
-            <div class="addresses-container">
-                {% for billing_address in addresses %}
-                    <div class="address-card">
-                        <input type="radio" id="address{{ billing_address.id }}" name="selected_address" value="{{ billing_address.id }}" required onchange="document.getElementById('address-form').submit();">
-                        <label for="address{{ billing_address.id }}">
-                            <p><strong>{{ billing_address.first_name }} {{ billing_address.last_name }}</strong></p>
-                            <p>{{ billing_address.street_address }}</p>
-                            <p>{{ billing_address.town_city }}, {{ billing_address.district }}</p>
-                            <p>{{ billing_address.postcode_zip }}</p>
-                            <p>Phone: {{ billing_address.phone }}</p>
-                            <p>Email: {{ billing_address.email }}</p>
-                        </label>
-                        <a href="{% url 'purchase:delete_address' billing_address.id %}" class="delete-btn">Delete Address</a>
-                    </div>
-                {% endfor %}
-            </div>
-        </form>
-    {% else %}
-        <p>No billing address found. Please add one before checking out.</p>
-    {% endif %}
-    
-<button id="addAddressBtn">Add a new address</button>
+    <section class="ftco-section"><div class="row justify-content-center">
+    <div class="col-xl-7 ftco-animate">
+        {% if addresses %}
+            <h2>Select Your Billing Address</h2>
+            <form method="POST" action="{% url 'purchase:set_delivery_address' %}" id="address-form">
+                {% csrf_token %}
+                <div class="addresses-container" id="address-list">
+                    {% for billing_address in addresses %}
+                        <div class="address-card" data-address-id="{{ billing_address.id }}">
+                            <input type="radio" id="address{{ billing_address.id }}" name="selected_address"
+                                   value="{{ billing_address.id }}" required
+                                   {% if billing_address.id|stringformat:"s" == selected_address_id|stringformat:"s" %} checked {% endif %}
+                                   onchange="selectAddress({{ billing_address.id }});">
+                            <label for="address{{ billing_address.id }}">
+                                <p><strong>{{ billing_address.first_name }} {{ billing_address.last_name }}</strong></p>
+                                <p>{{ billing_address.street_address }}</p>
+                                <p>{{ billing_address.town_city }}, {{ billing_address.district }}</p>
+                                <p>{{ billing_address.postcode_zip }}</p>
+                                <p>Phone: {{ billing_address.phone }}</p>
+                                <p>Email: {{ billing_address.email }}</p>
+                            </label>
+                            <a href="{% url 'purchase:delete_address' billing_address.id %}" class="delete-btn">Delete Address</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
+        {% else %}
+            <p>No billing address found. Please add one before checking out.</p>
+        {% endif %}
+        
+        <button id="addAddressBtn">Add a new address</button>
+    </div>
 </div>
+
+<script>
+    function selectAddress(addressId) {
+        fetch("{% url 'purchase:set_delivery_address' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: new URLSearchParams({
+                selected_address: addressId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the radio button to be checked
+                document.querySelectorAll('input[name="selected_address"]').forEach(radio => {
+                    radio.checked = (radio.value == data.address_id);
+                });
+                
+                // Highlight the selected address card
+                document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
+                document.querySelector(`.address-card[data-address-id="${data.address_id}"]`).classList.add('selected');
+            } else if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+</script>
+
+<style>
+    /* Highlight style for the selected address */
+    .address-card.selected {
+        border: 2px solid #ff6600;
+        background-color: #f9f9f9;
+    }
+</style>
 
 
 
@@ -359,89 +405,111 @@
 
 	          	<div class="col-md-12">
 	          		<div class="cart-detail p-3 p-md-4">
-	          			<div>
+	<div>
     <button id="rzp-button1" class="btn btn-outline-dark btn-lg">
         <i class="fas fa-money-bill"></i> Own Checkout
     </button>
 
     <!-- Razorpay script -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    var options = {
-        "key": "rzp_test_DRyi6K0A68qkc4", // Your Razorpay Test Key ID
-        "amount": "{{ total_price_with_delivery_and_discounts }}", // Amount in paise
-        "currency": "INR",
-        "description": "Acme Corp",
-        "image": "https://example.com/image/rzp.jpg", // Ensure to use a valid URL
-        "prefill": {
-            "email": "amaldapatrickputhenpurayil@gmail.com",
-            "contact": "918111876333" // Keep this as a string
-        },
-        "config": {
-            "display": {
-                "blocks": {
-                    "utib": { // Name for Axis block
-                        "name": "Pay Using Axis Bank",
-                        "instruments": [
-                            {
-                                "method": "card",
-                                "issuers": ["UTIB"]
-                            },
-                            {
-                                "method": "netbanking",
-                                "banks": ["UTIB"]
-                            }
-                        ]
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "rzp_test_DRyi6K0A68qkc4", // Your Razorpay Test Key ID
+            "amount": "{{ total_price_with_delivery_and_discount }}", // Amount in paise
+            "currency": "INR",
+            "description": "Acme Corp",
+            "image": "https://example.com/image/rzp.jpg", // Ensure to use a valid URL
+            "prefill": {
+                "email": "{{ user.email }}", // Dynamically pass user email if available
+                "contact": "{{ user.contact }}" // Dynamically pass user contact if available
+            },
+            "config": {
+                "display": {
+                    "blocks": {
+                        "utib": { // Name for Axis block
+                            "name": "Pay Using Axis Bank",
+                            "instruments": [
+                                {
+                                    "method": "card",
+                                    "issuers": ["UTIB"]
+                                },
+                                {
+                                    "method": "netbanking",
+                                    "banks": ["UTIB"]
+                                }
+                            ]
+                        },
+                        "other": { // Name for other block
+                            "name": "Other Payment Methods",
+                            "instruments": [
+                                {
+                                    "method": "card",
+                                    "issuers": ["ICIC", "HDFC", "SBI", "AXIS"]
+                                },
+                                {
+                                    "method": "netbanking"
+                                },
+                                {
+                                    "method": "upi", // Enable UPI payments
+                                    "issuers": ["googlepay", "paytm", "phonepe"] // Add specific UPI apps
+                                }
+                            ]
+                        }
                     },
-                    "other": { // Name for other block
-                        "name": "Other Payment Methods",
-                        "instruments": [
-                            {
-                                "method": "card",
-                                "issuers": ["ICIC", "HDFC", "SBI", "AXIS"]
-                            },
-                            {
-                                "method": "netbanking"
-                            },
-                            {
-                                "method": "upi", // Enable UPI payments
-                                "issuers": ["googlepay", "paytm", "phonepe"] // Add specific UPI apps
-                            }
-                        ]
+                    "hide": [],
+                    "sequence": ["block.utib", "block.other"],
+                    "preferences": {
+                        "show_default_blocks": true // Show default blocks for other payment methods
                     }
-                },
-                "hide": [],
-                "sequence": ["block.utib", "block.other"],
-                "preferences": {
-                    "show_default_blocks": true // Show default blocks for other payment methods
+                }
+            },
+            "handler": function (response) {
+                // Send the payment ID and order ID to your server
+                fetch('/purchase/razorpay_checkout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+                    },
+                    body: JSON.stringify({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        order_id: "{{ order.id }}" // Ensure you pass the order ID correctly
+                    })
+                }).then(res => res.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert("Payment successful! Thank you for your order.");
+                          window.location.href = '/purchase/order_summary/' + data.order_id + '/'; // Redirect to order summary
+                      } else {
+                          alert("Payment failed. Please try again.");
+                      }
+                  })
+                  .catch(error => {
+                      console.error("Error during payment processing:", error);
+                      alert("An error occurred. Please try again later.");
+                  });
+            },
+            "modal": {
+                "ondismiss": function () {
+                    if (confirm("Are you sure you want to close the form?")) {
+                        console.log("Checkout form closed by the user");
+                    } else {
+                        console.log("Complete the Payment");
+                    }
                 }
             }
-        },
-        "handler": function (response) {
-            alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
-            // Implement further logic here, like sending the payment ID to your server for verification
-        },
-        "modal": {
-            "ondismiss": function () {
-                if (confirm("Are you sure you want to close the form?")) {
-                    console.log("Checkout form closed by the user");
-                } else {
-                    console.log("Complete the Payment");
-                }
-            }
+        };
+
+        var rzp1 = new Razorpay(options);
+
+        document.getElementById('rzp-button1').onclick = function (e) {
+            this.disabled = true; // Disable button
+            rzp1.open();
+            e.preventDefault(); // Prevent default button action
         }
-    };
-
-    var rzp1 = new Razorpay(options);
-
-    document.getElementById('rzp-button1').onclick = function (e) {
-        rzp1.open();
-        e.preventDefault(); // Prevent default button action
-    }
-</script>
-
+    </script>
 </div>
-								</div>
+							</div>
 	          	</div>
 	          </div>
           </div> <!-- .col-md-8 -->

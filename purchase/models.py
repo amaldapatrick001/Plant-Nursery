@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import timedelta, timezone
 from django.db import models
 from userauths.models import Login, User_Reg
 from products.models import Batch
@@ -82,7 +82,9 @@ class Order(models.Model):
         ('Failed', 'Failed')
     ]
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Total amount for the order
-    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)  # For Razorpay integration
+  
+    razorpay_order_id = models.CharField(max_length=255, null=True, blank=True)
+
     payment_status = models.CharField(
         max_length=20,
         choices=PAYMENT_STATUS_CHOICES,
@@ -96,12 +98,13 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.id} by {self.user.email} - Status: {self.status}"
 
-    def mark_payment_successful(self, payment_id):
-        """Mark payment as successful and log the payment date."""
-        self.payment_status = 'Success'
-        self.razorpay_order_id = payment_id
-        self.payment_date = timezone.now()
-        self.save()
+def mark_payment_successful(self, payment_id):
+    """Mark payment as successful and log the payment date."""
+    self.payment_status = 'Success'
+    self.razorpay_order_id = payment_id
+    self.payment_date = timezone.now()
+    self.save()
+
 
     def set_delivery_date(self, delivery_date=None):
         """Set delivery date; defaults to 5 days from now if not provided."""
