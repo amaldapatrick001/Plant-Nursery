@@ -12,13 +12,30 @@ DEBUG = True
 CLIENT_SECRET = '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'
 
 # Database Configuration
-DATABASE_NAME = 'Enchanted_Eden'
-DATABASE_USER = 'postgres'
-DATABASE_PASSWORD = 'Amalda@2002'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Enchanted_Eden',
+        'USER': 'postgres',
+        'PASSWORD': 'Amalda@2002',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+# Use Render Database URL if needed
+DATABASES['default'] = dj_database_url.config(
+    default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
+)
 
 # Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'amaldapatrick2025@mca.ajce.in'
 EMAIL_HOST_PASSWORD = 'Amalda@MCA'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Installed applications
 INSTALLED_APPS = [
@@ -55,13 +72,35 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-# URLs and WSGI configuration
+# URL configurations
 ROOT_URLCONF = 'PlantNursery.urls'
 WSGI_APPLICATION = 'PlantNursery.wsgi.application'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/userauths/login/'
 
-# Social Auth Settings
+# Google OAuth2
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_OAUTH_CLIENT_ID
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CLIENT_SECRET
+
+# Template settings
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+            ],
+        },
+    },
+]
 
 # Static and Media Files
 STATIC_URL = '/static/'
@@ -70,22 +109,26 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Database configuration
-DATABASES = {
-    'default': dj_database_url.config(default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen')
-}
+# Password validators
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
 
-# Email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_SAVE_EVERY_REQUEST = True
 
-# Login settings
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/userauths/login/'
+# Security settings for production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Internationalization settings
 LANGUAGE_CODE = 'en-us'
@@ -93,12 +136,22 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Razorpay
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Site configuration
+SITE_ID = 1
+SITE_NAME = 'Enchanted Eden'
+DOMAIN = 'localhost:8000'
+PASSWORD_RESET_EMAIL_TEMPLATE = 'userauths/password_reset_email.html'
+
+# Razorpay Configuration
 RAZORPAY_KEY_ID = 'rzp_test_DRyi6K0A68qkc4'
 RAZORPAY_KEY_SECRET = '3zvEn8RxuvCxgu8ATRny3g95'
 
-# Allowed Hosts for deployment
+# Allowed Hosts
 ALLOWED_HOSTS = ['enchnated-eden.onrender.com', 'localhost', '127.0.0.1']
 
-# OAuth Development
+# Enable insecure transport for OAuth during development
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
