@@ -193,14 +193,6 @@ RAZORPAY_KEY_SECRET = "3zvEn8RxuvCxgu8ATRny3g95"
 
 
 
-# ... existing code ...
-GOOGLE_OAUTH_CLIENT_ID = config('GOOGLE_OAUTH_CLIENT_ID', default='')
-CLIENT_SECRET = config('CLIENT_SECRET', default='')
-# ... rest of your settings ...
-
-# Google OAuth Settings
-GOOGLE_OAUTH_CLIENT_ID = 'your-client-id.apps.googleusercontent.com'  # Update this
-CLIENT_SECRET = 'your-client-secret'  # Update this
 
 # For development
 ALLOWED_HOSTS = ['enchnated-eden.onrender.com', 'localhost', '127.0.0.1']
