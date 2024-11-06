@@ -203,8 +203,7 @@ GOOGLE_OAUTH_CLIENT_ID = 'your-client-id.apps.googleusercontent.com'  # Update t
 CLIENT_SECRET = 'your-client-secret'  # Update this
 
 # For development
-ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['enchnated-eden.onrender.com']
+ALLOWED_HOSTS = ['enchnated-eden.onrender.com', 'localhost', '127.0.0.1']
 
 # For OAuth development
 import os
