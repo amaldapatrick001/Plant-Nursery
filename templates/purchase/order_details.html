@@ -1,0 +1,178 @@
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+<h2 class="text-center my-4">Order Detail - Order ID: {{ order.id }}</h2>
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4>Order Summary</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Order ID:</strong> {{ order.id }}</li>
+                <li class="list-group-item"><strong>Customer Name:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ order.user.email }}</li>
+                <li class="list-group-item"><strong>Phone:</strong> {{ order.user.phone }}</li>
+                <li class="list-group-item"><strong>Address:</strong> {{ order.shipping_address }}</li>
+                <li class="list-group-item"><strong>Order Date:</strong> {{ order.order_date|date:"Y-m-d H:i" }}</li>
+                <li class="list-group-item"><strong>Payment Status:</strong> {{ order.payment_status }}</li>
+                <li class="list-group-item"><strong>Total Order Value:</strong> ${{ order.total_amount }}</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h4>Shipping Details</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Shipping Method:</strong> {{ order.shipping_method }}</li>
+                <li class="list-group-item"><strong>Tracking Number:</strong> {{ order.tracking_number }}</li>
+                <li class="list-group-item"><strong>Estimated Delivery Date:</strong> {{ order.estimated_delivery_date|date:"Y-m-d" }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="table-responsive mb-4">
+        <h4>Product Details</h4>
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Product Name</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Price per Item</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.product.sku }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.price_per_item }}</td>
+                    <td>${{ item.total_price }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No products found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mb-4">
+        <h4>Admin Actions</h4>
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-warning" onclick="updateOrderStatus({{ order.id }})">Update Order Status</button>
+            <button class="btn btn-danger" onclick="issueRefund({{ order.id }})">Issue Refund</button>
+            <button class="btn btn-primary" onclick="sendConfirmationEmail({{ order.id }})">Send Confirmation Email</button>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h4>Comments</h4>
+        <textarea class="form-control" rows="4" placeholder="Add comments here..."></textarea>
+    </div>
+</div>
+
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background for a soft look */
+        font-family: 'Arial', sans-serif; /* Modern font */
+    }
+
+    h2, h4 {
+        color: #343a40; /* Darker color for headers */
+        font-weight: bold;
+    }
+
+    .list-group-item {
+        border: 1px solid #007bff; /* Border color for list items */
+        background-color: #ffffff; /* White background */
+        transition: background-color 0.3s; /* Smooth transition for hover */
+    }
+
+    .list-group-item:hover {
+        background-color: #e9ecef; /* Light gray on hover */
+    }
+
+    .table {
+        margin-top: 20px; /* Space above the table */
+        border-radius: 10px; /* Rounded corners for the table */
+        overflow: hidden; /* Prevent overflow of rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+
+    .table th {
+        background-color: #007bff; /* Header background color */
+        color: white; /* White text color */
+    }
+
+    .btn {
+        width: 30%; /* Set a width for buttons */
+        margin-right: 10px; /* Space between buttons */
+    }
+
+    .btn:last-child {
+        margin-right: 0; /* Remove margin for the last button */
+    }
+
+    textarea {
+        border-radius: 5px; /* Rounded corners for textarea */
+        border: 2px solid #007bff; /* Border color */
+        transition: border-color 0.3s; /* Smooth transition on focus */
+    }
+
+    textarea:focus {
+        border-color: #0056b3; /* Darker blue on focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+    }
+</style>
+
+<script>
+    function updateOrderStatus(orderId) {
+        // Function to update order status
+        // You can add your logic to handle the update
+        alert('Update Order Status for Order ID: ' + orderId);
+    }
+
+    function issueRefund(orderId) {
+        // Function to issue refund
+        // You can add your logic to handle the refund
+        alert('Issue Refund for Order ID: ' + orderId);
+    }
+
+    function sendConfirmationEmail(orderId) {
+        // Function to send confirmation email
+        // You can add your logic to handle the email sending
+        alert('Send Confirmation Email for Order ID: ' + orderId);
+    }
+</script>
+<script>
+    function updateOrderStatus(orderId) {
+        $.ajax({
+            url: `/update-order-status/${orderId}/`, // Create a new URL pattern for this
+            type: 'POST',
+            data: {
+                'status': 'Processing', // or whatever new status you want to set
+                'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for security
+            },
+            success: function(response) {
+                alert('Order status updated successfully.');
+                location.reload(); // Reload the page to see changes
+            },
+            error: function(xhr, errmsg, err) {
+                alert('Error updating order status: ' + xhr.responseText);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

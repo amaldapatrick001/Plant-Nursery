@@ -217,17 +217,17 @@
                 </div>
 
                 <!-- Manage Orders -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="ordersDropdown"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-shopping-cart mr-2"></i> Manage Orders
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="ordersDropdown">
-                        <a class="dropdown-item" href="">View Orders</a>
-                        <a class="dropdown-item" href="">Update Order Status</a>
-                        <a class="dropdown-item" href="">Cancel Order</a>
-                    </div>
-                </div>
+<div class="dropdown">
+    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="ordersDropdown"
+       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-shopping-cart mr-2"></i> Manage Orders
+    </a>
+    <div class="dropdown-menu" aria-labelledby="ordersDropdown">
+        <a class="dropdown-item" href="{% url 'purchase:view_orders' %}">View Orders</a>
+        <a class="dropdown-item" href="">Order Details</a>
+    </div>
+</div>
+
 
                 <!-- Inventory Reports -->
                 <div class="dropdown">
@@ -236,8 +236,8 @@
                         <i class="fas fa-chart-line mr-2"></i> Inventory Reports
                     </a>
                     <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                        <a class="dropdown-item" href="">View Reports</a>
-                        <a class="dropdown-item" href="">Generate Report</a>
+                        <a class="dropdown-item" href="{% url 'purchase:reports' %}">View Reports</a>
+                        <a class="dropdown-item" href="{% url 'purchase:generate_report' %}">Generate Report</a>
                     </div>
                 </div>
 

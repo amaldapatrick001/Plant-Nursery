@@ -218,18 +218,17 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3 mb-5">
-                <div class="filter-sidebar">
-                    <h3>Filter Products</h3>
-                    <form method="get" action="" class="filter-form">
-                        
-                        <!-- Filter by Price Range -->
-                        <div class="form-group">
-                            <label>Price Range</label>
-                            <div class="form-check">
-                                <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
-                                       {% if request.GET.price == "0-500" %}checked{% endif %}>
-                                <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
-                            </div>
+                <div class="filter-sidebar" id="filter-sidebar">
+    <h3 id="filter-title">Filter Products</h3>
+    <form method="get" action="" class="filter-form" id="filter-form">
+        <!-- Example for price range filter -->
+        <div class="form-group" id="filter-price-range">
+            <label>Price Range</label>
+            <div class="form-check">
+                <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
+                       {% if request.GET.price == "0-500" %}checked{% endif %}>
+                <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
+            </div>
                             <div class="form-check">
                                 <input type="radio" id="price_500_1000" name="price" value="500-1000" class="form-check-input"
                                        {% if request.GET.price == "500-1000" %}checked{% endif %}>
@@ -408,13 +407,14 @@
         <div class="col-md-9">
             <!-- Add heading for products -->
             <!-- Place the search bar below the category filter -->
-            <div class="search-bar">
-                <form method="get" action="">
-                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search products...">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
+            <div class="search-bar" id="search-bar">
+    <form method="get" action="" id="search-form">
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search products..." id="search-input">
+        <button type="submit" id="search-button">Search</button>
+    </form>
+</div>
 <style>
+
             /* Style for the product card */
             .product-card {
                 border: 1px solid #ddd;
@@ -439,50 +439,45 @@
             }
             
 </style>
+<div class="row" id="product-list">
+    {% for batch in products %}
+    <div class="col-md-4 mb-4">
+        <div class="product-card shadow-lg rounded-lg overflow-hidden" id="product-card-{{ batch.id }}">
+            {% if batch.product %}
+            <a href="{% url 'products:cproduct_details' batch.product.id %}" id="product-link-{{ batch.product.id }}">
+                <div class="product-image position-relative">
+                    <img src="{% if batch.product.image_1 %}{{ batch.product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" 
+                         alt="{{ batch.product.name }}" class="img-fluid" id="product-image-{{ batch.product.id }}">
+                </div>
+            </a>
+            {% else %}
+            <div class="product-image position-relative">
+                <img src="{% static 'placeholder.png' %}" alt="No product" class="img-fluid">
+            </div>
+            {% endif %}
 
-<div class="row">
-        {% for batch in products %}
-        <div class="col-md-4 mb-4">
-            <div class="product-card shadow-lg rounded-lg overflow-hidden">
-                {% if batch.product %}
-    <a href="{% url 'products:cproduct_details' batch.product.id %}">
-        <div class="product-image position-relative">
-            <img src="{% if batch.product.image_1 %}{{ batch.product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" alt="{{ batch.product.name }}" class="img-fluid">
-        </div>
-    </a>
-{% else %}
-    <div class="product-image position-relative">
-        <img src="{% static 'placeholder.png' %}" alt="No product" class="img-fluid">
-    </div>
-{% endif %}
-
-                <div class="p-3">
-                    <h5 class="text-center">{{ batch.product.name }}</h5>
-                    <p class="text-center">Price: ₹{{ batch.price }}</p>
-                    <p class="text-center">
-                        {% if batch.product.discount %} 
-                            <span class="text-danger">Discount: {{ batch.discount }}% Off</span> 
-                        {% endif %}
-                    </p>
-                    <div class="bottom-area d-flex justify-content-center py-3">
-<a href="{% url 'products:cproduct_details' batch.product.id %}" class="add-to-cart d-flex justify-content-center align-items-center mx-2 icon-hovera btn btn-outline-primary rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
-    <i class="ion-ios-menu"></i>
-</a>
-
-                    <a href="{% url 'purchase:add_to_cart' batch.id %}" class="buy-now d-flex justify-content-center align-items-center mx-2 icon-hoverb btn btn-outline-success rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+            <div class="p-3">
+                <h5 class="text-center" id="product-name-{{ batch.id }}">{{ batch.product.name }}</h5>
+                <p class="text-center" id="product-price-{{ batch.id }}">Price: ₹{{ batch.price }}</p>
+                <p class="text-center">
+                    {% if batch.discount %}
+                        <span class="text-danger">Discount: {{ batch.discount }}% Off</span>
+                    {% endif %}
+                </p>
+                <div class="bottom-area d-flex justify-content-center py-3">
+                    <a href="{% url 'products:cproduct_details' batch.product.id %}" class="btn btn-outline-primary rounded-circle" id="product-details-btn-{{ batch.id }}">
+                        <i class="ion-ios-menu"></i>
+                    </a>
+                    <a href="{% url 'purchase:add_to_cart' batch.id %}" class="btn btn-outline-success rounded-circle" id="add-to-cart-btn-{{ batch.id }}">
                         <i class="ion-ios-cart"></i>
                     </a>
-                    <a href="{% url 'products:add_to_wishlist' batch.id %}" class="heart d-flex justify-content-center align-items-center mx-2 icon-hoverc btn btn-outline-danger rounded-circle" style="width: 45px; height: 45px; transition: background 0.3s ease;">
+                    <a href="{% url 'products:add_to_wishlist' batch.id %}" class="btn btn-outline-danger rounded-circle" id="add-to-wishlist-btn-{{ batch.id }}">
                         <i class="ion-ios-heart"></i>
                     </a>
-                    </div>
                 </div>
             </div>
         </div>
-        
-                
-                
-            
+    </div>    
         {% empty %}
         <p>No products available.</p>
         {% endfor %}

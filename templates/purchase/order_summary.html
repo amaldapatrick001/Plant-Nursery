@@ -45,12 +45,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in cart_items %}
+                {% for item in order.order_items.all %}
                     <tr>
-                        <td>{{ item.batch.product.name }}</td>
+                        <td>{{ item.product }}</td>
                         <td>{{ item.quantity }}</td>
-                        <td>{{ item.batch.price }}</td>
-                        <td>{{ item.get_total_price }}</td>
+                        <td>₹{{ item.price }}</td>
+                        <td>₹{{ item.get_total_price_with_discount }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -70,11 +70,11 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block styles %}
 <style>
+    /* Hero Section Styles */
     .hero-wrap {
         padding: 50px 0;
         color: white;
@@ -83,6 +83,7 @@
         background-position: center;
     }
 
+    /* Order Summary Section */
     .order-summary {
         background-color: #f8f9fa;
         border-radius: 8px;
@@ -90,11 +91,15 @@
         padding: 30px;
     }
 
-    .order-details {
+    .order-details, .summary {
         background-color: #ffffff;
         padding: 15px;
         border-radius: 5px;
         margin-bottom: 20px;
+    }
+
+    .order-details p {
+        margin: 0 0 10px;
     }
 
     .badge {
@@ -102,6 +107,7 @@
         font-size: 0.9em;
     }
 
+    /* Cart Items Table */
     .cart-items {
         margin-top: 20px;
     }
@@ -111,13 +117,11 @@
         color: white;
     }
 
-    .summary {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
+    .summary p, .summary h3 {
+        margin: 0 0 10px;
     }
 
+    /* Download Button */
     .download-btn {
         padding: 10px 20px;
         font-size: 1.1em;

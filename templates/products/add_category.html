@@ -211,9 +211,13 @@
                             <div class="form-group">
                                 <label class="form-label" for="{{ form.is_plant.id_for_label }}">{{ form.is_plant.label }}</label>
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="{{ form.is_plant.id_for_label }}" name="{{ form.is_plant.name }}" {% if form.is_plant.value %}checked{% endif %}>
-                                    <label class="custom-label" for="{{ form.is_plant.id_for_label }}"></label> <!-- Custom switch background -->
-                                    <span class="switch-label">{{ form.is_plant.value|yesno:"Yes,No" }}</span> <!-- Label for the switch -->
+                                    <input type="checkbox" 
+                                           class="custom-control-input" 
+                                           id="{{ form.is_plant.id_for_label }}" 
+                                           name="{{ form.is_plant.name }}" 
+                                           {% if form.is_plant.value %}checked{% endif %}>
+                                    <label class="custom-label" for="{{ form.is_plant.id_for_label }}"></label>
+                                    <span class="switch-label">{{ form.is_plant.value|yesno:"Yes,No" }}</span>
                                 </div>
                             </div>
 
@@ -239,14 +243,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                {% if status == 'success' %}
-                    <p>Category added successfully!</p>
-                {% elif status == 'error' %}
-                    <p>A category with the name '{{ form.name.value }}' already exists.</p>
-                {% endif %}
+                <p id="modalMessage">
+                    {% if status == 'success' %}
+                        Category added successfully!
+                    {% elif status == 'error' %}
+                        A category with the name '{{ form.name.value }}' already exists.
+                    {% endif %}
+                </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-primary" id="modalCloseBtn" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
