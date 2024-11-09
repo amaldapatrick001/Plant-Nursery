@@ -1,6 +1,4 @@
 from datetime import timedelta
-from multiprocessing import context
-from django.utils import timezone
 import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,18 +8,28 @@ from django.views import View
 from purchase.forms import CheckoutForm
 from userauths.models import Login, User_Reg
 from products.models import Batch
-from .models import  Billing, Cart, CartItem, Order  # Only import from purchase.models
+from .models import Billing, Cart, CartItem, Order, OrderItem
+from .utils import calculate_cart_total  # Assuming you have this utility function
+from django.views.decorators.http import require_POST
+from django.utils import timezone
+
+
+def ensure_user_logged_in(request):
+    """Ensure the user is logged in; if not, redirect to login with an error message."""
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to proceed.')
+        return False
+    return True
 
 # Add item to cart view
 def add_to_cart(request, batch_id):
-    if 'user_id' not in request.session:
-        messages.error(request, 'You must be logged in to add items to your cart.')
+    if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
     batch = get_object_or_404(Batch, id=batch_id)
 
     # Get or create the user's cart
-    cart, created = Cart.objects.get_or_create(user_id=request.session['user_id'])
+    cart, created = Cart.objects.get_or_create(user_id=request.session['user_id'], is_completed=False)
 
     # Check if the item is already in the cart
     cart_item, item_created = CartItem.objects.get_or_create(cart=cart, batch=batch)
@@ -35,21 +43,21 @@ def add_to_cart(request, batch_id):
         messages.success(request, f"{batch.product.name} added to your cart.")
 
     return redirect('purchase:cart_detail')
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Cart, CartItem
 
 def cart_detail(request):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     # Fetch the incomplete cart for the current user
     cart = Cart.objects.filter(user_id=request.session.get('user_id'), is_completed=False).first()
-    
+
     if not cart or not cart.items.exists():
         messages.info(request, 'Your cart is empty.')
         return redirect('products:cproduct_list')
 
     # Calculate subtotal, total discount, and delivery price
     actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
-    total_discount = sum(item.get_discount_amount() for item in cart.items.all())  # Use get_discount_amount here
+    total_discount = sum(item.get_discount_amount() for item in cart.items.all())
     delivery_price = 50  # Set your delivery price logic here
 
     # Calculate the total price with discount and delivery
@@ -66,12 +74,11 @@ def cart_detail(request):
 
     return render(request, 'purchase/cart_detail.html', context)
 
-
-
-
-
 # Remove item from cart view
 def remove_from_cart(request, cart_item_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     cart_item = get_object_or_404(CartItem, id=cart_item_id)
 
     # Ensure the item belongs to the current user
@@ -83,11 +90,9 @@ def remove_from_cart(request, cart_item_id):
     messages.success(request, f'Item "{cart_item.batch.product.name}" removed from your cart.')
     return redirect('purchase:cart_detail')
 
-
 # Update cart quantities view
 def update_cart(request):
-    if 'user_id' not in request.session:
-        messages.error(request, 'You must be logged in to update your cart.')
+    if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
     cart = Cart.objects.filter(user_id=request.session.get('user_id'), is_completed=False).first()
@@ -101,9 +106,7 @@ def update_cart(request):
         quantity = request.POST.get(f'quantities_{item.id}')
         if quantity:
             try:
-                item.quantity = int(quantity)
-                if item.quantity < 1:
-                    item.quantity = 1  # Prevent quantity from being less than 1
+                item.quantity = max(int(quantity), 1)  # Ensure at least 1 quantity
                 item.save()
             except ValueError:
                 messages.error(request, 'Invalid quantity entered.')
@@ -112,31 +115,6 @@ def update_cart(request):
     messages.success(request, 'Cart updated successfully.')
     return redirect('purchase:cart_detail')
 
-
-
-
-from django.contrib import messages
-from django.shortcuts import redirect
-
-def ensure_user_logged_in(request):
-    """Ensure the user is logged in; if not, redirect to login with an error message."""
-    if 'user_id' not in request.session:
-        messages.error(request, 'You must be logged in to proceed.')
-        return False
-    return True
-from django.shortcuts import get_object_or_404, redirect, reverse, render
-from django.views import View
-from django.contrib import messages
-from django.views.decorators.http import require_POST
-from .models import Billing, Cart, Order
-from .forms import CheckoutForm
-from .utils import calculate_cart_total
-
-
-
-
-
-# Ensure that all views check if the user is logged in
 class CheckoutView(View):
     def get(self, request):
         if not ensure_user_logged_in(request):
@@ -158,7 +136,7 @@ class CheckoutView(View):
 
         total_after_discount = actual_subtotal - total_discount
         total_price_with_delivery_and_discount = total_after_discount + delivery_price
-        total_price_with_delivery_and_discounts = int((total_after_discount + delivery_price) * 100)
+        total_price_with_delivery_and_discounts = int(total_price_with_delivery_and_discount * 100)  # Amount in paise
 
         selected_address_id = request.session.get('selected_address_id', None)
 
@@ -170,66 +148,44 @@ class CheckoutView(View):
             'total_discount': total_discount,
             'delivery_price': delivery_price,
             'total_price_with_delivery_and_discount': total_price_with_delivery_and_discount,
-            'total_after_discount': total_after_discount,
             'total_price_with_delivery_and_discounts': total_price_with_delivery_and_discounts,
+            'total_after_discount': total_after_discount,
             'selected_address_id': selected_address_id,
+            'csrf_token': request.COOKIES.get('csrftoken'),
+            'user': request.user,
         })
-from django.shortcuts import get_object_or_404, redirect, reverse
-from django.contrib import messages
-from django.views.decorators.http import require_POST
-from .models import Billing, Cart, Order
-from .utils import calculate_cart_total
-
 
 @require_POST
 def set_delivery_address(request):
-    # Ensure user is logged in
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
-    # Retrieve user and selected address ID
     user_id = request.session['user_id']
     address_id = request.POST.get('selected_address')
 
-    # Ensure an address was selected
     if not address_id:
         messages.error(request, "Please select a billing address.")
         return redirect('purchase:checkout')
 
-    # Fetch the selected billing address and active cart
     billing_address = get_object_or_404(Billing, id=address_id, user_id=user_id)
     cart = get_object_or_404(Cart, user_id=user_id, is_completed=False)
     total_amount = calculate_cart_total(cart)
 
-    # Retrieve or create an order
     order_id = request.session.get('current_order_id')
     order = Order.objects.filter(id=order_id, user_id=user_id).first()
 
-    if order:
-        # Update the existing order
-        order.billing = billing_address  # Update the billing address
-        order.total_amount = total_amount  # Ensure total amount is updated
-        order.save()
-    else:
-        # Create a new order if one doesn't exist in session
-        order = Order.objects.create(
-            user_id=user_id,
-            billing=billing_address,
-            cart=cart,
-            total_amount=total_amount,
-        )
-        request.session['current_order_id'] = order.id  # Save new order ID in session
+   
+    # Always create a new order for each checkout session
+    order = Order.objects.create(
+        user_id=user_id,
+        billing=billing_address,
+        cart=cart,
+        total_amount=total_amount,
+    )
 
-    # Store the selected address in the session
     request.session['selected_address_id'] = billing_address.id
-
-    # Confirm address update to user
     messages.success(request, "Delivery address set successfully.")
     return redirect(reverse('purchase:checkout'))
-
-
-
-
 
 @require_POST
 def delete_address(request, address_id):
@@ -248,77 +204,385 @@ def razorpay_checkout(request):
 
     user_id = request.session['user_id']
     data = json.loads(request.body)
-    
+
     razorpay_payment_id = data.get('razorpay_payment_id')
-    order_id = request.session.get('current_order_id')  # Retrieve from session
+    order_id = request.session.get('current_order_id')
 
     order = get_object_or_404(Order, id=order_id, user_id=user_id)
 
     if razorpay_payment_id:
         order.razorpay_order_id = razorpay_payment_id
-        order.status = "Processing"  # Update status after successful payment
-        order.payment_status = "Success"  # Update payment status
-        order.payment_date = timezone.now()  # Correctly using Django's timezone
-        
-        # Calculate delivery date (order_date + 5 days)
+        order.status = "Processing"
+        order.payment_status = "Success"
+        order.payment_date = timezone.now()
         order.delivery_date = order.order_date + timedelta(days=5)
 
-        # Calculate totals
         cart = get_object_or_404(Cart, id=order.cart.id, user_id=user_id)
+
+        # Get the subtotal and discount calculations
         actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
         total_discount = sum(item.get_discount_amount() for item in cart.items.all())
-        delivery_price = 50  # Set your delivery price calculation logic here
+        delivery_price = 50
         total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
-        
-        # Update the total amount in the order
+
         order.total_amount = total_price_with_delivery_and_discount
-        
-        order.save()  # Save all changes
-        
+        order.save()
+
+        # Clear cart items and mark cart as complete
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=item.batch.product.name,
+                batch=item.batch,
+                quantity=item.quantity,
+                price=item.batch.price,  # Storing unit price here
+                discount=item.batch.discount  # Storing discount here if applicable
+            )
+
+        # Clear cart items
+        cart.items.all().delete()
+        cart.is_completed = True
+        cart.save()
+
+        # Optionally clear session or other user feedback
+        request.session['current_order_id'] = None  # Clear current order ID from session
         return JsonResponse({'success': True, 'order_id': order.id})
-    
+
     return JsonResponse({'success': False, 'error': 'Payment failed'}, status=400)
 
-
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from .models import Order, Login, Cart
-from .utils import calculate_cart_total  # Assuming you have a utility function for cart total
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Order, Billing
 
 def order_summary(request, order_id):
-    if not ensure_user_logged_in(request):
+    # Ensure user is logged in
+    if not request.session.get('user_id'):
         return redirect('userauths:login')
 
+    # Retrieve user and order details
     user_id = request.session.get('user_id')
-    user = get_object_or_404(Login, login_id=user_id)
+    order = get_object_or_404(Order, id=order_id, user_id=user_id)
+    order_items = order.order_items.all()
 
-    # Fetch the order based on order_id and user_id
-    order = get_object_or_404(Order, id=order_id, user_id=user.uid_id)
-
-    # Retrieve cart items associated with the order
-    cart = get_object_or_404(Cart, id=order.cart.id, user_id=user.uid_id)  # Assuming order has a cart field
-
-    # Calculate the required totals
-    actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
-    total_discount = sum(item.get_discount_amount() for item in cart.items.all())
-    delivery_price = 50  # This can be dynamic based on your logic
+    # Calculate order summary details
+    actual_subtotal = sum(item.get_total_price() for item in order_items)
+    total_discount = sum((item.get_total_price() * item.discount / 100) for item in order_items)
+    delivery_price = 50  # Flat rate for delivery
     total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
 
-    # Prepare context for rendering the template
+    # Prepare context for rendering template
     context = {
         'order': order,
-        'cart_items': cart.items.all(),
+        'order_items': order_items,
         'actual_subtotal': actual_subtotal,
         'total_discount': total_discount,
         'delivery_price': delivery_price,
         'total_price_with_delivery_and_discount': total_price_with_delivery_and_discount,
-        'selected_address_id': request.session.get('selected_address_id'),  # Assuming you need this
-        'user_addresses': Billing.objects.filter(user_id=user_id),  # Fetching user's addresses
+        'selected_address_id': request.session.get('selected_address_id'),
+        'user_addresses': Billing.objects.filter(user_id=user_id),
     }
 
     return render(request, 'purchase/order_summary.html', context)
+# views.py
+from django.shortcuts import render, redirect
+from .models import Order
+
+def order_history(request):
+    # Ensure user is logged in
+    if not request.session.get('user_id'):
+        return redirect('userauths:login')
+
+    user_id = request.session.get('user_id')
+    
+    # Fetch orders for the logged-in user
+    orders = Order.objects.filter(user_id=user_id).order_by('-order_date')  # Order by date, latest first
+
+    # Prepare context for rendering the order history template
+    context = {
+        'orders': orders,
+    }
+
+    return render(request, 'purchase/order_history.html', context)
+
+
+
+
+
+
+
+#admin 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.db.models import Prefetch
+from .models import Order, OrderItem  # Ensure Order and OrderItem are imported
+from userauths.models import User_Reg
+
+def view_orders(request):
+    # Prefetch related `OrderItem` data for each `Order`
+    orders = Order.objects.select_related('user').prefetch_related('order_items').all()
+    
+    return render(request, 'purchase/view_orders.html', {'orders': orders})
+
+# Update Order Status
+def update_order_status(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        order.status = new_status
+        order.save()
+        messages.success(request, 'Order status updated successfully.')
+        return redirect('purchase:view_orders')
+
+    return render(request, 'purchase/update_order_status.html', {'order': order})
+from django.http import JsonResponse
+
+def get_order_details(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = order.order_items.all().select_related('product')  # Adjust as necessary
+
+    items = [
+        {
+            'product_name': item.product.name,  # Adjust this according to your Product model
+            'quantity': item.quantity,
+            'total_price': item.get_total_price_with_discount  # Ensure this method is defined in your OrderItem model
+        }
+        for item in order_items
+    ]
+
+    order_data = {
+        'order_id': order.id,
+        'customer_name': f"{order.user.first_name} {order.user.last_name}",
+        'customer_email': order.user.email,
+        'order_date': order.order_date.strftime("%Y-%m-%d %H:%M"),
+        'total_amount': order.total_amount,
+        'status': order.status,
+        'items': items
+    }
+
+    return JsonResponse(order_data)
+
+from django.shortcuts import render
+from django.db.models import Sum, Count
+from datetime import datetime, timedelta
+from decimal import Decimal
+from django.utils.dateparse import parse_date
+import json
+
+def decimal_to_float(value):
+    return float(value) if isinstance(value, Decimal) else value
+
+from datetime import datetime, timedelta
+from django.db.models import Sum, Count
+from django.shortcuts import render
+from django.utils.dateparse import parse_date
+import json
+
+def decimal_to_float(value):
+    """Convert Decimal to float for JSON serialization."""
+    return float(value) if value else 0.0
+def reports(request):
+    # Get date filters from request
+    date_filter = request.GET.get("date_filter", "30_days")
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    today = datetime.today()
+
+    # Define the date range based on the selected filter
+    if date_filter == "30_days":
+        date_from = today - timedelta(days=30)
+        date_to = today
+    elif date_filter == "past_week":
+        date_from = today - timedelta(days=7)
+        date_to = today
+    elif date_filter == "past_month":
+        date_from = today.replace(day=1)
+        date_to = today
+    elif date_filter == "custom" and start_date and end_date:
+        date_from = parse_date(start_date)
+        date_to = parse_date(end_date)
+    else:
+        # Default to the last 30 days if no valid filter is selected
+        date_from = today - timedelta(days=30)
+        date_to = today
+
+    # Sales Data
+    sales_data = Order.objects.filter(order_date__range=(date_from, date_to), payment_status="Success").aggregate(
+        total_sales=Sum('total_amount'), order_count=Count('id')
+    )
+    sales_data['total_sales'] = decimal_to_float(sales_data['total_sales'])
+
+    # Total Purchased Products Analysis
+    purchased_products = (
+        OrderItem.objects.filter(order__order_date__range=(date_from, date_to), order__payment_status="Success")
+        .values('product')  # Filter by product name in OrderItem
+        .annotate(total_quantity=Sum('quantity'), total_spent=Sum('price'))
+        .order_by('-total_quantity')
+    )
+    purchased_products_labels = [item['product'] for item in purchased_products]
+    purchased_products_quantities = [item['total_quantity'] for item in purchased_products]
+    for product in purchased_products:
+        product['total_spent'] = decimal_to_float(product['total_spent'])
+
+    # Order Trends
+    order_trends = Order.objects.filter(order_date__range=(date_from, date_to)).values('status').annotate(count=Count('id'))
+    order_trends_labels = [item['status'] for item in order_trends]
+    order_trends_counts = [item['count'] for item in order_trends]
+
+    # Top Customers
+    top_customers = (
+        Order.objects.filter(order_date__range=(date_from, date_to), payment_status="Success")
+        .values('user__first_name', 'user__last_name')
+        .annotate(total_spent=Sum('total_amount'))
+        .order_by('-total_spent')[:5]
+    )
+    for customer in top_customers:
+        customer['total_spent'] = decimal_to_float(customer['total_spent'])
+
+    # Monthly Sales (Last 6 Months)
+    monthly_sales_labels = []
+    monthly_sales_data = []
+    for i in range(6):
+        month_start = today.replace(day=1) - timedelta(days=i * 30)
+        month_end = (month_start + timedelta(days=30)).replace(day=1)
+        month_sales = Order.objects.filter(order_date__range=(month_start, month_end), payment_status="Success").aggregate(
+            total_sales=Sum('total_amount')
+        )
+        monthly_sales_labels.append(month_start.strftime("%B"))
+        monthly_sales_data.append(decimal_to_float(month_sales["total_sales"] or 0))
+
+    # Top Trending Products
+    top_trending_products = purchased_products[:5]  # Get the top 5 trending products
+    trending_products_labels = [item['product'] for item in top_trending_products]
+    trending_products_quantities = [item['total_quantity'] for item in top_trending_products]
+
+    # Context for rendering
+    context = {
+        'sales_data': sales_data,
+        'purchased_products': purchased_products,
+        'top_trending_products': top_trending_products,
+        'purchased_products_labels': json.dumps(purchased_products_labels),
+        'purchased_products_quantities': json.dumps(purchased_products_quantities),
+        'trending_products_labels': json.dumps(trending_products_labels),
+        'trending_products_quantities': json.dumps(trending_products_quantities),
+        'order_trends_labels': json.dumps(order_trends_labels),
+        'order_trends_counts': json.dumps(order_trends_counts),
+        'top_customers': top_customers,
+        'monthly_sales_labels': json.dumps(monthly_sales_labels),
+        'monthly_sales_data': json.dumps(monthly_sales_data),
+        'date_filter': date_filter,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+
+    return render(request, 'purchase/reports.html', context)
+
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from datetime import datetime, timedelta
+from django.utils.dateparse import parse_date
+from .models import Order, OrderItem
+
+
+def generate_report(request):
+    # Get date filters from request
+    date_filter = request.GET.get("date_filter", "30_days")
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    today = datetime.today()
+
+    # Define the date range based on the selected filter
+    if date_filter == "30_days":
+        date_from = today - timedelta(days=30)
+        date_to = today
+    elif date_filter == "past_week":
+        date_from = today - timedelta(days=7)
+        date_to = today
+    elif date_filter == "past_month":
+        date_from = today.replace(day=1)
+        date_to = today
+    elif date_filter == "custom" and start_date and end_date:
+        date_from = parse_date(start_date)
+        date_to = parse_date(end_date)
+    else:
+        # Default to the last 30 days if no valid filter is selected
+        date_from = today - timedelta(days=30)
+        date_to = today
+
+    # Fetch orders and order items data
+    orders = Order.objects.filter(order_date__range=(date_from, date_to))
+    order_items = OrderItem.objects.filter(order__order_date__range=(date_from, date_to))
+
+    context = {
+        'orders': orders,
+        'order_items': order_items,
+        'date_filter': date_filter,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+
+    # Check if PDF download is requested
+    if request.GET.get('download_pdf'):
+        html = render_to_string('purchase/generate_report.html', context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="order_report.pdf"'
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        if pisa_status.err:
+            return HttpResponse('Error generating PDF')
+        return response
+
+    # Render HTML view if not downloading PDF
+    return render(request, 'purchase/genetate_repaort.html', context)
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from .models import OrderItem
+from datetime import datetime, timedelta
+
+def generate_order_pdf(request):
+    date_filter = request.GET.get("date_filter", "30_days")
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    # Date range logic here
+    today = datetime.today()
+    if date_filter == "30_days":
+        date_from = today - timedelta(days=30)
+        date_to = today
+    else:
+        date_from, date_to = today - timedelta(days=7), today
+
+    order_items = OrderItem.objects.filter(order__order_date__range=(date_from, date_to))
+
+    context = {
+        'order_items': order_items,
+        'start_date': start_date or date_from,
+        'end_date': end_date or date_to,
+    }
+
+    # Render PDF
+    html = render_to_string('purchase/order_report_pdf.html', context)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="order_report.pdf"'
+    pisa.CreatePDF(html, dest=response)
+    return response
+
+
+
+
+
+
+
+
+
+
+
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages

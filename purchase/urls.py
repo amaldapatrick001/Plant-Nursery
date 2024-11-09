@@ -18,4 +18,14 @@ urlpatterns = [
     path('order/<int:order_id>/download-bill/', views.download_bill, name='download_bill'),
     path('download-bill/<int:order_id>/', views.download_bill, name='download_bill'),
     path('order/<int:order_id>/download-bill/', views.download_bill, name='download_bill'),
+
+    path('order-history/', views.order_history, name='order_history'),
+   #admin
+    path('orders/', views.view_orders, name='view_orders'),
+    path('orders/update/<int:order_id>/', views.update_order_status, name='update_order_status'),
+path('orders/details/<int:order_id>/', views.get_order_details, name='get_order_details'),  # Updated URL
+# Add this to your `urlpatterns`
+path('reports/', views.reports, name='reports'),
+    path('generate_report/', views.generate_report, name='generate_report'),
+    path('generate_order_pdf/', views.generate_order_pdf, name='generate_order_pdf'),
 ]

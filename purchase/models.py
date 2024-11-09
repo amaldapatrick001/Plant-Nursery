@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone
+from datetime import timezone
 from django.db import models
 from userauths.models import Login, User_Reg
 from products.models import Batch
@@ -37,7 +37,7 @@ class CartItem(models.Model):
 
 # Billing Model
 class Billing(models.Model):
-    user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)  # Changed to ForeignKey
+    user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     district = models.CharField(max_length=50, choices=[
@@ -70,45 +70,67 @@ class Order(models.Model):
         ('Cancelled', 'Cancelled'),
         ('Returned', 'Returned'),
     ]
-    
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='Pending'
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+
     PAYMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Success', 'Success'),
         ('Failed', 'Failed')
     ]
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Total amount for the order
-  
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     razorpay_order_id = models.CharField(max_length=255, null=True, blank=True)
-
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS_CHOICES,
-        default='Pending'
-    )
     payment_date = models.DateTimeField(blank=True, null=True)
-
     order_date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField(blank=True, null=True)  # Set upon shipment or delivery
+    delivery_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Order {self.id} by {self.user.email} - Status: {self.status}"
 
-def mark_payment_successful(self, payment_id):
-    """Mark payment as successful and log the payment date."""
-    self.payment_status = 'Success'
-    self.razorpay_order_id = payment_id
-    self.payment_date = timezone.now()
-    self.save()
-
-
-    def set_delivery_date(self, delivery_date=None):
-        """Set delivery date; defaults to 5 days from now if not provided."""
-        self.delivery_date = delivery_date or timezone.now() + timedelta(days=5)
+    def mark_payment_successful(self, payment_id):
+        """Mark payment as successful, store order items, and clear the cart."""
+        self.payment_status = 'Success'
+        self.razorpay_order_id = payment_id
+        self.payment_date = timezone.now()
         self.save()
 
+        # Copy each item from CartItem to OrderItem and reduce stock accordingly
+        for cart_item in self.cart.items.all():
+            if cart_item.batch.stock_quantity < cart_item.quantity:
+                raise ValueError(f"Insufficient stock for {cart_item.batch.product.name}. Only {cart_item.batch.stock_quantity} available.")
 
+            # Update stock quantity
+            cart_item.batch.stock_quantity -= cart_item.quantity
+            cart_item.batch.save()
+
+            OrderItem.objects.create(
+                order=self,
+                product=cart_item.batch.product.name,
+                batch=cart_item.batch,
+                quantity=cart_item.quantity,
+                price=cart_item.batch.price,
+                discount=getattr(cart_item.batch, 'discount', 0)
+            )
+
+        # Mark the cart as completed
+        self.cart.is_completed = True
+        self.cart.save()
+
+
+# OrderItem Model
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    product = models.CharField(max_length=255)  # Store product name for reference
+    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True)  # Link to the specific batch
+    quantity = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Store price at the time of order
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)  # Discount at time of order
+
+    def __str__(self):
+        return f"{self.product} - Quantity: {self.quantity} - Price: {self.price}"
+
+    def get_total_price(self):
+        return self.price * self.quantity
+
+    def get_total_price_with_discount(self):
+        return self.get_total_price() - ((self.get_total_price() * self.discount) / 100)
