@@ -28,8 +28,10 @@ class CartItem(models.Model):
         return self.batch.price * self.quantity
 
     def get_discount_amount(self):
-        discount = getattr(self.batch, 'discount', 0)
+        # Use a default discount of 0 if it's None
+        discount = self.batch.discount if self.batch.discount is not None else 0
         return (self.get_total_price() * discount) / 100
+
 
     def get_total_price_with_discount(self):
         return self.get_total_price() - self.get_discount_amount()

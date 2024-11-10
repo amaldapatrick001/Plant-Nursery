@@ -89,8 +89,8 @@ def remove_from_cart(request, cart_item_id):
     cart_item.delete()
     messages.success(request, f'Item "{cart_item.batch.product.name}" removed from your cart.')
     return redirect('purchase:cart_detail')
+from django.contrib import messages
 
-# Update cart quantities view
 def update_cart(request):
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
@@ -106,7 +106,19 @@ def update_cart(request):
         quantity = request.POST.get(f'quantities_{item.id}')
         if quantity:
             try:
-                item.quantity = max(int(quantity), 1)  # Ensure at least 1 quantity
+                quantity = int(quantity)
+                # Ensure at least 1 quantity
+                if quantity < 1:
+                    quantity = 1
+
+                # Check if requested quantity is available in stock (using Batch's stock_quantity field)
+                available_stock = item.batch.stock_quantity  # Using stock_quantity from the Batch model
+                if quantity > available_stock:
+                    messages.error(request, f'Not enough stock for {item.batch.product.name}. Available stock: {available_stock}.')
+                    return redirect('purchase:cart_detail')
+
+                # Update the quantity and save the item
+                item.quantity = quantity
                 item.save()
             except ValueError:
                 messages.error(request, 'Invalid quantity entered.')
@@ -114,6 +126,9 @@ def update_cart(request):
 
     messages.success(request, 'Cart updated successfully.')
     return redirect('purchase:cart_detail')
+
+
+
 
 class CheckoutView(View):
     def get(self, request):
@@ -155,6 +170,8 @@ class CheckoutView(View):
             'user': request.user,
         })
 
+
+
 @require_POST
 def set_delivery_address(request):
     if not ensure_user_logged_in(request):
@@ -162,6 +179,13 @@ def set_delivery_address(request):
 
     user_id = request.session['user_id']
     address_id = request.POST.get('selected_address')
+    form = CheckoutForm(request.POST)
+
+    if form.is_valid():  # Check if form is valid
+        # Create a new Billing entry
+        billing_address = form.save(commit=False)
+        billing_address.user_id = user_id  # Assign user to this address
+        billing_address.save()
 
     if not address_id:
         messages.error(request, "Please select a billing address.")
@@ -171,10 +195,6 @@ def set_delivery_address(request):
     cart = get_object_or_404(Cart, user_id=user_id, is_completed=False)
     total_amount = calculate_cart_total(cart)
 
-    order_id = request.session.get('current_order_id')
-    order = Order.objects.filter(id=order_id, user_id=user_id).first()
-
-   
     # Always create a new order for each checkout session
     order = Order.objects.create(
         user_id=user_id,
@@ -183,9 +203,13 @@ def set_delivery_address(request):
         total_amount=total_amount,
     )
 
+    # Store the order ID in the session so it can be used later in the payment processing
+    request.session['current_order_id'] = order.id
+
     request.session['selected_address_id'] = billing_address.id
     messages.success(request, "Delivery address set successfully.")
     return redirect(reverse('purchase:checkout'))
+
 
 @require_POST
 def delete_address(request, address_id):
@@ -197,58 +221,102 @@ def delete_address(request, address_id):
     address.delete()
     messages.success(request, "Address deleted successfully.")
     return redirect('purchase:checkout')
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from datetime import timedelta
+import json
+import logging
+
+# Create a logger for this module
+logger = logging.getLogger(__name__)
+
 @require_POST
 def razorpay_checkout(request):
-    if not ensure_user_logged_in(request):
-        return JsonResponse({'success': False, 'error': 'User not logged in'}, status=403)
+    try:
+        # Check if user is logged in
+        if not ensure_user_logged_in(request):
+            logger.error("User not logged in. Payment request denied.")
+            return JsonResponse({'success': False, 'error': 'User not logged in'}, status=403)
 
-    user_id = request.session['user_id']
-    data = json.loads(request.body)
+        # Retrieve the order and payment details from the request
+        user_id = request.session.get('user_id')
+        data = json.loads(request.body)
+        razorpay_payment_id = data.get('razorpay_payment_id')
+        order_id = request.session.get('current_order_id')
 
-    razorpay_payment_id = data.get('razorpay_payment_id')
-    order_id = request.session.get('current_order_id')
+        # Log the received payment details for debugging
+        logger.info(f"Received payment ID: {razorpay_payment_id}, Order ID: {order_id} from user ID: {user_id}")
 
-    order = get_object_or_404(Order, id=order_id, user_id=user_id)
+        # Validate the received payment ID and order ID
+        if not order_id or not razorpay_payment_id:
+            logger.error("Missing payment ID or order ID in the request.")
+            return JsonResponse({'success': False, 'error': 'Invalid payment or order ID'}, status=400)
 
-    if razorpay_payment_id:
+        # Retrieve the order object and validate it
+        order = get_object_or_404(Order, id=order_id, user_id=user_id)
+        
+        # Ensure order belongs to the correct user
+        if order.user.id != user_id:
+            logger.error(f"Order ID mismatch: Order {order_id} does not belong to user {user_id}.")
+            return JsonResponse({'success': False, 'error': 'Order not found for the given user.'}, status=404)
+
+        # Update order details upon successful payment
         order.razorpay_order_id = razorpay_payment_id
         order.status = "Processing"
         order.payment_status = "Success"
         order.payment_date = timezone.now()
         order.delivery_date = order.order_date + timedelta(days=5)
+        order.save()
 
+        # Retrieve the associated cart and calculate totals
         cart = get_object_or_404(Cart, id=order.cart.id, user_id=user_id)
 
-        # Get the subtotal and discount calculations
         actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
         total_discount = sum(item.get_discount_amount() for item in cart.items.all())
         delivery_price = 50
         total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
 
+        # Set total amount on order
         order.total_amount = total_price_with_delivery_and_discount
         order.save()
 
-        # Clear cart items and mark cart as complete
+        # Update stock quantities and create OrderItem records
         for item in cart.items.all():
+            batch = item.batch
+            if batch.stock_quantity >= item.quantity:
+                batch.stock_quantity -= item.quantity
+                if batch.stock_quantity == 0:
+                    batch.status = False
+                batch.save()
+
+            # Create an OrderItem record
             OrderItem.objects.create(
                 order=order,
                 product=item.batch.product.name,
                 batch=item.batch,
                 quantity=item.quantity,
-                price=item.batch.price,  # Storing unit price here
-                discount=item.batch.discount  # Storing discount here if applicable
+                price=item.batch.price,
+                discount=item.batch.discount
             )
 
-        # Clear cart items
+        # Clear the cart and mark it as completed
         cart.items.all().delete()
         cart.is_completed = True
         cart.save()
 
-        # Optionally clear session or other user feedback
-        request.session['current_order_id'] = None  # Clear current order ID from session
+        # Clear the current order ID from the session
+        request.session['current_order_id'] = None
+
+        # Return success response
+        logger.info(f"Payment successful for Order ID: {order.id}")
         return JsonResponse({'success': True, 'order_id': order.id})
 
-    return JsonResponse({'success': False, 'error': 'Payment failed'}, status=400)
+    except Exception as e:
+        # Log detailed error information
+        logger.error(f"Error during payment processing: {str(e)}", exc_info=True)
+        return JsonResponse({'success': False, 'error': 'An error occurred during payment processing'}, status=500)
+
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order, Billing
