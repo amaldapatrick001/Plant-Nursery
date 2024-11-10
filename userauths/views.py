@@ -41,13 +41,19 @@ def register(request):
             email = form.cleaned_data['email']
             password1 = form.cleaned_data['password1']
 
+            # Check if email already exists in the Login table
             if Login.objects.filter(email=email).exists():
                 messages.error(request, 'This email is already registered. Please use a different email address.')
                 return render(request, 'userauths/register.html', {'form': form, 'status': 'error'})
 
             # Save the user
             user = form.save(commit=False)
-            user.user_type = UserType.objects.get(utid=2)  # Assuming UserType is correctly set
+            try:
+                user.user_type = UserType.objects.get(utid=2)  # Assuming UserType is correctly set
+            except UserType.DoesNotExist:
+                messages.error(request, 'User type not found. Please try again later.')
+                return render(request, 'userauths/register.html', {'form': form, 'status': 'error'})
+
             user.status = True
             user.save()
 
@@ -59,22 +65,25 @@ def register(request):
                 status=False  # Initially not logged in
             )
 
-            # Set the password using the model's method
+            # Set the password using the model's method (automatically hashes the password)
             user_login.set_password(password1)
             user_login.save()
 
             # Send registration email
             send_registration_email(user_login)
 
+            # Success message and redirect to the same page with success status
             messages.success(request, 'Registration successful. You can now log in.')
             return render(request, 'userauths/register.html', {'form': form, 'status': 'success'})
         else:
+            # In case of form errors, render the form with error messages
             messages.error(request, 'Registration failed. Please correct the errors below.')
             return render(request, 'userauths/register.html', {'form': form, 'status': 'error'})
     else:
         form = RegistrationForm()
 
     return render(request, 'userauths/register.html', {'form': form})
+
 
 def send_registration_email(user_login):
     """Send an email notification upon successful registration."""
@@ -94,6 +103,11 @@ def send_registration_email(user_login):
         [user_login.email],
         fail_silently=False,
     )
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views.decorators.cache import cache_control
+from purchase.models import Order
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
     if request.method == 'POST':
@@ -104,36 +118,35 @@ def login(request):
             user_login = Login.objects.get(email=email)
 
             if user_login.status:
-                messages.error(request, 'This accoYunt is already logged in from another session.')
+                messages.error(request, 'This account is already logged in from another session.')
                 return redirect('userauths:login')
 
             if user_login.check_password(password):
                 # Successful authentication
-                user_login.login()
-
-                # Set user information in session
                 request.session['user_id'] = user_login.login_id 
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
                 request.session['email'] = user_login.email  # Save email in session
                 request.session['is_authenticated'] = True
 
+                # Fetch user's orders
+                user_orders = Order.objects.filter(user_id=request.session['user_id'])
+                request.session['user_orders'] = [order.id for order in user_orders] if user_orders.exists() else []
 
                 # Redirect based on user type
                 user_type = user_login.uid.user_type_id
-                if user_type == 1:
-                    return redirect('userauths:adminindex')
-                elif user_type == 2:
-                    return redirect('userauths:index')
-                elif user_type == 3:
-                    return redirect('delivery_dashboard')
-                elif user_type == 4:
-                    return redirect('expert_dashboard')
-                else:
-                    messages.error(request, 'User type is not recognized.')
-                    return redirect('userauths:login')
+                user_type_redirects = {
+                    1: 'userauths:adminindex',
+                    2: 'userauths:index',
+                    3: 'delivery_dashboard',
+                    4: 'expert_dashboard'
+                }
+
+                return redirect(user_type_redirects.get(user_type, 'userauths:login'))
+
             else:
                 messages.error(request, 'Incorrect password.')
+
         except Login.DoesNotExist:
             messages.error(request, 'No account found with this email.')
 
@@ -486,8 +499,6 @@ def google_login(request):
     """Initiates the Google OAuth2 login flow"""
     from google_auth_oauthlib.flow import Flow
     
-    redirect_uri = request.build_absolute_uri(reverse('userauths:google_callback'))
-    
     flow = Flow.from_client_config(
         {
             "web": {
@@ -495,7 +506,7 @@ def google_login(request):
                 "client_secret": settings.CLIENT_SECRET,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [redirect_uri],
+                "redirect_uris": [request.build_absolute_uri(reverse('userauths:google_callback'))],
             }
         },
         scopes=['openid', 'email', 'profile']
@@ -514,8 +525,6 @@ def google_callback(request):
     try:
         from google_auth_oauthlib.flow import Flow
         
-        redirect_uri = request.build_absolute_uri(reverse('userauths:google_callback'))
-        
         flow = Flow.from_client_config(
             {
                 "web": {
@@ -523,7 +532,7 @@ def google_callback(request):
                     "client_secret": settings.CLIENT_SECRET,
                     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                     "token_uri": "https://oauth2.googleapis.com/token",
-                    "redirect_uris": [redirect_uri],
+                    "redirect_uris": [request.build_absolute_uri(reverse('userauths:google_callback'))],
                 }
             },
             scopes=['openid', 'email', 'profile']
