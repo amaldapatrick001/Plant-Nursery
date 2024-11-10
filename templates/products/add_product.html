@@ -187,10 +187,13 @@
             const errorMessage = document.getElementById('id_name-error');
             const nameValue = nameField.value.trim();
 
-            if (!/^[A-Z][a-zA-Z\s]{2,}$/.test(nameValue)) {
-    errorMessage.textContent = "Name must start with a capital letter and contain at least 3 characters, with spaces allowed.";
+            if (!/^[A-Z][a-zA-Z\s()]{2,}$/.test(nameValue)) {
+    errorMessage.textContent = "Name must start with a capital letter, contain at least 3 characters for each word, and may contain parentheses.";
     return false;
 }
+
+
+
 
             errorMessage.textContent = ""; // Clear the error message if valid
             return true;
