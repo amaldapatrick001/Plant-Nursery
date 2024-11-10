@@ -222,6 +222,8 @@ def load_plant_types(request):
     plant_category_id = request.GET.get('plant_category')
     plant_types = PlantType.objects.filter(category_id=plant_category_id).order_by('name')
     return JsonResponse(list(plant_types.values('id', 'name')), safe=False)
+
+
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages  # Import messages framework
@@ -252,21 +254,15 @@ def add_product(request):
     }
     return render(request, 'products/add_product.html', context)
 
-# AJAX view to fetch plant categories based on the selected plant type
 from django.http import JsonResponse
 from .models import PlantCategory
 
 def get_plant_category(request):
     plant_type_id = request.GET.get('plant_type_id')
     if plant_type_id:
-        try:
-            # Get the plant categories related to the selected plant type
-            categories = PlantCategory.objects.filter(plant_type_id=plant_type_id).values('id', 'name')
-            return JsonResponse({'categories': list(categories)}, safe=False)
-        except PlantCategory.DoesNotExist:
-            return JsonResponse({'error': 'No plant categories found'}, status=404)
-    else:
-        return JsonResponse({'error': 'No plant type selected'}, status=400)
+        categories = PlantCategory.objects.filter(plant_type_id=plant_type_id).values('id', 'name')
+        return JsonResponse({'categories': list(categories)}, safe=False)
+    return JsonResponse({'error': 'No plant type selected'}, status=400)
 
 def product_list(request):
     # Fetch all active products (status=True)
@@ -505,3 +501,39 @@ def remove_from_wishlist(request, batch_id):
     
     messages.success(request, 'Item removed from your wishlist.')
     return redirect('products:wishlist')
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from purchase.models import Cart, CartItem 
+from purchase.models import Cart, CartItem
+def wishlist_addtocart(request, batch_id):
+    # Ensure the user is logged in
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
+    # Retrieve the current user and the batch (product) from the wishlist
+    user_login = get_object_or_404(Login, login_id=request.session['user_id'])
+    batch = get_object_or_404(Batch, pk=batch_id)
+    
+    # Get or create the user's cart
+    cart, created = Cart.objects.get_or_create(user_id=request.session['user_id'], is_completed=False)
+
+    # Check if the item is already in the cart
+    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, batch=batch)
+
+    # If the item is already in the cart, update the quantity
+    if not item_created:
+        cart_item.quantity += 1
+        cart_item.save()
+        messages.success(request, f"{batch.product.name} quantity updated in your cart.")
+    else:
+        messages.success(request, f"{batch.product.name} added to your cart.")
+    
+    # Now remove the item from the wishlist
+    Wishlist.objects.filter(email=user_login, batch=batch).delete()
+
+    # Show a success message that the item was moved to the cart
+    messages.success(request, f"{batch.product.name} has been moved to your cart from the wishlist.")
+
+    # Redirect back to the wishlist page (or cart page, depending on the flow)
+    return redirect('purchase:cart_detail')  # or 'purchase:cart_detail' if you want to redirect to the cart page directly

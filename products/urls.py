@@ -24,6 +24,7 @@ from .views import (
     add_plant_category,
     plant_category_list,
     edit_plant_category,
+    wishlist_addtocart,
     wishlist_view,
 )
 
@@ -56,9 +57,9 @@ urlpatterns = [
 
     # AJAX URLs
 path('add-product/', add_product, name='add_product'),  # URL to add a product
-    path('get-plant-categories/', get_plant_category, name='get_plant_category'),  # AJAX URL to get plant categories
-    path('get-plant-categories/', get_plant_category, name='get_plant_category'),
-
+    path('get-plant-categories/', get_plant_category, name='get_plant_category'),  
+    path('add_product/', add_product, name='add_product'),
+    path('get_plant_category/', get_plant_category, name='get_plant_category'),
     path('product_list/', product_list, name='product_list'),  # Product list
 
     # Batch URLs
@@ -73,4 +74,5 @@ path('cproducts/', cproduct_list, name='cproduct_list'),
 path('wishlist/', wishlist_view, name='wishlist'),
     path('wishlist/add/<int:batch_id>/', add_to_wishlist, name='add_to_wishlist'),
     path('wishlist/remove/<int:batch_id>/', remove_from_wishlist, name='remove_from_wishlist'),
+    path('wishlist/add-to-cart/<int:batch_id>/', wishlist_addtocart, name='wishlist_addtocart'),
 ]
