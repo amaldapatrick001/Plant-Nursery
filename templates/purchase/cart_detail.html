@@ -31,7 +31,6 @@
                                     <th>Product</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
-                                   
                                     <th>Total</th>
                                     <th>Actions</th>
                                 </tr>
@@ -50,11 +49,11 @@
                                     <td class="price">Rs. {{ item.batch.price }}</td>
                                     <td class="quantity">
                                         <input type="number" name="quantities_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control text-center" style="width: 60px;">
+                                        <small class="text-muted">Available: {{ item.batch.stock_quantity }}</small> <!-- Display available stock from Batch -->
                                     </td>
-                                    
                                     <td class="total">Rs. {{ item.get_total_price_with_discount }}</td>
                                     <td>
-                                        <a href="{% url 'purchase:remove_from_cart' item.id %}" class="remove-btn">Remove</a>
+                                        <a href="{% url 'purchase:remove_from_cart' item.id %}" class="btn btn-danger btn-custom"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -80,6 +79,11 @@
                     {% if cart_items %}
                     {% endif %}
                 </div>
+                <div class="text-center">
+                    <a href="{% url 'products:cproduct_list' %}" class="btn btn-primary btn-lg btn-custom">
+                        <i class="fa fa-shopping-bag"></i> Go to Shop
+                    </a>
+                  </div>
                 <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
                     <div class="cart-total mb-3">
                         <h3>Cart Totals</h3>
@@ -116,19 +120,33 @@
 
 {% block styles %}
 <style>
-    .remove-btn {
-        background-color: #ff4c4c; /* Red background */
-        color: white; /* White text */
-        padding: 8px 12px; /* Padding */
-        border: none; /* Remove border */
-        border-radius: 5px; /* Rounded corners */
-        text-decoration: none; /* No underline */
-        font-weight: bold; /* Bold text */
-        transition: background-color 0.3s ease-in-out; /* Smooth transition */
+     .btn-custom {
+        font-size: 16px;
+        padding: 12px 30px;
+        border-radius: 50px; /* Rounded corners for a modern look */
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600; /* Slightly lighter weight for elegance */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for a lifted effect */
+        transition: all 0.3s ease; /* Smooth transition for hover effects */
+        letter-spacing: 0.5px; /* Add a slight spacing between letters */
     }
 
-    .remove-btn:hover {
-        background-color: #ff1a1a; /* Darker red on hover */
+    /* Remove button style */
+    .btn-danger {
+        background: linear-gradient(145deg, #ff6a00, #ff3f00); /* Warm, eye-catching gradient */
+        border: 2px solid #ff3f00; 
+        color: white;
+        text-align: center;
+        padding: 12px 30px;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(145deg, #ff3f00, #ff6a00);
+        transform: translateY(-4px); /* Hover lift effect */
+        box-shadow: 0 8px 16px rgba(255, 67, 41, 0.3); /* Stronger shadow on hover */
+        cursor: pointer; /* Pointer cursor on hover */
     }
 
     .cart-list .table th, 

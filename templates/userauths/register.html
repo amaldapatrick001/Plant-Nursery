@@ -135,6 +135,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div class="modal-body">
+                <strong id="messageContent"></strong>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
             </div>
@@ -254,21 +257,26 @@
 
     setPlaceholders();
 });
-
 document.addEventListener('DOMContentLoaded', function () {
-        const status = '{{ status }}';
+        const status = '{{ status }}'; // Status passed from the backend (success or error)
+        const messageContent = document.getElementById('messageContent');
 
-        if (status === 'success' || status === 'error') {
+        if (status === 'success') {
+            messageContent.textContent = 'Account created successfully! You can now log in.';
+            $('#messageModal').modal('show');
+            
+            setTimeout(function () {
+                $('#messageModal').modal('hide');
+                window.location.href = "{% url 'userauths:login' %}";  // Redirect to login page on success
+            }, 2000);  // Close after 2 seconds
+        } else if (status === 'error') {
+            messageContent.textContent = 'Registration failed. This email is already used.';
             $('#messageModal').modal('show');
 
-            $('#messageModal').on('hidden.bs.modal', function () {
-                if (status === 'success') {
-                    window.location.href = "{% url 'userauths:login' %}";  // Redirect to login page on success
-                }
-            });
+            setTimeout(function () {
+                $('#messageModal').modal('hide');
+            }, 2000);  // Close after 2 seconds
         }
     });
-
-</script>
-
+    </script>
 {% endblock %}

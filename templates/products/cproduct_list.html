@@ -438,8 +438,7 @@
                 color: #53c317; /* Change color on hover (optional) */
             }
             
-</style>
-<div class="row" id="product-list">
+</style><div class="row" id="product-list">
     {% for batch in products %}
     <div class="col-md-4 mb-4">
         <div class="product-card shadow-lg rounded-lg overflow-hidden" id="product-card-{{ batch.id }}">
@@ -448,6 +447,12 @@
                 <div class="product-image position-relative">
                     <img src="{% if batch.product.image_1 %}{{ batch.product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" 
                          alt="{{ batch.product.name }}" class="img-fluid" id="product-image-{{ batch.product.id }}">
+                    
+                    {% if batch.discount %}
+                    <div class="discount-badge position-absolute top-0 end-0 bg-danger text-white px-2 py-1">
+                        {{ batch.discount }}% Off
+                    </div>
+                    {% endif %}
                 </div>
             </a>
             {% else %}
@@ -459,11 +464,6 @@
             <div class="p-3">
                 <h5 class="text-center" id="product-name-{{ batch.id }}">{{ batch.product.name }}</h5>
                 <p class="text-center" id="product-price-{{ batch.id }}">Price: ₹{{ batch.price }}</p>
-                <p class="text-center">
-                    {% if batch.discount %}
-                        <span class="text-danger">Discount: {{ batch.discount }}% Off</span>
-                    {% endif %}
-                </p>
                 <div class="bottom-area d-flex justify-content-center py-3">
                     <a href="{% url 'products:cproduct_details' batch.product.id %}" class="btn btn-outline-primary rounded-circle" id="product-details-btn-{{ batch.id }}">
                         <i class="ion-ios-menu"></i>
@@ -477,16 +477,38 @@
                 </div>
             </div>
         </div>
-    </div>    
-        {% empty %}
-        <p>No products available.</p>
-        {% endfor %}
     </div>
+    {% empty %}
+    <p>No products available.</p>
+    {% endfor %}
+</div>
+
 </body>
 </html>
 
 <!-- Add custom styles -->
 <style>
+    /* Ensure the product card is the containing element for the discount badge */
+.product-card {
+    position: relative; /* Ensure the product card is the containing block */
+    overflow: hidden; /* Hide any overflowing content */
+}
+
+/* Discount badge styling */
+.discount-badge {
+    position: absolute;
+    top: 10px; /* Adjust the distance from the top as needed */
+    right: 10px; /* Adjust the distance from the right as needed */
+    background-color: #dc3545; /* Bootstrap's 'bg-danger' color */
+    color: white;
+    padding: 5px 10px; /* Adjust padding */
+    font-size: 0.9rem; /* Adjust font size */
+    font-weight: bold;
+    border-radius: 5px; /* Rounded corners */
+    z-index: 10; /* Ensure the badge stays above the image */
+}
+
+
     .product-card {
         border: 1px solid #ddd;
         transition: transform 0.3s ease;

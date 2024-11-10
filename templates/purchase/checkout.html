@@ -132,22 +132,7 @@
     margin: 5px 0;
 }
 
-.delete-btn {
-    display: inline-block;
-    margin-top: 10px;
-    color: #d9534f;
-    text-decoration: none;
-    font-weight: bold;
-}
 
-.delete-btn:hover {
-    color: #c9302c;
-}
-
-        
-    </style>
-    
-<style>
     /* Modal container styles */
     .modal {
         display: none; /* Hidden by default */
@@ -187,6 +172,21 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+    .delete-btn {
+    background-color: #4d9c35; /* Red background color */
+    color: #fff; /* White text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for the button */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease-in-out;   
+ /* Smooth transition on hover */
+}
+
+.delete-btn:hover {
+    background-color: #c00; /* Darker red on hover */
+}
 </style>
 
 
@@ -200,77 +200,84 @@
         </div>
       </div>
     </div>
-
-    <section class="ftco-section"><div class="row justify-content-center">
-    <div class="col-xl-7 ftco-animate">
-        {% if addresses %}
-            <h2>Select Your Billing Address</h2>
-            <form method="POST" action="{% url 'purchase:set_delivery_address' %}" id="address-form">
-                {% csrf_token %}
-                <div class="addresses-container" id="address-list">
-                    {% for billing_address in addresses %}
-                        <div class="address-card" data-address-id="{{ billing_address.id }}">
-                            <input type="radio" id="address{{ billing_address.id }}" name="selected_address"
-                                   value="{{ billing_address.id }}" required
-                                   {% if billing_address.id|stringformat:"s" == selected_address_id|stringformat:"s" %} checked {% endif %}
-                                   onchange="selectAddress({{ billing_address.id }});">
-                            <label for="address{{ billing_address.id }}">
-                                <p><strong>{{ billing_address.first_name }} {{ billing_address.last_name }}</strong></p>
-                                <p>{{ billing_address.street_address }}</p>
-                                <p>{{ billing_address.town_city }}, {{ billing_address.district }}</p>
-                                <p>{{ billing_address.postcode_zip }}</p>
-                                <p>Phone: {{ billing_address.phone }}</p>
-                                <p>Email: {{ billing_address.email }}</p>
-                            </label>
-                            <a href="{% url 'purchase:delete_address' billing_address.id %}" class="delete-btn">Delete Address</a>
+    <section class="ftco-section">
+        <div class="row justify-content-center">
+            <div class="col-xl-7 ftco-animate">
+                {% if addresses %}
+                    <h2>Select Your Billing Address</h2>
+                    <form method="POST" action="{% url 'purchase:set_delivery_address' %}" id="address-form">
+                        {% csrf_token %}
+                        <div class="addresses-container" id="address-list">
+                            {% for billing_address in addresses %}
+                                <div class="address-card" data-address-id="{{ billing_address.id }}">
+                                    <input type="radio" id="address{{ billing_address.id }}" name="selected_address"
+                                           value="{{ billing_address.id }}" required
+                                           {% if billing_address.id|stringformat:"s" == selected_address_id|stringformat:"s" %} checked {% endif %}
+                                           onchange="selectAddress({{ billing_address.id }});">
+                                    <label for="address{{ billing_address.id }}">
+                                        <p><strong>{{ billing_address.first_name }} {{ billing_address.last_name }}</strong></p>
+                                        <p>{{ billing_address.street_address }}</p>
+                                        <p>{{ billing_address.town_city }}, {{ billing_address.district }}</p>
+                                        <p>{{ billing_address.postcode_zip }}</p>
+                                        <p>Phone: {{ billing_address.phone }}</p>
+                                        <p>Email: {{ billing_address.email }}</p>
+                                    </label>
+    
+                                    <!-- Address Deletion Form -->
+                                    <form method="POST" action="{% url 'purchase:delete_address' billing_address.id %}" class="delete-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="delete-btn">
+                                            <i class="fa fa-trash"></i> <!-- Font Awesome trash icon -->
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
-            </form>
-        {% else %}
-            <p>No billing address found. Please add one before checking out.</p>
-        {% endif %}
-        
-        <button id="addAddressBtn">Add a new address</button>
-    </div>
-</div>
-
-<script>
-    function selectAddress(addressId) {
-    fetch("{% url 'purchase:set_delivery_address' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": "{{ csrf_token }}",
-        },
-        body: new URLSearchParams({
-            selected_address: addressId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.querySelectorAll('input[name="selected_address"]').forEach(radio => {
-                radio.checked = (radio.value == data.address_id);
+                    </form>
+                {% else %}
+                    <p>No billing address found. Please add one before checking out.</p>
+                {% endif %}
+                
+                <button id="addAddressBtn">Add a new address</button>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        function selectAddress(addressId) {
+            fetch("{% url 'purchase:set_delivery_address' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: new URLSearchParams({
+                    selected_address: addressId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll('input[name="selected_address"]').forEach(radio => {
+                        radio.checked = (radio.value == data.address_id);
+                    });
+                    document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
+                    document.querySelector(`.address-card[data-address-id="${data.address_id}"]`).classList.add('selected');
+    
+                    // Call the function to check if the checkout button should be enabled
+                    enableCheckoutButton();
+                } else if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
             });
-            document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
-            document.querySelector(`.address-card[data-address-id="${data.address_id}"]`).classList.add('selected');
-
-            // Call the function to check if the checkout button should be enabled
-            enableCheckoutButton();
-        } else if (data.redirect) {
-            window.location.href = data.redirect;
-        } else {
-            alert("Error: " + data.error);
         }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
-}
-
-</script>
-
+    </script>
+    
 <style>
     /* Highlight style for the selected address */
     .address-card.selected {
@@ -291,7 +298,6 @@
         </div>
         <div class="modal-body">
             <form method="POST" id="checkoutForm" action="{% url 'purchase:set_delivery_address' %}">
-
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 
@@ -350,7 +356,7 @@
                     {{ form.email.errors }}
                 </div>
                 
-                <button type="submit">Proceed to Order Summary</button>
+                <button type="submit">Save Address</button>
             </form>
         </div>
         <div class="modal-footer">
@@ -472,17 +478,20 @@
             };
         </script>
 
-        <!-- Razorpay script -->
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+    console.log("Razorpay amount:", "{{ razorpay_amount }}");
+
     var options = {
         "key": "rzp_test_DRyi6K0A68qkc4",
-        "amount": "{{ razorpay_amount }}", // Already in paise
+        "amount": "{{ total_price_with_delivery_and_discounts }}", // Use the razorpay_amount from the context
         "currency": "INR",
         "name": "Enchanted Eden Plant Nursery",
         "description": "Order Payment",
         "image": "{% static 'images/logo.png' %}",
         "handler": function (response) {
+            console.log("Razorpay Payment ID:", response.razorpay_payment_id);
+            console.log("Order ID:", "{{ order.id }}");
+
             fetch("{% url 'purchase:razorpay_checkout' %}", {
                 method: 'POST',
                 headers: {
@@ -536,6 +545,7 @@
         radio.addEventListener('change', enableCheckoutButton);
     });
 </script>
+
 </div>
 </div>
 
