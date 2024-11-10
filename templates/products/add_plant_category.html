@@ -315,7 +315,7 @@
 </section>
 
 <!-- Bootstrap Modal for Messages -->
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -336,7 +336,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <script>
     // Toggle the visibility of the Cultivation Method form
@@ -500,8 +500,8 @@
         // Validate Pit Size Height and Width (Between 5 and 50 inches)
         if (target.name === 'pit_size_height' || target.name === 'pit_size_width') {
             const pitSizeValue = parseFloat(target.value);
-            if (isNaN(pitSizeValue) || pitSizeValue < 5 || pitSizeValue > 50) {
-                document.getElementById(`${target.name}Error`).textContent = "Pit size must be between 5 and 50 inches.";
+            if (isNaN(pitSizeValue) || pitSizeValue < 5 || pitSizeValue > 100) {
+                document.getElementById(`${target.name}Error`).textContent = "Pit size must be between 5 and 100 inches.";
             } else {
                 document.getElementById(`${target.name}Error`).textContent = "";
             }
@@ -510,8 +510,8 @@
         // Validate Distance Between Plants (Between 3 and 30 inches)
         if (target.name === 'distance_between_plants') {
             const distanceValue = parseFloat(target.value);
-            if (isNaN(distanceValue) || distanceValue < 3 || distanceValue > 30) {
-                document.getElementById('distanceBetweenPlantsError').textContent = "Distance between plants must be between 3 and 30 inches.";
+            if (isNaN(distanceValue) || distanceValue < 3 || distanceValue > 1000) {
+                document.getElementById('distanceBetweenPlantsError').textContent = "Distance between plants must be between 3 and 1000 inches.";
             } else {
                 document.getElementById('distanceBetweenPlantsError').textContent = "";
             }
