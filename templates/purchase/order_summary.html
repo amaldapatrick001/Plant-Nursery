@@ -64,10 +64,7 @@
             <h3><strong>Grand Total:</strong> ₹{{ total_price_with_delivery_and_discount }}</h3>
         </div>
 
-        <!-- Download Button -->
-        <div class="text-center">
-            <a href="{% url 'purchase:download_bill' order.id %}" class="btn btn-primary download-btn">Download Bill</a>
-        </div>
+       
     </div>
 </div>
 {% endblock %}
