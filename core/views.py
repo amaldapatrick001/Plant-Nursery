@@ -3,21 +3,28 @@
 from django.shortcuts import render
 from products.models import Product
 from userauths.models import User_Reg
+from purchase.models import Order
 
 def index(request):
     return render(request, 'core/index.html')  # Rendering the core/index.html template
 
 
 def adminindex(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     # Count the total number of products
     product_count = Product.objects.count()
     user_count = User_Reg.objects.count()
+    order_count = Order.objects.count()
 
 
     # Pass the counts to the template
     context = {
         'product_count': product_count,
         'user_count': user_count,
+        'order_count':order_count,
     }
 
     # Pass context to the template
