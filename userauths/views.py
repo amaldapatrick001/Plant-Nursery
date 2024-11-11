@@ -291,7 +291,7 @@ class adminindex(TemplateView):
         context['user_count_with_uid_2'] = User_Reg.objects.filter(user_type=2).count()
         
         # Get the total count of users (with fallback to 0 if no data exists)
-        context['user_count'] = User_Reg.objects.count() if User_Reg.objects.exists() else 0
+        context['order_count'] = Order.objects.count() if Order.objects.exists() else 0
         
         # Get the total count of products (assuming Product model is defined)
         context['product_count'] = Product.objects.count() if Product.objects.exists() else 0

@@ -389,21 +389,20 @@ def order_history(request):
 
 
 
-#admin 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.db.models import Prefetch
-from .models import Order, OrderItem  # Ensure Order and OrderItem are imported
-from userauths.models import User_Reg
+# Function to ensure the user is logged in
 
+# View Orders
 def view_orders(request):
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
     # Prefetch related `OrderItem` data for each `Order`
     orders = Order.objects.select_related('user').prefetch_related('order_items').all()
-    
+
     return render(request, 'purchase/view_orders.html', {'orders': orders})
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Order
 
 # Update Order Status
 def update_order_status(request, order_id):
@@ -414,41 +413,58 @@ def update_order_status(request, order_id):
 
     if request.method == 'POST':
         new_status = request.POST.get('status')
-        order.status = new_status
-        order.save()
-        messages.success(request, 'Order status updated successfully.')
-        return redirect('purchase:view_orders')
+        if new_status in dict(Order.STATUS_CHOICES):  # Ensure the status is valid
+            order.status = new_status
+            order.save()
+            messages.success(request, 'Order status updated successfully.')
+        else:
+            messages.error(request, 'Invalid status selected.')
+
+        return redirect('purchase:view_orders')  # Redirect to the list of orders
 
     return render(request, 'purchase/update_order_status.html', {'order': order})
-from django.http import JsonResponse
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Order, OrderItem, Login
 
 def get_order_details(request, order_id):
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
     order = get_object_or_404(Order, id=order_id)
-    order_items = order.order_items.all().select_related('product')  # Adjust as necessary
+    order_items = order.order_items.select_related('batch').all()
+
+    # Accessing email from the Login table, using 'uid' field to reference User_Reg
+    login_data = get_object_or_404(Login, uid=order.user)  # Use 'uid' to reference User_Reg in Login
 
     items = [
         {
-            'product_name': item.product.name,  # Adjust this according to your Product model
+            'product_name': item.product,
             'quantity': item.quantity,
-            'total_price': item.get_total_price_with_discount  # Ensure this method is defined in your OrderItem model
+            'total_price': item.get_total_price_with_discount()
         }
         for item in order_items
     ]
 
-    order_data = {
-        'order_id': order.id,
-        'customer_name': f"{order.user.first_name} {order.user.last_name}",
-        'customer_email': order.user.email,
-        'order_date': order.order_date.strftime("%Y-%m-%d %H:%M"),
-        'total_amount': order.total_amount,
-        'status': order.status,
-        'items': items
+    # Passing order data to the template
+    context = {
+        'order': order,
+        'order_items': items,
+        'customer_email': login_data.email,  # Get email from the Login table
+        'delivery_address': {
+            'first_name': order.billing.first_name,
+            'last_name': order.billing.last_name,
+            'street_address': order.billing.street_address,
+            'town_city': order.billing.town_city,
+            'district': order.billing.district,
+            'postcode_zip': order.billing.postcode_zip,
+            'phone': order.billing.phone,
+            'email': order.billing.email,
+        }
     }
 
-    return JsonResponse(order_data)
+    return render(request, 'purchase/order_details.html', context)
+
 
 from django.shortcuts import render
 from django.db.models import Sum, Count
@@ -569,16 +585,6 @@ def reports(request):
 
     return render(request, 'purchase/reports.html', context)
 
-
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
-from datetime import datetime, timedelta
-from django.utils.dateparse import parse_date
-from .models import Order, OrderItem
-
-
 def generate_report(request):
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
@@ -604,11 +610,10 @@ def generate_report(request):
         date_from = parse_date(start_date)
         date_to = parse_date(end_date)
     else:
-        # Default to the last 30 days if no valid filter is selected
         date_from = today - timedelta(days=30)
         date_to = today
 
-    # Fetch orders and order items data
+    # Fetch orders and order items data based on date range
     orders = Order.objects.filter(order_date__range=(date_from, date_to))
     order_items = OrderItem.objects.filter(order__order_date__range=(date_from, date_to))
 
@@ -620,18 +625,10 @@ def generate_report(request):
         'end_date': end_date,
     }
 
-    # Check if PDF download is requested
-    if request.GET.get('download_pdf'):
-        html = render_to_string('purchase/generate_report.html', context)
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="order_report.pdf"'
-        pisa_status = pisa.CreatePDF(html, dest=response)
-        if pisa_status.err:
-            return HttpResponse('Error generating PDF')
-        return response
-
-    # Render HTML view if not downloading PDF
+    # Standard page rendering for non-AJAX requests
     return render(request, 'purchase/genetate_repaort.html', context)
+
+
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponse
