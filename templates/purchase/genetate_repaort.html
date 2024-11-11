@@ -4,8 +4,29 @@
 <div class="container my-5">
     <h2 class="text-center mb-4">Order Details Report</h2>
 
-    <div class="mb-4">
-        <h4>Date Range: {{ start_date|default:date_filter }} to {{ end_date|default:date_filter }}</h4>
+    <div class="card shadow-sm p-4 mb-4">
+        <form id="report-form" method="GET" action="{% url 'purchase:generate_report' %}">
+            <div class="form-group mb-3">
+                <label for="date_filter" class="font-weight-bold">Select Date Filter:</label>
+                <select id="date_filter" name="date_filter" class="form-select">
+                    <option value="30_days" {% if date_filter == '30_days' %}selected{% endif %}>Last 30 Days</option>
+                    <option value="past_week" {% if date_filter == 'past_week' %}selected{% endif %}>Past Week</option>
+                    <option value="past_month" {% if date_filter == 'past_month' %}selected{% endif %}>Past Month</option>
+                    <option value="custom" {% if date_filter == 'custom' %}selected{% endif %}>Custom Range</option>
+                </select>
+            </div>
+            
+            <div id="custom-date-range" class="row g-2" style="display: {% if date_filter == 'custom' %}block{% else %}none{% endif %};">
+                <div class="col-md-6">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Order Details Table -->
@@ -23,15 +44,15 @@
                     <th scope="col">Delivery Date</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="order-details-tbody">
                 {% for order in orders %}
                     <tr>
                         <td>{{ order.id }}</td>
-                        <td>{{ order.user.email }}</td>
+                        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
                         <td>{{ order.order_date }}</td>
                         <td>{{ order.status }}</td>
                         <td>{{ order.payment_status }}</td>
-                        <td>${{ order.total_amount }}</td>
+                        <td>Rs. {{ order.total_amount }}</td>
                         <td>{{ order.delivery_date|default:"Not yet delivered" }}</td>
                     </tr>
                 {% empty %}
@@ -57,15 +78,15 @@
                     <th scope="col">Total Price with Discount</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="order-items-tbody">
                 {% for item in order_items %}
                     <tr>
                         <td>{{ item.order.id }}</td>
                         <td>{{ item.product }}</td>
                         <td>{{ item.quantity }}</td>
-                        <td>${{ item.price }}</td>
+                        <td>Rs. {{ item.price }}</td>
                         <td>{{ item.discount }}</td>
-                        <td>${{ item.get_total_price_with_discount }}</td>
+                        <td>Rs. {{ item.get_total_price_with_discount }}</td>
                     </tr>
                 {% empty %}
                     <tr>
@@ -81,4 +102,22 @@
         <a href="{% url 'purchase:generate_order_pdf' %}?date_filter={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-primary">Download PDF</a>
     </div>
 </div>
+
+<script>
+    document.getElementById('date_filter').addEventListener('change', function() {
+        const customDateRange = document.getElementById('custom-date-range');
+        customDateRange.style.display = this.value === 'custom' ? 'block' : 'none';
+        if (this.value !== 'custom') {
+            document.getElementById('report-form').submit();
+        }
+    });
+
+    document.getElementById('start_date').addEventListener('change', function() {
+        document.getElementById('report-form').submit();
+    });
+
+    document.getElementById('end_date').addEventListener('change', function() {
+        document.getElementById('report-form').submit();
+    });
+</script>
 {% endblock %}

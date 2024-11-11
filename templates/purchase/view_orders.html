@@ -4,31 +4,15 @@
 <h2 class="text-center my-4">Order Management</h2>
 
 <div class="container mt-4">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control custom-search" placeholder="Search by Order ID or Customer Name" onkeyup="filterOrders()">
-        </div>
-        <div class="col-md-6 text-end">
-            <select id="statusFilter" class="form-select custom-select" onchange="filterOrders()">
-                <option value="">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
-            </select>
-        </div>
-    </div>
-
     <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover" id="ordersTable">
+        <table class="table table-bordered table-striped table-hover">
             <thead class="table-light">
                 <tr>
-                    <th onclick="sortTable(0)" style="cursor: pointer;">Order ID</th>
-                    <th onclick="sortTable(1)" style="cursor: pointer;">Customer Name</th>
-                    <th onclick="sortTable(2)" style="cursor: pointer;">Order Date</th>
-                    <th onclick="sortTable(3)" style="cursor: pointer;">Order Status</th>
-                    <th onclick="sortTable(4)" style="cursor: pointer;">Total Order Value</th>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Order Status</th>
+                    <th>Total Order Value</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -39,11 +23,9 @@
                     <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
                     <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
                     <td>{{ order.status }}</td>
-                    <td>${{ order.total_amount }}</td>
+                    <td>Rs. {{ order.total_amount }}</td>
                     <td>
-                        <button type="button" class="btn btn-info btn-sm" onclick="fetchOrderDetails({{ order.id }})" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
-                            View Details
-                        </button>
+                        <a href="{% url 'purchase:view_order_details' order_id=order.id %}" class="btn btn-warning btn-sm">View details</a>
                     </td>
                 </tr>
                 {% empty %}
@@ -56,112 +38,10 @@
     </div>
 </div>
 
-<!-- Modal Structure for Order Details -->
-<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="loadingIndicator" style="display: none;" class="text-center">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                <div id="orderDetailsContent" style="display: none;">
-                    <h5>Customer Information:</h5>
-                    <p id="customerName"></p>
-                    <p id="customerEmail"></p>
-                    <p id="orderDate"></p>
-                    <p id="orderStatus"></p>
-                    <h5>Products Ordered:</h5>
-                    <ul id="orderedItemsList" class="list-group"></ul>
-                    <p><strong>Total Amount: $<span id="totalAmount"></span></strong></p>
-                </div>
-                <div id="errorMessage" style="color: red; display: none;"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap CSS -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
-<style>
-    /* Custom styles for search bar and dropdown */
-    .custom-search {
-        border: 2px solid ; /* Primary color border */
-        border-radius: 5px; /* Slightly rounded corners */
-        padding: 10px; /* Padding for a better look */
-        transition: border-color 0.3s; /* Smooth transition on focus */
-    }
-
-    .custom-search:focus {
-        border-color: #0056b3; /* Darker blue on focus */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
-    }
-
-    .custom-select {
-        border: 2px solid ; /* Primary color border */
-        border-radius: 5px; /* Slightly rounded corners */
-        transition: border-color 0.3s; /* Smooth transition on focus */
-    }
-
-    .custom-select:focus {
-        border-color: #0056b3; /* Darker blue on focus */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
-    }
-</style>
 
 <script>
-    function fetchOrderDetails(orderId) {
-        // Show loading indicator
-        $('#loadingIndicator').show();
-        $('#orderDetailsContent').hide();
-        $('#errorMessage').hide();
 
-        $.ajax({
-            url: '/your-order-details-endpoint/' + orderId + '/', // Adjust the URL accordingly
-            method: 'GET',
-            success: function(data) {
-                // Hide loading indicator
-                $('#loadingIndicator').hide();
-                $('#orderDetailsContent').show();
 
-                // Populate modal with data
-                $('#orderDetailsModalLabel').text('Order Details - Order ID: ' + data.order_id);
-                $('#customerName').text(data.customer_name);
-                $('#customerEmail').text(data.customer_email);
-                $('#orderDate').text('Order Date: ' + data.order_date);
-                $('#orderStatus').text('Status: ' + data.status);
-                $('#totalAmount').text(data.total_amount);
-                
-                // Clear previous items
-                $('#orderedItemsList').empty();
-                data.items.forEach(item => {
-                    $('#orderedItemsList').append('<li class="list-group-item">' + item.product_name + ' - Quantity: ' + item.quantity + ' - Price: $' + item.total_price + '</li>');
-                });
-
-                // Show the modal
-                $('#orderDetailsModal').modal('show');
-            },
-            error: function(xhr, status, error) {
-                $('#loadingIndicator').hide();
-                $('#errorMessage').text('An error occurred while fetching order details: ' + xhr.responseText).show();
-            }
-        });
-    }
 
     function filterOrders() {
         const searchInput = document.getElementById('searchInput').value.toLowerCase();

@@ -38,8 +38,8 @@
                 <tr>
                     <td>{{ item.product }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>${{ item.price }}</td>
-                    <td>${{ item.get_total_price_with_discount }}</td>
+                    <td>Rs. {{ item.price }}</td>
+                    <td>Rs. {{ item.get_total_price_with_discount }}</td>
                 </tr>
             {% empty %}
                 <tr>

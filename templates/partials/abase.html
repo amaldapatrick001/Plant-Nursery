@@ -6,97 +6,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enchanted Eden - Admin Panel</title>
+    
+    <!-- Bootstrap and Font Awesome -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <!-- Custom Styles -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #eef2f7;
         }
-
         #sidebar-wrapper {
             min-height: 100vh;
             background: linear-gradient(135deg, #6b8e23, #82ae46);
             color: #fff;
         }
-
         #sidebar-wrapper .list-group-item {
             background-color: transparent;
             color: #fff;
             border: none;
             transition: all 0.3s ease;
         }
-
         #sidebar-wrapper .list-group-item:hover {
             background-color: #558b2f;
             color: #fff;
         }
-
         .dropdown-menu {
-            width: 250px; /* Set a fixed width */
-            height: auto; /* Ensure height adjusts based on content */
+            width: 250px;
             background-color: #82ae46;
             border: none;
             border-radius: 0.5rem;
             margin-top: 0.5rem;
         }
-
         .dropdown-item {
             color: #fff;
+            padding: 10px;
+            font-size: 1rem;
             transition: background-color 0.2s ease;
-            padding: 10px; /* Adjust padding for uniform height */
-            font-size: 1rem; /* Consistent font size */
         }
-
         .dropdown-item:hover {
             background-color: #558b2f;
-            color: #fff;
         }
-
         #page-content-wrapper {
             width: 100vw;
             padding: 30px;
             background-color: #f4f6f9;
         }
-
         .navbar {
             padding-left: 0;
             background-color: #ffffff;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
         .navbar h2 {
             color: #82ae46;
         }
-
         .navbar-nav .nav-link {
             color: #82ae46;
         }
-
         .navbar-nav .nav-link:hover {
             color: #558b2f;
         }
-
         .card {
             border: none;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
         }
-
         .card:hover {
             transform: translateY(-5px);
         }
-
         .card-title {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
-
         .icon {
             font-size: 3rem;
         }
-
         .sidebar-heading {
             font-size: 1.7rem;
             font-weight: bold;
@@ -104,19 +90,12 @@
             background-color: #6b8e23;
             padding: 15px;
         }
-
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(160, 193, 115, 0.5);
-        }
-
         .dropdown-toggle::after {
             color: #fff;
         }
-
         @media (max-width: 768px) {
             .dropdown-menu {
-                width: 100%; /* Adjust width for smaller screens */
+                width: 100%;
             }
         }
     </style>
@@ -210,7 +189,7 @@
                         <i class="fas fa-users mr-2"></i> Manage Users
                     </a>
                     <div class="dropdown-menu" aria-labelledby="usersDropdown">
-                        <a class="dropdown-item" href="{% url 'userauths:register' %}">Add User</a>
+                        <!-- <a class="dropdown-item" href="{% url 'userauths:register' %}">Add User</a> -->
                         <a class="dropdown-item" href="{% url 'userauths:user_details' %}">View Users</a>
                         <a class="dropdown-item" href="{% url 'userauths:user_details_view' %}">Deleted Users</a>
                     </div>
@@ -224,7 +203,6 @@
     </a>
     <div class="dropdown-menu" aria-labelledby="ordersDropdown">
         <a class="dropdown-item" href="{% url 'purchase:view_orders' %}">View Orders</a>
-        <a class="dropdown-item" href="">Order Details</a>
     </div>
 </div>
 
