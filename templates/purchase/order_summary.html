@@ -30,7 +30,7 @@
                 <p><strong>Estimated Delivery Date:</strong> {{ order.delivery_date|date:"F j, Y" }}</p>
             {% endif %}
             <p><strong>Payment Status:</strong> <span class="badge badge-success">{{ order.payment_status }}</span></p>
-            <p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+            <p><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
         </div>
 
         <!-- Cart Items -->
@@ -40,8 +40,8 @@
                 <tr>
                     <th>Item</th>
                     <th>Quantity</th>
-                    <th>Price (₹)</th>
-                    <th>Total (₹)</th>
+                    <th>Price (Rs)</th>
+                    <th>Total (Rs)</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,8 +49,8 @@
                     <tr>
                         <td>{{ item.product }}</td>
                         <td>{{ item.quantity }}</td>
-                        <td>₹{{ item.price }}</td>
-                        <td>₹{{ item.get_total_price_with_discount }}</td>
+                        <td>Rs. {{ item.price }}</td>
+                        <td>Rs. {{ item.get_total_price_with_discount }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -58,13 +58,16 @@
 
         <!-- Summary Section -->
         <div class="summary mb-4">
-            <p><strong>Subtotal:</strong> ₹{{ actual_subtotal }}</p>
-            <p><strong>Discount:</strong> ₹{{ total_discount }}</p>
-            <p><strong>Delivery Fee:</strong> ₹{{ delivery_price }}</p>
-            <h3><strong>Grand Total:</strong> ₹{{ total_price_with_delivery_and_discount }}</h3>
+            <p><strong>Subtotal:</strong> Rs. {{ actual_subtotal }}</p>
+            <p><strong>Discount:</strong> Rs. {{ total_discount }}</p>
+            <p><strong>Delivery Fee:</strong> Rs. {{ delivery_price }}</p>
+            <h3><strong>Grand Total:</strong> Rs. {{ total_price_with_delivery_and_discount }}</h3>
         </div>
 
-       
+        <!-- Download Button -->
+        <!-- <div class="text-center">
+            <a href="{% url 'purchase:download_bill' order.id %}" class="btn btn-primary download-btn">Download Bill</a>
+        </div> -->
     </div>
 </div>
 {% endblock %}
