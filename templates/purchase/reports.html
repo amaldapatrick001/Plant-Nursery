@@ -53,7 +53,7 @@
             {% for product in purchased_products %}
                 <li class="list-group-item d-flex justify-content-between">
                     <span>{{ product.product }}</span>
-                    <span>Quantity: {{ product.total_quantity }}, Total: ${{ product.total_spent }}</span>
+                    <span>Quantity: {{ product.total_quantity }}, Total: Rs. {{ product.total_spent }}</span>
                 </li>
             {% endfor %}
         </ul>
@@ -82,7 +82,7 @@
             {% for product in top_trending_products %}
                 <li class="list-group-item d-flex justify-content-between">
                     <span>{{ product.product }}</span>
-                    <span>Quantity: {{ product.total_quantity }}, Total: ${{ product.total_spent }}</span>
+                    <span>Quantity: {{ product.total_quantity }}, Total: Rs. {{ product.total_spent }}</span>
                 </li>
             {% endfor %}
         </ul>
