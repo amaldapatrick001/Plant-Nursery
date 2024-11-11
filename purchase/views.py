@@ -171,6 +171,7 @@ class CheckoutView(View):
         })
 
 
+from django.db.models import Q
 
 @require_POST
 def set_delivery_address(request):
@@ -181,10 +182,9 @@ def set_delivery_address(request):
     address_id = request.POST.get('selected_address')
     form = CheckoutForm(request.POST)
 
-    if form.is_valid():  # Check if form is valid
-        # Create a new Billing entry
+    if form.is_valid():  # Check if the form is valid
         billing_address = form.save(commit=False)
-        billing_address.user_id = user_id  # Assign user to this address
+        billing_address.user_id = user_id  # Assign the user to this address
         billing_address.save()
 
     if not address_id:
@@ -192,23 +192,38 @@ def set_delivery_address(request):
         return redirect('purchase:checkout')
 
     billing_address = get_object_or_404(Billing, id=address_id, user_id=user_id)
-    cart = get_object_or_404(Cart, user_id=user_id, is_completed=False)
-    total_amount = calculate_cart_total(cart)
-
-    # Always create a new order for each checkout session
-    order = Order.objects.create(
+    
+    # Check for an existing unpaid order
+    existing_order = Order.objects.filter(
         user_id=user_id,
-        billing=billing_address,
-        cart=cart,
-        total_amount=total_amount,
-    )
+        payment_status="Pending"
+    ).first()
 
-    # Store the order ID in the session so it can be used later in the payment processing
-    request.session['current_order_id'] = order.id
+    if existing_order:
+        # Update the existing order with the new billing address
+        existing_order.billing = billing_address
+        existing_order.total_amount = calculate_cart_total(existing_order.cart)
+        existing_order.save()
+        messages.success(request, "Order updated successfully.")
+    else:
+        # Create a new order if no unpaid order exists
+        cart = get_object_or_404(Cart, user_id=user_id, is_completed=False)
+        total_amount = calculate_cart_total(cart)
 
+        order = Order.objects.create(
+            user_id=user_id,
+            billing=billing_address,
+            cart=cart,
+            total_amount=total_amount,
+            payment_status="Pending",
+        )
+        request.session['current_order_id'] = order.id
+        messages.success(request, "New order created successfully.")
+
+    # Store the selected address ID in the session
     request.session['selected_address_id'] = billing_address.id
-    messages.success(request, "Delivery address set successfully.")
     return redirect(reverse('purchase:checkout'))
+
 
 
 @require_POST
@@ -221,11 +236,7 @@ def delete_address(request, address_id):
     address.delete()
     messages.success(request, "Address deleted successfully.")
     return redirect('purchase:checkout')
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from datetime import timedelta
-import json
+
 import logging
 
 # Create a logger for this module
@@ -257,7 +268,7 @@ def razorpay_checkout(request):
         order = get_object_or_404(Order, id=order_id, user_id=user_id)
         
         # Ensure order belongs to the correct user
-        if order.user.id != user_id:
+        if order.user.uid != user_id:
             logger.error(f"Order ID mismatch: Order {order_id} does not belong to user {user_id}.")
             return JsonResponse({'success': False, 'error': 'Order not found for the given user.'}, status=404)
 
@@ -292,13 +303,14 @@ def razorpay_checkout(request):
 
             # Create an OrderItem record
             OrderItem.objects.create(
-                order=order,
-                product=item.batch.product.name,
-                batch=item.batch,
-                quantity=item.quantity,
-                price=item.batch.price,
-                discount=item.batch.discount
-            )
+    order=order,
+    product=item.batch.product.name,
+    batch=item.batch,
+    quantity=item.quantity,
+    price=item.batch.price,
+    discount=item.batch.discount if item.batch.discount is not None else 0.0
+)
+
 
         # Clear the cart and mark it as completed
         cart.items.all().delete()
@@ -385,6 +397,9 @@ from .models import Order, OrderItem  # Ensure Order and OrderItem are imported
 from userauths.models import User_Reg
 
 def view_orders(request):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     # Prefetch related `OrderItem` data for each `Order`
     orders = Order.objects.select_related('user').prefetch_related('order_items').all()
     
@@ -392,6 +407,9 @@ def view_orders(request):
 
 # Update Order Status
 def update_order_status(request, order_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     order = get_object_or_404(Order, id=order_id)
 
     if request.method == 'POST':
@@ -405,6 +423,9 @@ def update_order_status(request, order_id):
 from django.http import JsonResponse
 
 def get_order_details(request, order_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     order = get_object_or_404(Order, id=order_id)
     order_items = order.order_items.all().select_related('product')  # Adjust as necessary
 
@@ -449,6 +470,9 @@ def decimal_to_float(value):
     """Convert Decimal to float for JSON serialization."""
     return float(value) if value else 0.0
 def reports(request):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     # Get date filters from request
     date_filter = request.GET.get("date_filter", "30_days")
     start_date = request.GET.get("start_date")
@@ -556,6 +580,9 @@ from .models import Order, OrderItem
 
 
 def generate_report(request):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     # Get date filters from request
     date_filter = request.GET.get("date_filter", "30_days")
     start_date = request.GET.get("start_date")
@@ -613,6 +640,9 @@ from .models import OrderItem
 from datetime import datetime, timedelta
 
 def generate_order_pdf(request):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     date_filter = request.GET.get("date_filter", "30_days")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
@@ -662,6 +692,9 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, 
 from io import BytesIO
 
 def download_bill(request, order_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
     # Ensure the user is logged in
     user_id = request.session.get('user_id')
     if not user_id:

@@ -281,6 +281,7 @@ from products.models import Product  # Import Product from the 'product' app
 
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class adminindex(TemplateView):
+    
     template_name = "core/adminindex.html"
     
     def get_context_data(self, **kwargs):
@@ -381,6 +382,10 @@ from django.shortcuts import render, get_object_or_404
 from .models import User_Reg, UserType, Login
 
 def user_details(request):
+    
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
     # Fetch users with user_type 2 (customers) and related login and usertype data
     users = User_Reg.objects.filter(user_type__utid=2).select_related('user_type').prefetch_related('login_set')
 
@@ -403,6 +408,10 @@ def user_details(request):
 
 
 def user_details_view(request):
+    
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
     # Fetch active and deleted users with user_type=2 (customers) and related login data
     active_users = User_Reg.objects.filter(status=True, user_type__utid=2).prefetch_related('login_set')
     deleted_users = User_Reg.objects.filter(status=False, user_type__utid=2).prefetch_related('login_set')
@@ -458,6 +467,10 @@ def send_activation_email(user, action):
 
 
 def delete_user_view(request, uid):
+    
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
     # Soft delete user by setting status to False
     user = get_object_or_404(User_Reg, uid=uid)
     user.status = False
@@ -469,6 +482,10 @@ def delete_user_view(request, uid):
     return redirect('userauths:user_details_view')  # Redirect back to the user details page
 
 def undo_delete_view(request, uid):
+    
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
     # Restore user by setting status to True
     user = get_object_or_404(User_Reg, uid=uid)
     user.status = True

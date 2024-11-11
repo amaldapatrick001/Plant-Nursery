@@ -126,7 +126,7 @@ class OrderItem(models.Model):
     batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True)  # Link to the specific batch
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Store price at the time of order
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)  # Discount at time of order
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, null=True, blank=True)
 
     def __str__(self):
         return f"{self.product} - Quantity: {self.quantity} - Price: {self.price}"
