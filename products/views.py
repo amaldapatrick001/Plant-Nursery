@@ -6,11 +6,20 @@ from .forms import BatchForm, CategoryForm, CultivationMethodForm, PlantCategory
 
 # View to list only active categories
 def category_list(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
+    
     active_categories = Category.objects.filter(status=True)
     return render(request, 'products/category_list.html', {'categories': active_categories})
 
 # View to list all categories (both active and inactive)
 def category_update(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     categories = Category.objects.all().order_by('-status')  # Show active categories on top
     return render(request, 'products/category_update.html', {'categories': categories})
 from django.shortcuts import render, redirect
@@ -20,6 +29,10 @@ from .models import Category  # Make sure to import the Category model
 
 # View to add a new category (status set to active by default)
 def add_category(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -38,6 +51,10 @@ def add_category(request):
 
 # View to toggle category status (activate/deactivate)
 def update_category_status(request, category_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     category = get_object_or_404(Category, id=category_id)
     category.status = not category.status  # Toggle the status
     category.save()
@@ -45,6 +62,10 @@ def update_category_status(request, category_id):
     return redirect('products:category-update')
 
 def edit_category(request, category_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     category = get_object_or_404(Category, id=category_id)
     
     if request.method == 'POST':
@@ -57,6 +78,10 @@ def edit_category(request, category_id):
 
 # View to list only active plant types
 def plant_type_list(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     active_plant_types = PlantType.objects.filter(status=True)
     return render(request, 'products/plant_type_list.html', {'plant_types': active_plant_types})
 from django.shortcuts import render, redirect
@@ -66,6 +91,10 @@ from .models import Category
 
 # View to add a new plant type (status set to active by default)
 def add_plant_type(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     categories = Category.objects.filter(is_plant=True)
     
     if request.method == 'POST':
@@ -89,10 +118,18 @@ def add_plant_type(request):
 
 
 def plant_type_update(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     plant_types = PlantType.objects.all().order_by('-status')  # Show active plant types on top
     return render(request, 'products/plant_type_update.html', {'plant_types': plant_types})
 
 def update_plant_type_status(request, plant_type_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     plant_type = get_object_or_404(PlantType, id=plant_type_id)
     plant_type.status = not plant_type.status  # Toggle the status
     plant_type.save()
@@ -100,6 +137,10 @@ def update_plant_type_status(request, plant_type_id):
     return redirect('products:plant-type-update')
 
 def edit_plant_type(request, plant_type_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     plant_type = get_object_or_404(PlantType, id=plant_type_id)
     
     if request.method == 'POST':
@@ -113,6 +154,10 @@ def edit_plant_type(request, plant_type_id):
 from django.db import IntegrityError
 
 def add_plant_category(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     if request.method == 'POST':
         form1 = PlantCategoryForm(request.POST)
         form2 = CultivationMethodForm(request.POST)
@@ -142,6 +187,10 @@ from django.shortcuts import render
 from .models import PlantCategory
 
 def plant_category_list(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     # Fetch all Plant Categories with status=True
     plant_categories = PlantCategory.objects.filter(status=True)  
     return render(request, 'products/plant_category_list.html', {'plant_categories': plant_categories})
@@ -151,6 +200,10 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import PlantCategory, CultivationMethod
 def get_cultivation_methods(request, category_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     cultivation_methods = CultivationMethod.objects.filter(plant_category_id=category_id)
 
     if not cultivation_methods.exists():
@@ -178,6 +231,10 @@ def get_cultivation_methods(request, category_id):
 
 # View to update PlantCategory
 def edit_plant_category(request, category_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     category = get_object_or_404(PlantCategory, id=category_id)
     if request.method == 'POST':
         form = PlantCategoryForm(request.POST, instance=category)
@@ -192,6 +249,10 @@ def edit_plant_category(request, category_id):
 
 # View to update CultivationMethod
 def edit_cultivation_method(request, category_id):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     category = get_object_or_404(PlantCategory, id=category_id)
     try:
         cultivation_method = category.cultivation_methods.get()
@@ -232,6 +293,10 @@ from .models import PlantCategory, PlantType, Product  # Make sure to import the
 
 # View to handle adding a product
 def add_product(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     plant_types = PlantType.objects.all()  # Fetch all plant types
     
     if request.method == 'POST':
@@ -258,6 +323,7 @@ from django.http import JsonResponse
 from .models import PlantCategory
 
 def get_plant_category(request):
+    
     plant_type_id = request.GET.get('plant_type_id')
     if plant_type_id:
         categories = PlantCategory.objects.filter(plant_type_id=plant_type_id).values('id', 'name')
@@ -265,6 +331,10 @@ def get_plant_category(request):
     return JsonResponse({'error': 'No plant type selected'}, status=400)
 
 def product_list(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     # Fetch all active products (status=True)
     active_products = Product.objects.filter(status=True).select_related('plant_category', 'plant_type')
     
@@ -279,6 +349,10 @@ def product_list(request):
 
 
 def add_batch(request):
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to add items to the cart.')
+        return redirect('userauths:login')
+
     if request.method == "POST":
         form = BatchForm(request.POST)
         if form.is_valid():
@@ -395,6 +469,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Product, Batch, CultivationMethod
 
 def cproduct_details(request, product_id):
+
     # Fetch the product details
     product = get_object_or_404(Product, id=product_id)
     
