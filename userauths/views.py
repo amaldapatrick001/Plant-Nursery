@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -33,6 +36,9 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.conf import settings
 from django.db import transaction
+
+from google_auth_oauthlib.flow import Flow
+from django.urls import reverse
 
 def register(request):
     if request.method == 'POST':
@@ -122,11 +128,17 @@ def login(request):
                 return redirect('userauths:login')
 
             if user_login.check_password(password):
-                # Successful authentication
+                # Update login status and timestamps
+                user_login.status = True
+                user_login.last_login = timezone.now()
+                user_login.login_count += 1
+                user_login.save()
+
+                # Set session data
                 request.session['user_id'] = user_login.login_id 
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
-                request.session['email'] = user_login.email  # Save email in session
+                request.session['email'] = user_login.email
                 request.session['is_authenticated'] = True
 
                 # Fetch user's orders
@@ -143,7 +155,6 @@ def login(request):
                 }
 
                 return redirect(user_type_redirects.get(user_type, 'userauths:login'))
-
             else:
                 messages.error(request, 'Incorrect password.')
 
@@ -184,6 +195,7 @@ def logout(request):
             )
             login_entry = Login.objects.get(uid=user_reg)
 
+            
             # Update last_logout and status
             login_entry.logout()  # This sets status to False and updates last_logout
             messages.success(request, 'You have been successfully logged out.')
@@ -514,28 +526,41 @@ def custom_logout(request):
 
 def google_login(request):
     """Initiates the Google OAuth2 login flow"""
-    from google_auth_oauthlib.flow import Flow
-    
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
-                "client_secret": settings.CLIENT_SECRET,
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [request.build_absolute_uri(reverse('userauths:google_callback'))],
-            }
-        },
-        scopes=['openid', 'email', 'profile']
-    )
-    
-    authorization_url, state = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true'
-    )
-    
-    request.session['google_oauth_state'] = state
-    return redirect(authorization_url)
+    try:
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+                    "client_secret": settings.CLIENT_SECRET,
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "redirect_uris": [settings.GOOGLE_OAUTH_REDIRECT_URI],
+                }
+            },
+            # Update scopes to match exactly what Google is returning
+            scopes=[
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/userinfo.profile',
+                'openid'
+            ]
+        )
+        
+        flow.redirect_uri = settings.GOOGLE_OAUTH_REDIRECT_URI
+        
+        authorization_url, state = flow.authorization_url(
+            access_type='offline',
+            include_granted_scopes='true',
+            prompt='consent'
+        )
+        
+        # Store state in session
+        request.session['google_oauth_state'] = state
+        return redirect(authorization_url)
+        
+    except Exception as e:
+        logger.error(f"Error initiating Google login: {str(e)}")
+        messages.error(request, 'Failed to initiate Google login. Please try again.')
+        return redirect('userauths:login')
 
 def google_callback(request):
     """Handles the Google OAuth2 callback"""
@@ -549,77 +574,90 @@ def google_callback(request):
                     "client_secret": settings.CLIENT_SECRET,
                     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                     "token_uri": "https://oauth2.googleapis.com/token",
-                    "redirect_uris": [request.build_absolute_uri(reverse('userauths:google_callback'))],
+                    "redirect_uris": [settings.GOOGLE_OAUTH_REDIRECT_URI],
                 }
             },
-            scopes=['openid', 'email', 'profile']
+            scopes=[
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/userinfo.profile',
+                'openid'
+            ]
         )
         
-        flow.fetch_token(
-            authorization_response=request.build_absolute_uri(),
-            state=request.session['google_oauth_state']
-        )
+        flow.redirect_uri = settings.GOOGLE_OAUTH_REDIRECT_URI
         
+        # Fetch token
+        authorization_response = request.build_absolute_uri()
+        flow.fetch_token(authorization_response=authorization_response)
+        
+        # Get user info with clock skew tolerance
         credentials = flow.credentials
-        id_info = id_token.verify_oauth2_token(
-            credentials.id_token, 
-            requests.Request(), 
-            settings.GOOGLE_OAUTH_CLIENT_ID
+        google_request = requests.Request()
+        user_info = id_token.verify_oauth2_token(
+            credentials.id_token,
+            google_request,
+            settings.GOOGLE_OAUTH_CLIENT_ID,
+            clock_skew_in_seconds=300  # Add 5 minutes tolerance
         )
-        
-        email = id_info.get('email')
-        first_name = id_info.get('given_name', '')
-        last_name = id_info.get('family_name', '')
-        
-        # Check if user exists
-        try:
-            user_login = Login.objects.get(email=email)
-            user = user_login.uid
-        except Login.DoesNotExist:
-            # Create new user
-            with transaction.atomic():
-                # Create User_Reg entry
-                user = User_Reg.objects.create(
-                    first_name=first_name,
-                    last_name=last_name,
+
+        email = user_info.get('email')
+        if not email:
+            messages.error(request, 'Email not provided by Google')
+            return redirect('userauths:login')
+
+        # Create or get user
+        with transaction.atomic():
+            try:
+                login_user = Login.objects.get(email=email)
+                user_reg = login_user.uid
+            except Login.DoesNotExist:
+                # Create new user if not exists
+                customer_type = UserType.objects.get(utid=2)
+                user_reg = User_Reg.objects.create(
+                    first_name=user_info.get('given_name', ''),
+                    last_name=user_info.get('family_name', ''),
+                    phoneno='',
+                    user_type=customer_type,
+                    status=True
+                )
+                login_user = Login.objects.create(
+                    uid=user_reg,
                     email=email,
                     status=True,
-                    user_type=UserType.objects.get(utid=2)
+                    is_google_user=True
                 )
-                # Create Login entry
-                user_login = Login.objects.create(
-                    uid=user,
-                    email=email,
-                    login_count=0,
-                    status=False
-                )
-                # Set password
-                user_login.set_password(email)
-                user_login.save()
 
-        # Successful login
-        user_login.login()
+            # Update login status and timestamps
+            login_user.status = True
+            login_user.last_login = timezone.now()
+            login_user.login_count += 1
+            login_user.save()
 
-        # Set user information in session
-        request.session['user_id'] = user_login.login_id
-        request.session['user_first_name'] = user_login.uid.first_name
-        request.session['user_last_name'] = user_login.uid.last_name
-        request.session['email'] = user_login.email  # Save email in session
-        request.session['is_authenticated'] = True
+            # Set session data
+            request.session['user_id'] = login_user.login_id
+            request.session['user_first_name'] = user_reg.first_name
+            request.session['user_last_name'] = user_reg.last_name
+            request.session['email'] = email
+            request.session['is_authenticated'] = True
+            request.session.modified = True
 
-        # Redirect based on user type
-        user_type = user_login.uid.user_type_id
-        if user_type == 1:
-            return redirect('userauths:adminindex')
-        elif user_type == 2:
-            return redirect('userauths:index')
-        elif user_type == 3:
-            return redirect('delivery_dashboard')
-        elif user_type == 4:
-            return redirect('expert_dashboard')
-        else:
-            messages.error(request, 'User type is not recognized.')
-            return redirect('userauths:login')
+            # Get user type and redirect accordingly
+            user_type = user_reg.user_type.utid
+            user_type_redirects = {
+                1: 'userauths:adminindex',
+                2: 'userauths:index',
+                3: 'delivery_dashboard',
+                4: 'expert_dashboard'
+            }
+
+            messages.success(request, f'Welcome {user_reg.first_name}!')
+            return redirect(user_type_redirects.get(user_type, 'userauths:index'))
+
+    except ValueError as ve:
+        logger.error(f"Validation error: {str(ve)}")
+        messages.error(request, str(ve))
+        return redirect('userauths:login')
     except Exception as e:
-        messages.error(request, f'Error logging in with Google: {str(e)}')
+        logger.error(f"Google authentication error: {str(e)}")
+        messages.error(request, 'Authentication failed. Please try again.')
         return redirect('userauths:login')

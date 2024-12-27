@@ -417,15 +417,16 @@
 
             /* Style for the product card */
             .product-card {
+                background-color: #ffffff; /* Set background color to white */
                 border: 1px solid #ddd;
                 border-radius: 8px;
-                overflow: hidden;
-                transition: box-shadow 0.3s ease;
+                transition: box-shadow 0.3s ease, transform 0.3s ease;
             }
             
             /* Hover effect for product card */
             .product-card:hover {
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                transform: translateY(-5px);
             }
             
             /* Style for the icons */
@@ -438,10 +439,11 @@
                 color: #53c317; /* Change color on hover (optional) */
             }
             
-</style><div class="row" id="product-list">
+</style>
+<div class="row" id="product-list">
     {% for batch in products %}
     <div class="col-md-4 mb-4">
-        <div class="product-card shadow-lg rounded-lg overflow-hidden" id="product-card-{{ batch.id }}">
+        <div class="product-card shadow-lg rounded-lg overflow-hidden bg-white" id="product-card-{{ batch.id }}" style="transition: transform 0.3s ease;">
             {% if batch.product %}
             <a href="{% url 'products:cproduct_details' batch.product.id %}" id="product-link-{{ batch.product.id }}">
                 <div class="product-image position-relative">

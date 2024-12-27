@@ -33,6 +33,7 @@ class Login(models.Model):
     last_logout = models.DateTimeField(null=True, blank=True)
     login_count = models.IntegerField(default=0)
     is_google_user = models.BooleanField(default=False)
+    google_id = models.CharField(max_length=255, null=True, blank=True)
 
     def get_email_field_name(self):
         return 'email'
@@ -58,6 +59,15 @@ class Login(models.Model):
         self.status = False  # Set status to False on logout
         self.last_logout = timezone.now()
         self.save()
+
+    def login_with_google(self, google_id):
+        """Special login method for Google users"""
+        self.is_google_user = True
+        self.google_id = google_id
+        self.login()
+
+    def is_google_authenticated(self):
+        return bool(self.is_google_user)
 
     def __str__(self):
         return f'Login entry for {self.email}'

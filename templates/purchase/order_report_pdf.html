@@ -39,7 +39,7 @@
                     <td>{{ item.product }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>Rs. {{ item.price }}</td>
-                    <td>Rs. {{ item.get_total_price_with_discount }}</td>
+                    <td>Rs. {{ item.get_total_price_with_discount() }}</td>  <!-- Corrected -->
                 </tr>
             {% empty %}
                 <tr>
@@ -47,6 +47,6 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
+        
 </body>
 </html>

@@ -35,6 +35,23 @@
     font-size: 240px; /* Adjust this value to increase/decrease size */
 }
 
+      .logo {
+        max-width: 100px;
+        height: auto;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      .navbar .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
     </style>
   </head>
   <head>
@@ -132,6 +149,15 @@
 .fa-shopping-cart, .fa-user {
     margin-right: 5px; /* Adds some space between the icon and the text */
 }
+body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
 
 </style>                  
                   </ul>

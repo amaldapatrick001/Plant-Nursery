@@ -1,52 +1,44 @@
-import logging
-from .models import User_Reg, Login, UserType
 from django.utils import timezone
+from .models import User_Reg, Login, UserType
+import logging
 
 logger = logging.getLogger(__name__)
 
-def custom_create_user(strategy, details, backend, user=None, *args, **kwargs):
+def create_or_get_user_from_google(details):
+    """Helper function to create or get user from Google details"""
     email = details.get('email')
-    first_name = details.get('first_name')
-    last_name = details.get('last_name')
-
-    if email is None:
-        return None  # No email returned
+    first_name = details.get('first_name', '')
+    last_name = details.get('last_name', '')
 
     try:
+        # Try to get existing login
         login_user = Login.objects.get(email=email)
-        return {'user': login_user.uid}  # Return the corresponding User_Reg instance
-    except Login.DoesNotExist:
-        user_reg = User_Reg.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            phoneno='',  # Default if no phone number from Google
-            user_type=UserType.objects.get(usertype='Customer')
-        )
-        Login.objects.create(
-            uid=user_reg,
-            email=email,
-            password='',  # Password not required for Google login
-            status=True
-        )
-
-        return {'user': user_reg}  # Return the User_Reg instance
-
-from django.utils import timezone
-from .models import Login
-
-def custom_login_user(strategy, user, *args, **kwargs):
-    if isinstance(user, User_Reg):
-        logger.debug(f"Logging in user: {user.uid}")
-        login_user = Login.objects.get(uid=user)
-
-        # Update last_login to the current time
-        login_user.last_login = timezone.now()
-        login_user.login_count += 1
+        login_user.is_google_user = True
         login_user.save()
+        return login_user.uid, login_user
 
-        # Set the session
-        strategy.session_set('user_id', user.uid)
-        return {'user': user}
-    else:
-        logger.error("Provided user is not a User_Reg instance")
-        return {'user': None}
+    except Login.DoesNotExist:
+        # Create new user
+        try:
+            customer_type = UserType.objects.get(utid=2)  # Get Customer type
+            user_reg = User_Reg.objects.create(
+                first_name=first_name,
+                last_name=last_name,
+                phoneno='',  # Can be updated later
+                user_type=customer_type,
+                status=True
+            )
+
+            # Create login entry
+            login_user = Login.objects.create(
+                uid=user_reg,
+                email=email,
+                password='',  # No password for Google users
+                status=True,
+                is_google_user=True
+            )
+            return user_reg, login_user
+
+        except Exception as e:
+            logger.error(f"Error creating user from Google: {str(e)}")
+            raise

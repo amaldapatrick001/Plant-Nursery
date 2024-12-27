@@ -2,177 +2,116 @@
 {% load static %}
 
 {% block content %}
-
 <style>
-    /* Custom Styles for Product Detail */
-    .product-detail-container {
-        display: flex;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        gap: 20px;
+    .product-details-container {
+        margin-top: 50px;
+        padding: 30px;
+        background-color: #f4f4f9;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
-
     .product-image {
-        flex: 1;
-        max-width: 500px;
+        max-width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
-
-    .product-image img {
-        width: 100%;
-        height: auto;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .product-title {
+        font-family: 'Merriweather', serif;
+        color: #2c3e50;
+        margin-bottom: 15px;
     }
-
-    .product-info {
-        flex: 1;
-        max-width: 700px;
+    .product-description {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin-bottom: 20px;
     }
-
-    .product-info h1 {
-        margin: 0;
-        font-size: 2em;
-        color: #333;
-    }
-
-    .product-info p {
-        margin: 10px 0;
-        color: #666;
-    }
-
-    .product-info .price {
-        font-size: 1.5em;
-        color: #e74c3c;
-    }
-
-    .product-info .description {
-        margin-top: 20px;
-    }
-
-    .product-info .details {
-        margin-top: 20px;
-    }
-
     .details-list {
         list-style: none;
         padding: 0;
     }
-
     .details-list li {
         margin-bottom: 10px;
-        font-size: 1.1em;
+        font-size: 1rem;
+        color: #34495e;
     }
-
-    .details-list li span {
-        font-weight: bold;
+    .btn-custom {
+        background-color: #3498db;
+        color: #fff;
+        border-radius: 25px;
+        padding: 10px 25px;
+        transition: background-color 0.3s ease;
     }
-
-    .card {
-        border: 1px solid #e0e0e0;
+    .btn-custom:hover {
+        background-color: #2980b9;
     }
-
-    .card-body {
-        border-radius: 15px;
-        background-color: #f9f9f9;
-    }
-
-    /* Cultivation Method Dropdown Styles */
     .cultivation-method {
         margin-top: 20px;
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
-
-    .collapse-header {
-        cursor: pointer;
-        color: #007bff;
+    .cultivation-method h3 {
+        font-family: 'Merriweather', serif;
+        color: #2c3e50;
+        margin-bottom: 15px;
     }
-
-    .collapse-header:hover {
-        text-decoration: underline;
+    .cultivation-method p {
+        font-size: 1rem;
+        color: #7f8c8d;
+        margin-bottom: 10px;
     }
-    /* Cultivation Method Button Styles */
-.btn-cultivation {
-    display: inline-block;
-    background-color: #007bff; /* Button background color */
-    color: white; /* Button text color */
-    padding: 10px 15px; /* Padding for button-like feel */
-    border-radius: 55%; /* Rounded corners */
-    text-align: center; /* Center text */
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
-    cursor: pointer; /* Cursor changes to pointer on hover */
-    margin-top: 20px; /* Margin to separate from previous content */
-}
-
-.btn-cultivation:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-    transform: scale(1.02); /* Slightly scale up on hover */
-}
-
-.cultivation-method {
-    margin-top: 20px;
-}
-
+    .divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 20px 0;
+    }
 </style>
-<body>
-<section class="ftco-section py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card shadow-lg border-light rounded">
-                    <div class="card-body p-4">
-                        <div class="product-detail-container">
-                            <!-- Product Image -->
-                            <div class="product-image">
-                                <img src="{{ product.image_1.url }}" alt="{{ product.name }}">
-                            </div>
 
-                            <!-- Product Information -->
-                            <div class="product-info">
-                                <h1>{{ product.name }}</h1>
-                                <p class="price">Rs. {{ batch.price }}</p>
-                                {% if batch.discount %}
-                    <p>Discount: {{ batch.discount }}%</p>
-                {% endif %}
-                                <div class="details">
-                                    <h3>Product Details</h3>
-                                    <ul class="details-list">
-                                        <p class="description">{{ product.description }}</p>
-                                        <li><span>Category:</span> {{ plant_category.name }}</li>
-                                        <li><span>Sunlight Requirement:</span> {{ plant_category.sunlight_requirement }}</li>
-                                        <li><span>Water Requirement:</span> {{ plant_category.water_requirement }}</li>
-                                        <li><span>Climate Suitability:</span> {{ plant_category.climate_suitability }}</li>
-                                        <li><span>Growth Rate:</span> {{ plant_category.growth_rate }}</li>
-                                        <li><span>Soil Type:</span> {{ plant_category.soil_type }}</li>
-                                        <li><span>Best Time to Plant:</span> {{ plant_category.best_time_to_plant }}</li>
-                                        <li><span>Stock Quantity:</span> {{ batch.stock_quantity }}</li>
-                                        <li><center><a href="{% url 'purchase:add_to_cart' batch.id %}">
-                                            </i>
-                                        </a>Add to Cart</a>
-                                       <a href="{% url 'products:cproduct_list'  %}"class="btn btn-primary">Back to Product</a>
-                                       </center> </li> </ul>
-                                </div>
-                                <!-- Cultivation Method Details Button -->
-{% if cultivation_method %}
-<div class="cultivation-method">
-    <h3 class="collapse-header btn-cultivation" data-toggle="collapse" data-target="#cultivationDetails" aria-expanded="false" aria-controls="cultivationDetails">
-        Cultivation Method Details
-    </h3>
-    <div class="collapse" id="cultivationDetails">
-        <ul class="details-list">
-            <li><span>Title:</span> {{ cultivation_method.title }}</li>
-            <li><span>Description:</span> {{ cultivation_method.desc }}</li>
-            <li><span>Steps:</span> {{ cultivation_method.steps }}</li>
-            <li><span>Recommended Tools:</span> {{ cultivation_method.recommended_tools }}</li>
-            <li><span>Pit Size:</span> {{ cultivation_method.pit_size }}</li>
-            <li><span>Distance Between Plants:</span> {{ cultivation_method.distance_between_plants }}</li>
-            <li><span>Watering Frequency:</span> {{ cultivation_method.watering_frequency }}</li>
-            <li><span>Fertilization Guidelines:</span> {{ cultivation_method.fertilization_guidelines }}</li>
-            <li><span>Common Issues:</span> {{ cultivation_method.common_issues }}</li>
-        </ul>
+<div class="container product-details-container">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{% if product.image_1 %}{{ product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
+            {% if cultivation_method %}
+           <center> <button class="btn btn-info mt-3" type="button" data-toggle="collapse" data-target="#cultivationDetails" aria-expanded="false" aria-controls="cultivationDetails">
+                Cultivation Method Details
+            </button></center>
+            <div class="collapse" id="cultivationDetails">
+                <div class="cultivation-method">
+                    <h3>Cultivation Method Details</h3>
+                    <p><strong>Title:</strong> {{ cultivation_method.title }}</p>
+                    <p><strong>Description:</strong> {{ cultivation_method.desc }}</p>
+                    <p><strong>Steps:</strong> {{ cultivation_method.steps }}</p>
+                    <p><strong>Recommended Tools:</strong> {{ cultivation_method.recommended_tools }}</p>
+                    <p><strong>Pit Size:</strong> {{ cultivation_method.pit_size }}</p>
+                    <p><strong>Distance Between Plants:</strong> {{ cultivation_method.distance_between_plants }}</p>
+                    <p><strong>Watering Frequency:</strong> {{ cultivation_method.watering_frequency }}</p>
+                    <p><strong>Fertilization Guidelines:</strong> {{ cultivation_method.fertilization_guidelines }}</p>
+                    <p><strong>Common Issues:</strong> {{ cultivation_method.common_issues }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-6">
+            <h2 class="product-title">{{ product.name }}</h2>
+            <p class="product-description">{{ product.description }}</p>
+            <ul class="details-list">
+                <li><strong>Category:</strong> {{ plant_category.name }}</li>
+                <li><strong>Sunlight Requirement:</strong> {{ plant_category.sunlight_requirement }}</li>
+                <li><strong>Water Requirement:</strong> {{ plant_category.water_requirement }}</li>
+                <li><strong>Climate Suitability:</strong> {{ plant_category.climate_suitability }}</li>
+                <li><strong>Growth Rate:</strong> {{ plant_category.growth_rate }}</li>
+                <li><strong>Soil Type:</strong> {{ plant_category.soil_type }}</li>
+                <li><strong>Best Time to Plant:</strong> {{ plant_category.best_time_to_plant }}</li>
+                <li><strong>Stock Quantity:</strong> {{ batch.stock_quantity }}</li>
+            </ul>
+            <div class="mt-4">
+                <a href="{% url 'purchase:add_to_cart' batch.id %}" class="btn btn-custom mr-2">Add to Cart</a>
+                <a href="{% url 'products:cproduct_list' %}" class="btn btn-secondary">Back to Product List</a>
+            </div>
+        </div>
     </div>
-</div> <!-- End of Cultivation Method Details -->
-{% else %}
-<p>No cultivation method details available.</p>
-{% endif %}
-</body>
+   
+</div>
 {% endblock %}

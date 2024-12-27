@@ -10,23 +10,29 @@ GOOGLE_OAUTH_CLIENT_ID = '130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.goo
 SECRET_KEY = 'django-insecure-_&b(9(a%^7)t%%&9ctl$)bb8t2mo1djy8#kc_szj7ss6v!ahpk'
 DEBUG = True
 CLIENT_SECRET = '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'
-
+GOOGLE_OAUTH_REDIRECT_URI = 'http://localhost:8000/userauths/google/callback'  # Remove trailing slash
+SITE_URL = 'http://localhost:8000'  # Base URL without trailing slash
 # Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Enchanted_Eden',
+        'NAME': 'EnchantedEden',
         'USER': 'postgres',
         'PASSWORD': 'Amalda@2002',
         'HOST': 'localhost',
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'prefer',  # Try 'prefer' or 'disable'
+        },
     }
 }
 
+
 # Use Render Database URL if needed
-DATABASES['default'] = dj_database_url.config(
-    default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
-)
+# DATABASES['default'] = dj_database_url.config(
+#     default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
+# )
+
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
     'products',
     'purchase',
     'social_django',
+    
 ]
 
 # Authentication backends
@@ -82,6 +89,19 @@ LOGIN_URL = '/userauths/login/'
 # Google OAuth2
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_OAUTH_CLIENT_ID
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CLIENT_SECRET
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+# Additional Social Auth Settings
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/userauths/login/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
+# Session Settings for Google Auth
+SESSION_COOKIE_SECURE = True  # For HTTPS
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Template settings
 TEMPLATES = [
@@ -154,4 +174,35 @@ ALLOWED_HOSTS = ['enchnated-eden.onrender.com', 'localhost', '127.0.0.1']
 
 # Enable insecure transport for OAuth during development
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'userauths': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 

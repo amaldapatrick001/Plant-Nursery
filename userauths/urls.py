@@ -25,6 +25,6 @@ urlpatterns = [
     path('undo-delete/<int:uid>/', undo_delete_view, name='undo_delete_view'),  # Restore user
  path('profile/update/', update_profile, name='update_profile'),  # Add this line for the update_profile view
 path('auth/', include('social_django.urls', namespace='social')),  # Social Auth URLs
-    path('google/login/', google_login, name='google_login'),
-    path('google/callback/', google_callback, name='google_callback'),
+    path('google/login', google_login, name='google_login'),
+    path('google/callback', google_callback, name='google_callback'),
 ]

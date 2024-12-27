@@ -4,17 +4,36 @@
 {% block content %}
 
 <style>
-    /* Custom Styles for the Registration Form */
+    /* Custom Styles for the Login Form */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
     .form-group {
-        margin-bottom: 1rem;
+        position: relative;
+        margin-bottom: 1.5rem;
     }
 
     .form-group input {
-        border-radius: 5px;
-        padding: 10px 15px;
+        border-radius: 30px;
+        padding: 12px 20px 12px 45px; /* Adjust padding for icon space */
         border: 1px solid #ced4da;
         width: 100%;
         box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
     }
 
     .form-group input:focus {
@@ -22,32 +41,28 @@
         box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
     }
 
-    .card {
-        border: 1px solid #e0e0e0;
+    .form-group input.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
     }
 
-    .card-body {
-        border-radius: 15px;
-        background-color: #f9f9f9;
+    .form-group input.is-valid {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
     }
 
-    .row {
-        margin-right: 0;
-        margin-left: 0;
-    }
-
-    .col-md-6 {
-        padding-right: 1px;
-        padding-left: 1px;
-    }
-
-    .form-group.row {
-        margin-bottom: 1.5rem;
+    .form-group i {
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        color: #007bff;
     }
 
     .btn {
-        border-radius: 25px;
-        padding: 10px 20px;
+        border-radius: 30px;
+        padding: 12px 25px;
+        transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
     }
 
     .btn-primary {
@@ -58,16 +73,42 @@
     .btn-primary:hover {
         background-color: #0056b3;
         border-color: #004085;
+        transform: translateY(-2px);
     }
 
-    .text-danger {
-        font-size: 0.875rem;
+    .btn-google {
+        background-color: #ffffff;
+        border: 1px solid #dadce0;
+        color: #3c4043;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        border-radius: 30px;
+        transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .btn-google:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15);
+        transform: translateY(-2px);
+    }
+
+    .btn-google i {
+        margin-right: 10px;
+    }
+
+    .text-center {
+        text-align: center;
     }
 
     .logo {
         display: block;
         margin: 0 auto 20px;
-        width: 200px;
+        width: 100px;
+        height: auto;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
     }
 
     .separator {
@@ -89,16 +130,14 @@
         color: #6c757d;
     }
 
-    .google-login .btn-light {
-        background-color: #ffffff;
-        border: 1px solid #dadce0;
-        color: #3c4043;
-        margin-top: 1rem;
-    }
-
-    .google-login .btn-light:hover {
-        background-color: #f8f9fa;
-        box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    .text-danger {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        color: #dc3545;
     }
 </style>
 
@@ -108,21 +147,23 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body p-4">
-                        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo mb-4">
                         
-                        <h4 class="card-title text-center mb-4">Login to Your Account</h4>
+                        <h4 class="card-title text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #2c3e50; letter-spacing: 1px; text-transform: uppercase;">Login to Your Account</h4>
                         <form id="loginForm" action="{% url 'userauths:login' %}" method="post">
                             {% csrf_token %}
                             
                             <!-- Email Field -->
                             <div class="form-group">
-                                <input type="email" id="id_email" name="email" placeholder="Email id" class="form-control">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="id_email" name="email" placeholder="Email id" class="form-control pl-5">
                                 <div id="emailError" class="text-danger"></div>
                             </div>
                         
                             <!-- Password Field -->
                             <div class="form-group">
-                                <input type="password" id="id_password" name="password" placeholder="Password" class="form-control">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="id_password" name="password" placeholder="Password" class="form-control pl-5">
                                 <div id="passwordError" class="text-danger"></div>
                             </div>
                         
@@ -135,8 +176,8 @@
                         </div>
 
                         <div class="google-login">
-                            <a >
-                                Sign in with Google
+                            <a href="{% url 'userauths:google_login' %}" class="btn btn-google">
+                                <i class="fab fa-google"></i> Sign in with Google
                             </a>
                         </div>
 
@@ -156,26 +197,54 @@
     </div>
 </section>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
-<!-- Script to manage modal, form validation, and session redirection -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Your form validation and modal logic
+        const form = document.getElementById('loginForm');
+        const fields = {
+            email: {
+                element: document.getElementById('id_email'),
+                errorElement: document.getElementById('emailError'),
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address.'
+            },
+            password: {
+                element: document.getElementById('id_password'),
+                errorElement: document.getElementById('passwordError'),
+                pattern: /^.{6,}$/, // Minimum 6 characters
+                message: 'Password must be at least 6 characters long.'
+            }
+        };
 
-        const messagesExist = {% if messages %}true{% else %}false{% endif %};
-        const redirectUrl = "{% if request.session.redirect_url %}{% url request.session.redirect_url %}{% endif %}";
+        function validateField(name) {
+            const { element, errorElement, pattern, message } = fields[name];
+            const value = element.value;
+            const isValid = pattern.test(value);
 
-        if (messagesExist) {
-            $('#messageModal').modal('show');
+            if (isValid) {
+                element.classList.remove('is-invalid');
+                element.classList.add('is-valid');
+                errorElement.textContent = '';
+            } else {
+                element.classList.remove('is-valid');
+                element.classList.add('is-invalid');
+                errorElement.textContent = message;
+            }
+            return isValid;
         }
 
-        document.getElementById('modalCloseButton').addEventListener('click', function() {
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
+        Object.values(fields).forEach(({ element }) => {
+            element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
+        });
+
+        form.addEventListener('submit', (event) => {
+            const isValid = Object.keys(fields).every(name => validateField(name));
+            if (!isValid) {
+                event.preventDefault();
             }
         });
     });
 </script>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 {% endblock %}
