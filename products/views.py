@@ -486,14 +486,15 @@ def cproduct_details(request, product_id):
     } if plant_category else None
     
     # Fetch related Batch details (if available)
-    batch = product.batches.first()  # Assuming you're showing details of the first batch
+    batch = product.batches.first()  # Get the first batch or None if no batches exist
     batch_data = {
+        'id': batch.id if batch else None,
         'current_height': batch.current_height if batch else 'N/A',
         'price': batch.price if batch else 'N/A',
         'stock_quantity': batch.stock_quantity if batch else 'N/A',
         'discount': batch.discount if batch else 'N/A',
     } if batch else None
-    
+
     # Fetch related CultivationMethod details (if available)
     cultivation_method = plant_category.cultivation_methods.first() if plant_category else None
     cultivation_method_data = {
