@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="container my-5">
-    <h2 class="text-center mb-4">Order Details Report</h2>
+    <h2 class="text-center mb-4 text-primary font-weight-bold" style="font-family: 'Montserrat', sans-serif; letter-spacing: 1px;">Order Details Report</h2>
 
-    <div class="card shadow-sm p-4 mb-4">
+    <div class="card shadow-lg p-4 mb-4" style="border-radius: 12px; background: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
         <form id="report-form" method="GET" action="{% url 'purchase:generate_report' %}">
             <div class="form-group mb-3">
-                <label for="date_filter" class="font-weight-bold">Select Date Filter:</label>
-                <select id="date_filter" name="date_filter" class="form-select">
+                <label for="date_filter" class="font-weight-bold" style="font-size: 1.1rem; color: #333;">Select Date Filter:</label>
+                <select id="date_filter" name="date_filter" class="form-select" style="border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                     <option value="30_days" {% if date_filter == '30_days' %}selected{% endif %}>Last 30 Days</option>
                     <option value="past_week" {% if date_filter == 'past_week' %}selected{% endif %}>Past Week</option>
                     <option value="past_month" {% if date_filter == 'past_month' %}selected{% endif %}>Past Month</option>
@@ -18,22 +18,22 @@
             
             <div id="custom-date-range" class="row g-2" style="display: {% if date_filter == 'custom' %}block{% else %}none{% endif %};">
                 <div class="col-md-6">
-                    <label for="start_date">Start Date:</label>
-                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}">
+                    <label for="start_date" style="font-size: 1rem; color: #555;">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}" style="border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                 </div>
                 <div class="col-md-6">
-                    <label for="end_date">End Date:</label>
-                    <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}">
+                    <label for="end_date" style="font-size: 1rem; color: #555;">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}" style="border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                 </div>
             </div>
         </form>
     </div>
 
     <!-- Order Details Table -->
-    <div class="card shadow-sm p-4 mb-4">
-        <h4 class="text-center">Order Details</h4>
-        <table class="table table-striped">
-            <thead>
+    <div class="card shadow-lg p-4 mb-4" style="border-radius: 12px; background: #f9f9f9;">
+        <h4 class="text-center" style="font-size: 1.3rem; color: #007bff; font-weight: 600;">Order Details</h4>
+        <table class="table table-striped" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+            <thead class="bg-light" style="color: #333; font-size: 1rem;">
                 <tr>
                     <th scope="col">Order ID</th>
                     <th scope="col">User</th>
@@ -44,7 +44,7 @@
                     <th scope="col">Delivery Date</th>
                 </tr>
             </thead>
-            <tbody id="order-details-tbody">
+            <tbody id="order-details-tbody" style="font-size: 0.95rem; color: #444;">
                 {% for order in orders %}
                     <tr>
                         <td>{{ order.id }}</td>
@@ -57,7 +57,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center">No orders found for the selected date range.</td>
+                        <td colspan="7" class="text-center" style="color: #888;">No orders found for the selected date range.</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -65,10 +65,10 @@
     </div>
 
     <!-- Order Items Table -->
-    <div class="card shadow-sm p-4 mb-4">
-        <h4 class="text-center">Order Items</h4>
-        <table class="table table-striped">
-            <thead>
+    <div class="card shadow-lg p-4 mb-4" style="border-radius: 12px; background: #f9f9f9;">
+        <h4 class="text-center" style="font-size: 1.3rem; color: #007bff; font-weight: 600;">Order Items</h4>
+        <table class="table table-striped" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+            <thead class="bg-light" style="color: #333; font-size: 1rem;">
                 <tr>
                     <th scope="col">Order ID</th>
                     <th scope="col">Product Name</th>
@@ -78,7 +78,7 @@
                     <th scope="col">Total Price with Discount</th>
                 </tr>
             </thead>
-            <tbody id="order-items-tbody">
+            <tbody id="order-items-tbody" style="font-size: 0.95rem; color: #444;">
                 {% for item in order_items %}
                     <tr>
                         <td>{{ item.order.id }}</td>
@@ -90,7 +90,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center">No order items found for the selected date range.</td>
+                        <td colspan="6" class="text-center" style="color: #888;">No order items found for the selected date range.</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -98,8 +98,10 @@
     </div>
 
     <!-- Download PDF Button -->
-    <div class="text-center">
-        <a href="{% url 'purchase:generate_order_pdf' %}?date_filter={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-primary">Download PDF</a>
+    <div class="text-center my-4">
+        <a href="{% url 'purchase:generate_order_pdf' %}?date_filter={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-lg btn-primary" style="border-radius: 8px; padding: 12px 24px; font-size: 1.1rem; transition: background-color 0.3s;">
+            Download PDF
+        </a>
     </div>
 </div>
 

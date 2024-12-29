@@ -1536,3 +1536,165 @@ Not Found: /favicon.ico
 Not Found: /favicon.ico
 "GET /favicon.ico HTTP/1.1" 404 4127
 "GET /favicon.ico HTTP/1.1" 404 4127
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 35271
+"GET / HTTP/1.1" 200 35271
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"POST /userauths/login/ HTTP/1.1" 302 0
+"POST /userauths/login/ HTTP/1.1" 302 0
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"POST /userauths/login/ HTTP/1.1" 302 0
+"POST /userauths/login/ HTTP/1.1" 302 0
+"GET /userauths/adminindex/ HTTP/1.1" 200 11575
+"GET /userauths/adminindex/ HTTP/1.1" 200 11575
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/orders/ HTTP/1.1" 200 15068
+"GET /purchase/orders/ HTTP/1.1" 200 15068
+"GET /purchase/generate_report/ HTTP/1.1" 200 14361
+"GET /purchase/generate_report/ HTTP/1.1" 200 14361
+"GET /purchase/generate_report/ HTTP/1.1" 200 14804
+"GET /purchase/generate_report/ HTTP/1.1" 200 14804
+"GET /purchase/generate_report/ HTTP/1.1" 200 14361
+"GET /purchase/generate_report/ HTTP/1.1" 200 14361
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15248
+"GET /purchase/generate_report/ HTTP/1.1" 200 15248
+"GET /purchase/generate_report/ HTTP/1.1" 200 15248
+"GET /purchase/generate_report/ HTTP/1.1" 200 15248
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 16858
+"GET /purchase/reports/ HTTP/1.1" 200 16858
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/reports/ HTTP/1.1" 200 17058
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/?date_filter=custom&start_date=2024-10-09&end_date= HTTP/1.1" 200 15653
+"GET /purchase/generate_report/?date_filter=custom&start_date=2024-10-09&end_date= HTTP/1.1" 200 15653
+"GET /purchase/generate_report/?date_filter=custom&start_date=2024-10-09&end_date=2024-12-09 HTTP/1.1" 200 18330
+"GET /purchase/generate_report/?date_filter=custom&start_date=2024-10-09&end_date=2024-12-09 HTTP/1.1" 200 18330
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/generate_report/ HTTP/1.1" 200 15649
+"GET /purchase/reports/ HTTP/1.1" 200 16851
+"GET /purchase/reports/ HTTP/1.1" 200 16851
+"GET /purchase/reports/ HTTP/1.1" 200 16858
+"GET /purchase/reports/ HTTP/1.1" 200 16858
+"GET /purchase/reports/ HTTP/1.1" 200 17164
+"GET /purchase/reports/ HTTP/1.1" 200 17164
+- Broken pipe from ('127.0.0.1', 50849)
+- Broken pipe from ('127.0.0.1', 50849)
+"GET /purchase/reports/ HTTP/1.1" 200 17164
+"GET /purchase/reports/ HTTP/1.1" 200 17164
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17295
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17369
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17369
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17369
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17369
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17156
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17157
+"GET /purchase/reports/?date_filter=30_days&start_date=&end_date= HTTP/1.1" 200 17157
+"GET /purchase/reports/?date_filter=custom&start_date=2024-10-10&end_date= HTTP/1.1" 200 17168
+"GET /purchase/reports/?date_filter=custom&start_date=2024-10-10&end_date= HTTP/1.1" 200 17168
+"GET /purchase/reports/?date_filter=custom&start_date=2024-10-10&end_date=2024-12-14 HTTP/1.1" 200 18661
+"GET /purchase/reports/?date_filter=custom&start_date=2024-10-10&end_date=2024-12-14 HTTP/1.1" 200 18661
+"GET /purchase/orders/ HTTP/1.1" 200 15068
+"GET /purchase/orders/ HTTP/1.1" 200 15068
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 35994
+"GET / HTTP/1.1" 200 35994
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
