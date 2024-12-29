@@ -129,7 +129,6 @@
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body">
                         <h2 class="category-list-heading">Add New Batch</h2>
-
                         <form method="POST" id="batchForm">
                             {% csrf_token %}
                             <div class="form-group">
@@ -139,47 +138,50 @@
                                     <div class="text-danger">{{ form.product.errors }}</div>
                                 {% endif %}
                             </div>
-
+                        
                             <div class="form-group">
-                                {{ form.current_height.label_tag }}
+                                <!-- Update label to show 'Current Height (m)' -->
+                                <label for="{{ form.current_height.id_for_label }}">Current Height (m)</label>
                                 {{ form.current_height }}
                                 <div id="currentHeightError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="form-group">
-                                {{ form.price.label_tag }}
+                                <!-- Update label to show 'Price (Rs.)' -->
+                                <label for="{{ form.price.id_for_label }}">Price (Rs.)</label>
                                 {{ form.price }}
                                 <div id="priceError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="form-group">
                                 {{ form.stock_quantity.label_tag }}
                                 {{ form.stock_quantity }}
                                 <div id="stockError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="form-group">
-                                {{ form.discount.label_tag }}
+                                <label for="{{ form.discount.id_for_label }}">Discount (%)</label>
                                 {{ form.discount }}
                                 <div id="discountError" class="text-danger"></div>
                             </div>
+                        
                             <div class="form-group">
                                 {{ form.no_of_plants.label_tag }}
                                 {{ form.no_of_plants }}
                                 <div id="plantsError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="form-group">
                                 {{ form.short_description.label_tag }}
                                 {{ form.short_description }}
                                 <div id="descriptionError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="form-group text-center">
                                 <button type="submit" class="btn btn-primary">Add Batch</button>
                             </div>
                         </form>
-                    </div>
+                                  </div>
                 </div>
             </div>
         </div>

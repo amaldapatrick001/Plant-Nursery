@@ -169,14 +169,16 @@ class Product(models.Model):
         return f"{self.name} ({self.plant_category.name if self.plant_category else 'No Category'})"
 
 
-# Batch Model
+from django.utils.timezone import now
+from datetime import timedelta
+
 class Batch(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="batches")
 
     current_height = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock_quantity = models.PositiveIntegerField()
-    no_of_plants=models.PositiveIntegerField(default=1)
+    no_of_plants = models.PositiveIntegerField(default=1)
     discount = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     short_description = models.TextField(blank=True, null=True)
     status = models.BooleanField(default=True, help_text="Set to active or inactive.")
@@ -187,14 +189,23 @@ class Batch(models.Model):
         verbose_name_plural = "Batches"
 
     def __str__(self):
-        return f"{self.product.name} - {self.size} - Height: {self.current_height}"
+        return f"{self.product.name} - Height: {self.current_height}"
+
+    def save(self, *args, **kwargs):
+        # Check if stock_quantity > 0 and 30 days have passed
+        if self.stock_quantity > 0:
+            # Calculate if 30 days have passed since updated_on
+            if self.updated_on + timedelta(days=30) <= now():
+                self.price += 10
+                self.updated_on = now()  # Update the updated_on timestamp
+        super().save(*args, **kwargs)
+
     def get_discounted_price(self):
         """Returns the price after applying the discount, if any."""
         if self.discount:
             discount_amount = (self.discount / 100) * self.price
             return self.price - discount_amount
         return self.price
-
 
 
 # NonPlantProduct Model
