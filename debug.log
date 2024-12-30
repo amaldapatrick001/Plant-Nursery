@@ -1700,3 +1700,1271 @@ Not Found: /images/person_3.jpg
 "GET /images/person_3.jpg HTTP/1.1" 404 4151
 Watching for file changes with StatReloader
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 35994
+"GET / HTTP/1.1" 200 35994
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 200 3445
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 200 3445
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 200 18456
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 200 18456
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 200 979
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 200 979
+"GET /static/css/aos.css HTTP/1.1" 200 25984
+"GET /static/css/aos.css HTTP/1.1" 200 25984
+"GET /static/css/flaticon.css HTTP/1.1" 200 1398
+"GET /static/css/flaticon.css HTTP/1.1" 200 1398
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 200 1660
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 200 1660
+"GET /static/css/animate.css HTTP/1.1" 200 77017
+"GET /static/css/animate.css HTTP/1.1" 200 77017
+"GET /static/css/magnific-popup.css HTTP/1.1" 200 7300
+"GET /static/css/magnific-popup.css HTTP/1.1" 200 7300
+"GET /static/css/ionicons.min.css HTTP/1.1" 200 46826
+"GET /static/css/ionicons.min.css HTTP/1.1" 200 46826
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/css/icomoon.css HTTP/1.1" 200 84794
+"GET /static/css/icomoon.css HTTP/1.1" 200 84794
+"GET /static/css/style.css HTTP/1.1" 200 279476
+"GET /static/css/style.css HTTP/1.1" 200 279476
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 200 11635
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 200 11635
+"GET /static/js/popper.min.js HTTP/1.1" 200 19036
+"GET /static/js/popper.min.js HTTP/1.1" 200 19036
+"GET /static/js/jquery.min.js HTTP/1.1" 200 278290
+"GET /static/js/jquery.min.js HTTP/1.1" 200 278290
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 200 8315
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 200 8315
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 200 8841
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 200 8841
+"GET /static/js/bootstrap.min.js HTTP/1.1" 200 55781
+"GET /static/js/bootstrap.min.js HTTP/1.1" 200 55781
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 200 12598
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 200 12598
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 200 43243
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 200 43243
+"GET /static/js/aos.js HTTP/1.1" 200 14245
+"GET /static/js/aos.js HTTP/1.1" 200 14245
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 200 1399
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 200 1399
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 200 20219
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 200 20219
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 200 48490
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 200 48490
+"GET /static/js/scrollax.min.js HTTP/1.1" 200 7478
+"GET /static/js/scrollax.min.js HTTP/1.1" 200 7478
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/js/google-map.js HTTP/1.1" 200 2007
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/js/google-map.js HTTP/1.1" 200 2007
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 200 8038
+"GET /static/js/main.js HTTP/1.1" 200 8038
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 200 50592
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 200 50592
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 200 307168
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 200 307168
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/person_2.jpg HTTP/1.1" 200 47939
+"GET /static/images/person_3.jpg HTTP/1.1" 200 35096
+"GET /static/images/person_1.jpg HTTP/1.1" 200 36090
+"GET /static/images/person_1.jpg HTTP/1.1" 200 36090
+"GET /static/images/person_3.jpg HTTP/1.1" 200 35096
+"GET /static/images/person_2.jpg HTTP/1.1" 200 47939
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 35271
+"GET / HTTP/1.1" 200 35271
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /userauths/login/ HTTP/1.1" 200 21509
+"GET /userauths/login/ HTTP/1.1" 200 21509
+"GET /static/css/animate.css HTTP/1.1" 304 0
+"GET /static/css/animate.css HTTP/1.1" 304 0
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 304 0
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 304 0
+"GET /static/css/magnific-popup.css HTTP/1.1" 304 0
+"GET /static/css/magnific-popup.css HTTP/1.1" 304 0
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 304 0
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 304 0
+"GET /static/css/aos.css HTTP/1.1" 304 0
+"GET /static/css/aos.css HTTP/1.1" 304 0
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 304 0
+"GET /static/css/flaticon.css HTTP/1.1" 304 0
+"GET /static/css/ionicons.min.css HTTP/1.1" 304 0
+"GET /static/css/icomoon.css HTTP/1.1" 304 0
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 304 0
+"GET /static/css/style.css HTTP/1.1" 304 0
+"GET /static/css/flaticon.css HTTP/1.1" 304 0
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 304 0
+"GET /static/css/ionicons.min.css HTTP/1.1" 304 0
+"GET /static/css/icomoon.css HTTP/1.1" 304 0
+"GET /static/css/style.css HTTP/1.1" 304 0
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 304 0
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /static/js/jquery.min.js HTTP/1.1" 304 0
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /static/js/jquery.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap.min.js HTTP/1.1" 304 0
+"GET /static/js/popper.min.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap.min.js HTTP/1.1" 304 0
+"GET /static/js/popper.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 304 0
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 304 0
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 304 0
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 304 0
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 304 0
+"GET /static/js/aos.js HTTP/1.1" 304 0
+"GET /static/js/aos.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 304 0
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 304 0
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 304 0
+"GET /static/js/scrollax.min.js HTTP/1.1" 304 0
+"GET /static/js/scrollax.min.js HTTP/1.1" 304 0
+"GET /static/js/google-map.js HTTP/1.1" 304 0
+"GET /static/js/google-map.js HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 304 0
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 304 0
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 304 0
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 304 0
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b2b3e80fsm14112400a12.31 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b2b3e80fsm14112400a12.31 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111175
+"POST /userauths/password_reset/ HTTP/1.1" 500 111175
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-91b56cb2e5dsm12136a12.13 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-91b56cb2e5dsm12136a12.13 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111130
+"POST /userauths/password_reset/ HTTP/1.1" 500 111130
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad830afasm18367118b3a.49 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad830afasm18367118b3a.49 - gsmtp')
+- Broken pipe from ('127.0.0.1', 60534)
+- Broken pipe from ('127.0.0.1', 60534)
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b84fb8d1sm14055931a12.37 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b84fb8d1sm14055931a12.37 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111153
+"POST /userauths/password_reset/ HTTP/1.1" 500 111153
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad8fd58asm18891700b3a.145 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad8fd58asm18891700b3a.145 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111158
+"POST /userauths/password_reset/ HTTP/1.1" 500 111158
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (534, b'5.7.9 Application-specific password required. For more information, go to\n5.7.9  https://support.google.com/mail/?p=InvalidSecondFactor 41be03b00d2f7-842b8e867d7sm16869559a12.46 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (534, b'5.7.9 Application-specific password required. For more information, go to\n5.7.9  https://support.google.com/mail/?p=InvalidSecondFactor 41be03b00d2f7-842b8e867d7sm16869559a12.46 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111214
+"POST /userauths/password_reset/ HTTP/1.1" 500 111214
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+"GET /userauths/password_reset/ HTTP/1.1" 200 15879
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dca04f46sm170902135ad.263 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dca04f46sm170902135ad.263 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111160
+"POST /userauths/password_reset/ HTTP/1.1" 500 111160
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 35994
+"GET / HTTP/1.1" 200 35994
+"GET /static/images/product-2.jpg HTTP/1.1" 304 0
+"GET /static/images/product-1.jpg HTTP/1.1" 304 0
+"GET /static/images/product-2.jpg HTTP/1.1" 304 0
+"GET /static/images/product-1.jpg HTTP/1.1" 304 0
+"GET /static/images/product-3.jpg HTTP/1.1" 304 0
+"GET /static/images/product-4.jpg HTTP/1.1" 304 0
+"GET /static/images/product-3.jpg HTTP/1.1" 304 0
+"GET /static/images/product-4.jpg HTTP/1.1" 304 0
+"GET /static/images/product-5.jpg HTTP/1.1" 304 0
+"GET /static/images/product-5.jpg HTTP/1.1" 304 0
+"GET /static/images/product-6.jpg HTTP/1.1" 304 0
+"GET /static/images/product-6.jpg HTTP/1.1" 304 0
+"GET /static/images/product-7.jpg HTTP/1.1" 304 0
+"GET /static/images/product-7.jpg HTTP/1.1" 304 0
+"GET /static/images/product-8.jpg HTTP/1.1" 304 0
+"GET /static/images/product-8.jpg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/h22.jpeg HTTP/1.1" 304 0
+"GET /static/images/h21.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/tree.jpeg HTTP/1.1" 304 0
+"GET /static/images/category.jpg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/images/category.jpg HTTP/1.1" 304 0
+"GET /static/images/h23.jpeg HTTP/1.1" 304 0
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 304 0
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/person_1.jpg HTTP/1.1" 304 0
+"GET /static/images/person_3.jpg HTTP/1.1" 304 0
+"GET /static/images/person_2.jpg HTTP/1.1" 304 0
+"GET /static/images/person_1.jpg HTTP/1.1" 304 0
+"GET /static/images/person_3.jpg HTTP/1.1" 304 0
+"GET /static/images/person_2.jpg HTTP/1.1" 304 0
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 35271
+"GET / HTTP/1.1" 200 35271
+Not Found: /images/person_3.jpg
+Not Found: /images/person_3.jpg
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /images/person_3.jpg HTTP/1.1" 404 4151
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842aba72f7csm16758621a12.4 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842aba72f7csm16758621a12.4 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111278
+"POST /userauths/password_reset/ HTTP/1.1" 500 111278
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad836192sm19108990b3a.68 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad836192sm19108990b3a.68 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 111285
+"POST /userauths/password_reset/ HTTP/1.1" 500 111285
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"POST /userauths/password_reset/ HTTP/1.1" 302 0
+"POST /userauths/password_reset/ HTTP/1.1" 302 0
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad8dbb28sm19049397b3a.123 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-72aad8dbb28sm19049397b3a.123 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 113499
+"POST /userauths/password_reset/ HTTP/1.1" 500 113499
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-2f4478aaa74sm20001549a91.45 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-2f4478aaa74sm20001549a91.45 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 113492
+"POST /userauths/password_reset/ HTTP/1.1" 500 113492
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b821da83sm16891339a12.40 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-842b821da83sm16891339a12.40 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 113492
+"POST /userauths/password_reset/ HTTP/1.1" 500 113492
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/google/login HTTP/1.1" 302 0
+"GET /userauths/google/login HTTP/1.1" 302 0
+"GET /userauths/google/callback?state=lfmvQgF4gVKHQTNJJQZnQ6ql7FVGnb&code=4%2F0AanRRrtEccnfs4ebUAIdaFvhfNPPU5kdWQIm3pFIEomdgmu3mwQagvBQVnNDOsGsw_U9zA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=consent HTTP/1.1" 302 0
+"GET /userauths/google/callback?state=lfmvQgF4gVKHQTNJJQZnQ6ql7FVGnb&code=4%2F0AanRRrtEccnfs4ebUAIdaFvhfNPPU5kdWQIm3pFIEomdgmu3mwQagvBQVnNDOsGsw_U9zA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=consent HTTP/1.1" 302 0
+"GET /userauths/index/ HTTP/1.1" 200 35995
+"GET /userauths/index/ HTTP/1.1" 200 35995
+"GET /static/css/animate.css HTTP/1.1" 304 0
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 304 0
+"GET /static/css/animate.css HTTP/1.1" 304 0
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 304 0
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 304 0
+"GET /static/css/magnific-popup.css HTTP/1.1" 304 0
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 304 0
+"GET /static/css/magnific-popup.css HTTP/1.1" 304 0
+"GET /static/css/aos.css HTTP/1.1" 304 0
+"GET /static/css/ionicons.min.css HTTP/1.1" 304 0
+"GET /static/css/aos.css HTTP/1.1" 304 0
+"GET /static/css/ionicons.min.css HTTP/1.1" 304 0
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 304 0
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 304 0
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 304 0
+"GET /static/css/flaticon.css HTTP/1.1" 304 0
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 304 0
+"GET /static/css/flaticon.css HTTP/1.1" 304 0
+"GET /static/css/style.css HTTP/1.1" 304 0
+"GET /static/css/icomoon.css HTTP/1.1" 304 0
+"GET /static/css/style.css HTTP/1.1" 304 0
+"GET /static/css/icomoon.css HTTP/1.1" 304 0
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/js/jquery.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 304 0
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/js/bootstrap.min.js HTTP/1.1" 304 0
+"GET /static/js/popper.min.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap.min.js HTTP/1.1" 304 0
+"GET /static/js/popper.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 304 0
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 304 0
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 304 0
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 304 0
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 304 0
+"GET /static/js/aos.js HTTP/1.1" 304 0
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 304 0
+"GET /static/js/aos.js HTTP/1.1" 304 0
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 304 0
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 304 0
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 304 0
+"GET /static/js/scrollax.min.js HTTP/1.1" 304 0
+"GET /static/js/scrollax.min.js HTTP/1.1" 304 0
+"GET /static/js/google-map.js HTTP/1.1" 304 0
+"GET /static/js/google-map.js HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/h23.jpeg HTTP/1.1" 200 13135
+"GET /static/images/h22.jpeg HTTP/1.1" 200 9766
+"GET /static/images/h21.jpeg HTTP/1.1" 200 9158
+"GET /static/images/h23.jpeg HTTP/1.1" 200 13135
+"GET /static/images/h22.jpeg HTTP/1.1" 200 9766
+"GET /static/images/h21.jpeg HTTP/1.1" 200 9158
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/images/tree.jpeg HTTP/1.1" 200 116979
+"GET /static/images/tree.jpeg HTTP/1.1" 200 116979
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 304 0
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 304 0
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 304 0
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 304 0
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur3.jpeg HTTP/1.1" 304 0
+"GET /static/images/nur4.jpeg HTTP/1.1" 200 49089
+"GET /static/images/nur4.jpeg HTTP/1.1" 200 49089
+"GET /static/images/person_2.jpg HTTP/1.1" 200 47939
+"GET /static/images/person_2.jpg HTTP/1.1" 200 47939
+"GET /static/images/person_1.jpg HTTP/1.1" 200 36090
+"GET /static/images/person_1.jpg HTTP/1.1" 200 36090
+"GET /static/images/person_3.jpg HTTP/1.1" 200 35096
+"GET /static/images/person_3.jpg HTTP/1.1" 200 35096
+Not Found: /userauths/index/images/person_3.jpg
+Not Found: /userauths/index/images/person_3.jpg
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /favicon.ico HTTP/1.1" 404 4127
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/index/ HTTP/1.1" 200 35271
+"GET /userauths/index/ HTTP/1.1" 200 35271
+Not Found: /userauths/index/images/person_3.jpg
+Not Found: /userauths/index/images/person_3.jpg
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /static/images/logo.png HTTP/1.1" 304 0
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+"GET /userauths/password_reset/ HTTP/1.1" 200 15156
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dc9f72b8sm171870285ad.191 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dc9f72b8sm171870285ad.191 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 113535
+"POST /userauths/password_reset/ HTTP/1.1" 500 113535
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dc9630a5sm172520995ad.51 - gsmtp')
+Internal Server Error: /userauths/password_reset/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 339, in password_reset_request
+    send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\hp\AppData\Local\Programs\Python\Python311\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-219dc9630a5sm172520995ad.51 - gsmtp')
+"POST /userauths/password_reset/ HTTP/1.1" 500 113528
+"POST /userauths/password_reset/ HTTP/1.1" 500 113528
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"POST /userauths/password_reset/ HTTP/1.1" 302 0
+"POST /userauths/password_reset/ HTTP/1.1" 302 0
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
+"GET /userauths/password_reset/done/ HTTP/1.1" 200 12825
