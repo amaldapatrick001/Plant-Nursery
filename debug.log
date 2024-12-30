@@ -1698,3 +1698,5 @@ Not Found: /images/person_3.jpg
 Not Found: /images/person_3.jpg
 "GET /images/person_3.jpg HTTP/1.1" 404 4151
 "GET /images/person_3.jpg HTTP/1.1" 404 4151
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
