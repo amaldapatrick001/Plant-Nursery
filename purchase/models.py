@@ -1,7 +1,8 @@
 from datetime import timezone
 from django.db import models
 from userauths.models import Login, User_Reg
-from products.models import Batch
+from products.models import Batch, Product
+from django.core.mail import send_mail
 
 # Cart Model
 class Cart(models.Model):
@@ -136,3 +137,14 @@ class OrderItem(models.Model):
 
     def get_total_price_with_discount(self):
         return self.get_total_price() - ((self.get_total_price() * self.discount) / 100)
+
+class Review(models.Model):
+    user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(choices=[(i, f"{i} Stars") for i in range(1, 6)])  # 1 to 5 stars
+    comment = models.TextField(blank=True, null=True)
+    review_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.user.fname} for {self.product.name} - Rating: {self.rating} Stars"

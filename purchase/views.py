@@ -362,29 +362,68 @@ def order_summary(request, order_id):
     }
 
     return render(request, 'purchase/order_summary.html', context)
-# views.py
+
+
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from .models import Order
 
 def order_history(request):
-    # Ensure user is logged in
-    if not request.session.get('user_id'):
+    if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
     user_id = request.session.get('user_id')
-    
-    # Fetch orders for the logged-in user
-    orders = Order.objects.filter(user_id=user_id).order_by('-order_date')  # Order by date, latest first
-
-    # Prepare context for rendering the order history template
-    context = {
-        'orders': orders,
-    }
-
+    orders = Order.objects.filter(user_id=user_id).order_by('-order_date')
+    context = {'orders': orders}
     return render(request, 'purchase/order_history.html', context)
 
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import JsonResponse
+from .models import Review, OrderItem
+from products.models import Product
+def submit_review(request, order_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
+    order = get_object_or_404(Order, id=order_id, user_id=request.session.get('user_id'))
+
+    # Ensure the order is delivered before allowing a review
+    if order.status != 'Delivered':
+        return JsonResponse({'error': 'You can only review delivered items.'}, status=403)
+
+    if request.method == 'POST':
+        # Handle review submission for all products in the order
+        for item_id, rating in request.POST.items():
+            if item_id.startswith('rating_'):
+                order_item_id = int(item_id.split('_')[1])
+                comment = request.POST.get(f'comment_{order_item_id}', '')
+
+                order_item = get_object_or_404(order.order_items, id=order_item_id)
+
+                # Create the review
+                Review.objects.create(
+                    user=order.user,
+                    product=order_item.batch.product,
+                    order=order,
+                    rating=rating,
+                    comment=comment
+                )
+        return redirect('purchase:order_history')
+
+    rating_range = range(1, 6)  # Pass the range to the template
+    return render(request, 'purchase/submit_review.html', {'order': order, 'rating_range': rating_range})
 
 
+from django.shortcuts import get_object_or_404, render
+from .utils import ensure_user_logged_in
+
+def product_reviews(request, product_id):
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
+    product = get_object_or_404(Product, id=product_id)
+    reviews = Review.objects.filter(product=product).order_by('-review_date')
+    return render(request, 'products/product_reviews.html', {'product': product, 'reviews': reviews})
 
 
 

@@ -125,3 +125,4 @@ class NonPlantProductForm(forms.ModelForm):
         if category.is_plant:
             raise forms.ValidationError("Category for Non-Plant Product cannot be a plant category.")
         return category
+

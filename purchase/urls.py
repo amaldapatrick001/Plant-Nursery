@@ -28,4 +28,6 @@ path('order_details/<int:order_id>/', views.get_order_details, name='view_order_
 path('reports/', views.reports, name='reports'),
     path('generate_report/', views.generate_report, name='generate_report'),
     path('generate_order_pdf/', views.generate_order_pdf, name='generate_order_pdf'),
+    path('submit-review/<int:order_id>/', views.submit_review, name='submit_review'),
+path('product-reviews/<int:product_id>/', views.product_reviews, name='product_reviews'),
 ]

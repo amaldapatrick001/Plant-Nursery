@@ -243,7 +243,6 @@ class NonPlantProduct(models.Model):
 
 
 
-
 class Wishlist(models.Model):
     email = models.ForeignKey('userauths.Login', on_delete=models.CASCADE, null=True, blank=True)  # Referencing Login model
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE, null=True, blank=True)  # Nullable foreign key
