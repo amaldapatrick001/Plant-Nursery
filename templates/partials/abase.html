@@ -214,6 +214,7 @@
                         <i class="fas fa-chart-line mr-2"></i> Inventory Reports
                     </a>
                     <div class="dropdown-menu" aria-labelledby="reportsDropdown">
+                        <a class="dropdown-item" href="{% url 'purchase:manage_reviews' %}">Manage Reviews</a>
                         <a class="dropdown-item" href="{% url 'purchase:reports' %}">View Reports</a>
                         <a class="dropdown-item" href="{% url 'purchase:generate_report' %}">Generate Report</a>
                     </div>

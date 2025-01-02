@@ -29,9 +29,9 @@ DATABASES = {
 
 
 # Use Render Database URL if needed
-# DATABASES['default'] = dj_database_url.config(
-#     default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
-# )
+DATABASES['default'] = dj_database_url.config(
+     default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
+ )
 
 
 # Email Configuration

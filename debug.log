@@ -18108,3 +18108,81 @@ Watching for file changes with StatReloader
 Watching for file changes with StatReloader
 "POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 17970
 "POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 17970
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18027
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18027
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18383
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18383
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18387
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18387
+"GET /products/categories/ HTTP/1.1" 200 12803
+"GET /products/categories/ HTTP/1.1" 200 12803
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18387
+"POST /purchase/admin/manage_reviews/?q=Good HTTP/1.1" 200 18387
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21814
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21814
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21921
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21921
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21921
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 21921
+"GET /purchase/admin/manage_reviews/?q=Chakka HTTP/1.1" 200 16786
+"GET /purchase/admin/manage_reviews/?q=Chakka HTTP/1.1" 200 16786
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /purchase/admin/manage_reviews/?q=Chakka HTTP/1.1" 302 0
+"GET /purchase/admin/manage_reviews/?q=Chakka HTTP/1.1" 302 0
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"POST /userauths/login/ HTTP/1.1" 302 0
+"POST /userauths/login/ HTTP/1.1" 302 0
+"GET /userauths/index/ HTTP/1.1" 200 35996
+"GET /userauths/index/ HTTP/1.1" 200 35996
+Not Found: /userauths/index/images/person_3.jpg
+Not Found: /userauths/index/images/person_3.jpg
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+"GET /userauths/index/images/person_3.jpg HTTP/1.1" 404 8783
+"GET /products/cproducts/ HTTP/1.1" 200 53179
+"GET /products/cproducts/ HTTP/1.1" 200 53179
+"GET /media/products/istockphoto-1172008120-612x612.jpg HTTP/1.1" 200 45201
+"GET /media/products/istockphoto-1172008120-612x612.jpg HTTP/1.1" 200 45201
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/91I0AlWC0L._SL1500_.jpg HTTP/1.1" 200 240946
+"GET /media/products/91I0AlWC0L._SL1500_.jpg HTTP/1.1" 200 240946
+"GET /media/products/yellow-passion-fruit-with-leaf-on-white-background-photo.jpg HTTP/1.1" 200 341093
+"GET /media/products/yellow-passion-fruit-with-leaf-on-white-background-photo.jpg HTTP/1.1" 200 341093
+"GET /media/products/tea-rose.jpg HTTP/1.1" 200 14829
+"GET /media/products/tea-rose.jpg HTTP/1.1" 200 14829
+"GET /media/products/IMG_4395-scaled-q67fiutmeaty5numaj4s5z2xhjf2oa8glq360bn16g.jpg HTTP/1.1" 200 54209
+"GET /media/products/IMG_4395-scaled-q67fiutmeaty5numaj4s5z2xhjf2oa8glq360bn16g.jpg HTTP/1.1" 200 54209
+"GET /media/products/miniature-rose.jpg HTTP/1.1" 200 17142
+"GET /media/products/miniature-rose.jpg HTTP/1.1" 200 17142
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /purchase/order-history/ HTTP/1.1" 200 15274
+"GET /purchase/order-history/ HTTP/1.1" 200 15274
+"GET /purchase/submit-review/13/ HTTP/1.1" 200 21611
+"GET /purchase/submit-review/13/ HTTP/1.1" 200 21611
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/miniature-rose.jpg HTTP/1.1" 200 17142
+"GET /media/products/miniature-rose.jpg HTTP/1.1" 200 17142
+"GET /media/products/istockphoto-1172008120-612x612.jpg HTTP/1.1" 200 45201
+"GET /media/products/istockphoto-1172008120-612x612.jpg HTTP/1.1" 200 45201
+"GET /purchase/order-history/ HTTP/1.1" 200 15274
+"GET /purchase/order-history/ HTTP/1.1" 200 15274
+"GET /purchase/submit-review/12/ HTTP/1.1" 200 19536
+"GET /purchase/submit-review/12/ HTTP/1.1" 200 19536
+"GET /media/products/yellow-passion-fruit-with-leaf-on-white-background-photo.jpg HTTP/1.1" 200 341093
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /media/products/yellow-passion-fruit-with-leaf-on-white-background-photo.jpg HTTP/1.1" 200 341093
+"GET /media/products/Ayur-Jack-Farm-Kurumalkunnu-Thrissur-5.jpg HTTP/1.1" 200 120746
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /purchase/submit-review/12/ HTTP/1.1" 302 0
+"GET /purchase/submit-review/12/ HTTP/1.1" 302 0
+"GET /userauths/login/ HTTP/1.1" 200 20786
+"GET /userauths/login/ HTTP/1.1" 200 20786
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
+F:\Main project\Plant-Nursery\PlantNursery\settings.py changed, reloading.
