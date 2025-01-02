@@ -30,4 +30,5 @@ path('reports/', views.reports, name='reports'),
     path('generate_order_pdf/', views.generate_order_pdf, name='generate_order_pdf'),
     path('submit-review/<int:order_id>/', views.submit_review, name='submit_review'),
 path('product-reviews/<int:product_id>/', views.product_reviews, name='product_reviews'),
+path('admin/manage_reviews/', views.manage_reviews, name='manage_reviews'),
 ]

@@ -444,20 +444,66 @@
                 transform: scale(1.2); /* Increase size slightly */
                 color: #53c317; /* Change color on hover (optional) */
             }
+            .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.discount-badge {
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.product-image img {
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover img {
+    transform: scale(1.05);
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-icon:hover {
+    transform: scale(1.1);
+}
+
+.text-primary {
+    color: #000000 !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
             
-</style>
-<div class="row" id="product-list">
+</style><div class="row" id="product-list">
     {% for batch in products %}
     <div class="col-md-4 mb-4">
-        <div class="product-card shadow-lg rounded-lg overflow-hidden bg-white" id="product-card-{{ batch.id }}" style="transition: transform 0.3s ease;">
+        <div class="product-card shadow-sm rounded-lg overflow-hidden bg-white border" id="product-card-{{ batch.id }}" style="transition: transform 0.3s ease;">
             {% if batch.product %}
             <a href="{% url 'products:cproduct_details' batch.product.id %}" id="product-link-{{ batch.product.id }}">
                 <div class="product-image position-relative">
                     <img src="{% if batch.product.image_1 %}{{ batch.product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" 
-                         alt="{{ batch.product.name }}" class="img-fluid" id="product-image-{{ batch.product.id }}">
+                         alt="{{ batch.product.name }}" class="img-fluid rounded-top" id="product-image-{{ batch.product.id }}">
                     
                     {% if batch.discount %}
-                    <div class="discount-badge position-absolute top-0 end-0 bg-danger text-white px-2 py-1">
+                    <div class="discount-badge position-absolute top-0 end-0 bg-danger text-white px-2 py-1 rounded-start">
                         {{ batch.discount }}% Off
                     </div>
                     {% endif %}
@@ -465,21 +511,38 @@
             </a>
             {% else %}
             <div class="product-image position-relative">
-                <img src="{% static 'placeholder.png' %}" alt="No product" class="img-fluid">
+                <img src="{% static 'placeholder.png' %}" alt="No product" class="img-fluid rounded-top">
             </div>
             {% endif %}
 
-            <div class="p-3">
-                <h5 class="text-center" id="product-name-{{ batch.id }}">{{ batch.product.name }}</h5>
-                <p class="text-center" id="product-price-{{ batch.id }}">Price: ₹{{ batch.price }}</p>
+            <div class="p-4 text-center">
+                <h5 class="mb-2 font-weight-bold text-dark" id="product-name-{{ batch.id }}">{{ batch.product.name }}</h5>
+                <div class="text-center text-muted" id="product-rating-{{ batch.id }}">
+                    {% if batch.avg_rating %}
+                        <span class="text-warning" style="font-size: 1.2rem;">
+                            {{ batch.avg_rating|floatformat:1 }} ★
+                        </span>
+                    {% else %}
+                        <span>No ratings yet</span>
+                    {% endif %}
+                </div>
+                <p class="text-primary font-weight-bold mt-2" id="product-price-{{ batch.id }}">₹{{ batch.price }}</p>
                 <div class="bottom-area d-flex justify-content-center py-3">
-                    <a href="{% url 'products:cproduct_details' batch.product.id %}" class="btn btn-outline-primary rounded-circle" id="product-details-btn-{{ batch.id }}">
+                    <a href="{% url 'products:cproduct_details' batch.product.id %}" 
+                       class="btn btn-outline-primary btn-icon mx-1" 
+                       id="product-details-btn-{{ batch.id }}">
                         <i class="ion-ios-menu"></i>
                     </a>
-                    <a href="{% url 'purchase:add_to_cart' batch.id %}" class="btn btn-outline-success rounded-circle" id="add-to-cart-btn-{{ batch.id }}">
+                    
+                    <a href="{% url 'purchase:add_to_cart' batch.id %}" 
+                       class="btn btn-outline-success btn-icon mx-1" 
+                       id="add-to-cart-btn-{{ batch.id }}">
                         <i class="ion-ios-cart"></i>
                     </a>
-                    <a href="{% url 'products:add_to_wishlist' batch.id %}" class="btn btn-outline-danger rounded-circle" id="add-to-wishlist-btn-{{ batch.id }}">
+                    
+                    <a href="{% url 'products:add_to_wishlist' batch.id %}" 
+                       class="btn btn-outline-danger btn-icon mx-1" 
+                       id="add-to-wishlist-btn-{{ batch.id }}">
                         <i class="ion-ios-heart"></i>
                     </a>
                 </div>

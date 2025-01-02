@@ -378,11 +378,10 @@ def batch_list_view(request):
 
 
 
-
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.db.models import Q
+from django.db.models import Q, Avg
 from .models import Batch
+from purchase.models import Review
 
 def cproduct_list(request):
     # Retrieve all GET parameters
@@ -440,6 +439,12 @@ def cproduct_list(request):
     if best_time_to_plant:
         products = products.filter(product__plant_category__best_time_to_plant=best_time_to_plant)
 
+    # Annotate average rating and review count for each batch's product
+    products = products.annotate(
+        avg_rating=Avg('product__reviews__rating'),
+        review_count=Avg('product__reviews__rating')
+    )
+
     # Optional: Implement pagination
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
     paginator = Paginator(products, 9)  # Show 9 products per page
@@ -463,16 +468,15 @@ def cproduct_list(request):
         'best_time_to_plant': best_time_to_plant,
     }
     return render(request, 'products/cproduct_list.html', context)
-
-
 from django.shortcuts import render, get_object_or_404
+from purchase.models import Review
+from userauths.models import User_Reg  # Adjust the import path as per your project structure
 from .models import Product, Batch, CultivationMethod
 
 def cproduct_details(request, product_id):
-
     # Fetch the product details
     product = get_object_or_404(Product, id=product_id)
-    
+
     # Fetch related PlantCategory details (if available)
     plant_category = product.plant_category
     plant_category_data = {
@@ -484,9 +488,9 @@ def cproduct_details(request, product_id):
         'climate_suitability': plant_category.get_climate_suitability_display() if plant_category else 'N/A',
         'best_time_to_plant': plant_category.get_best_time_to_plant_display() if plant_category else 'N/A',
     } if plant_category else None
-    
+
     # Fetch related Batch details (if available)
-    batch = product.batches.first()  # Get the first batch or None if no batches exist
+    batch = product.batches.first()
     batch_data = {
         'id': batch.id if batch else None,
         'current_height': batch.current_height if batch else 'N/A',
@@ -509,17 +513,33 @@ def cproduct_details(request, product_id):
         'common_issues': cultivation_method.common_issues if cultivation_method else 'N/A',
     } if cultivation_method else None
 
+    # Fetch reviews for the product
+    reviews = Review.objects.filter(product=product).select_related('user')
+
+    # Get user's name from session or User_Reg table
+    user_fname = request.session.get('user_first_name')
+    user_lname = request.session.get('user_last_name')
+
+    if not user_fname or not user_lname:
+        user = User_Reg.objects.filter(uid=request.session.get('user_id')).first()
+        user_fname = user.first_name if user else 'Guest'
+        user_lname = user.last_name if user else ''
+
     # Combine all data into context
     context = {
-        'product': product,
-        'plant_category': plant_category_data,
-        'batch': batch_data,
-        'cultivation_method': cultivation_method_data,
-    }
+    'product': product,
+    'plant_category': plant_category_data,
+    'batch': batch_data,
+    'cultivation_method': cultivation_method_data,
+    'reviews': reviews,
+    'user_fname': user_fname,
+    'user_lname': user_lname,
+    'rating_range': range(1, 6),  # Passing the range for the stars
+}
+
 
     # Render the details page
     return render(request, 'products/cproduct_details.html', context)
-
 
 
 from django.shortcuts import render, redirect, get_object_or_404

@@ -140,11 +140,12 @@ class OrderItem(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(choices=[(i, f"{i} Stars") for i in range(1, 6)])  # 1 to 5 stars
     comment = models.TextField(blank=True, null=True)
     review_date = models.DateTimeField(auto_now_add=True)
+    reply = models.TextField(blank=True, null=True)  # Add reply field
 
     def __str__(self):
         return f"Review by {self.user.fname} for {self.product.name} - Rating: {self.rating} Stars"

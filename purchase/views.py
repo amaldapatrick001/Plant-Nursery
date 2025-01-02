@@ -425,7 +425,53 @@ def product_reviews(request, product_id):
     reviews = Review.objects.filter(product=product).order_by('-review_date')
     return render(request, 'products/product_reviews.html', {'product': product, 'reviews': reviews})
 
+# views.py
+from django.db.models import Q
 
+def manage_reviews(request):
+    # Check if the user is logged in
+    if not ensure_user_logged_in(request):
+        return redirect('userauths:login')
+
+    # Fetch all reviews with related user and product data
+    reviews = Review.objects.select_related('user', 'product').all()
+
+    # Get the search query from GET request
+    search_query = request.GET.get('q', '').strip()
+
+    if search_query:
+        # Search for reviews containing the query in comment, user name, email, or product name
+        reviews = reviews.filter(
+            Q(comment__icontains=search_query) |
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(product__name__icontains=search_query)
+        )
+
+    # Sort reviews by the most recent review date
+    reviews = reviews.order_by('-review_date')
+
+    if request.method == 'POST':
+        # Process admin actions like replying or deleting a review
+        action = request.POST.get('action')
+        review_id = request.POST.get('review_id')
+
+        try:
+            review = Review.objects.get(id=review_id)
+            if action == 'reply':
+                reply = request.POST.get('reply')
+                # Save the reply to the review (update if already exists)
+                review.reply = reply
+                review.save()
+            elif action == 'delete':
+                review.delete()
+        except Review.DoesNotExist:
+            pass  # Handle case where the review doesn't exist
+
+    return render(request, 'purchase/manage_reviews.html', {
+        'reviews': reviews,
+        'search_query': search_query
+    })
 
 
 # Function to ensure the user is logged in
