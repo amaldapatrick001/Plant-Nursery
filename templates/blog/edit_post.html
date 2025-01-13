@@ -1,0 +1,13 @@
+<!-- blog/edit_post.html -->
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Blog Post</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Update Post</button>
+    </form>
+</div>
+{% endblock %}

@@ -220,6 +220,24 @@
                     </div>
                 </div>
 
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="blogDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-blog mr-2"></i> Manage Blog
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="blogDropdown">
+                        <a class="dropdown-item" href="{% url 'blog:home' %}">
+                            <i class="fas fa-list mr-2"></i> Blog List
+                        </a>
+                        <a class="dropdown-item" href="{% url 'blog:add' %}">
+                            <i class="fas fa-plus-circle mr-2"></i> Add New Blog
+                        </a>
+                        <a class="dropdown-item" href="{% url 'blog:dashboard' %}">
+                            <i class="fas fa-edit mr-2"></i> Edit Blog
+                        </a>
+                    </div>
+                </div>
+                
+
                 <!-- View Contact Us Submissions -->
                 <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
                     <i class="fas fa-envelope mr-2"></i> Contact Us

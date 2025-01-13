@@ -91,43 +91,46 @@
 		  </div>
     </div>
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'userauths:index' %}">Enchanted Eden</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="oi oi-menu"></span> Menu
-            </button>
-            <div class="collapse navbar-collapse" id="ftco-nav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-    <a href="{% url 'userauths:index' %}" class="nav-link" id="homePageElementId">Home</a>
-</li>
+      <div class="container">
+          <a class="navbar-brand" href="{% url 'userauths:index' %}">Enchanted Eden</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="oi oi-menu"></span> Menu
+          </button>
+          <div class="collapse navbar-collapse" id="ftco-nav">
+              <ul class="navbar-nav ml-auto">
+                  <li class="nav-item active">
+                      <a href="{% url 'userauths:index' %}" class="nav-link" id="homePageElementId">Home</a>
+                  </li>
                   <li class="nav-item dropdown" id="nav-shop-dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
-    <div class="dropdown-menu" aria-labelledby="dropdown04">
-        <a class="dropdown-item" href="{% url 'products:cproduct_list' %}" id="nav-shop-link">Shop</a>
-        <a class="dropdown-item" href="{% url 'products:wishlist' %}" id="nav-wishlist-link">Wishlist</a>
-        <a class="dropdown-item" href="{% url 'purchase:cart_detail' %}" id="nav-cart-link">Cart</a>
-        <a class="dropdown-item" href="{% url 'purchase:checkout' %}" id="nav-checkout-link">Checkout</a>
-        {% if request.session.user_id %}
-            <a class="dropdown-item" href="{% url 'purchase:order_history' %}" id="nav-order-history-link">Order History</a>
-        {% endif %}
-    </div>
-</li>
-
-                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
-<!-- 
-                    <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li> -->
-                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
+                      <div class="dropdown-menu" aria-labelledby="dropdown04">
+                          <a class="dropdown-item" href="{% url 'products:cproduct_list' %}" id="nav-shop-link">Shop</a>
+                          <a class="dropdown-item" href="{% url 'products:wishlist' %}" id="nav-wishlist-link">Wishlist</a>
+                          <a class="dropdown-item" href="{% url 'purchase:cart_detail' %}" id="nav-cart-link">Cart</a>
+                          <a class="dropdown-item" href="{% url 'purchase:checkout' %}" id="nav-checkout-link">Checkout</a>
+                          {% if request.session.user_id %}
+                              <a class="dropdown-item" href="{% url 'purchase:order_history' %}" id="nav-order-history-link">Order History</a>
+                          {% endif %}
+                      </div>
+                  </li>
+                  <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                  
+                  <!-- Blog Links for Both Guest and Registered Users -->
+                  <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'blog:home' %}">Home</a>
+                </li>
+  
+                  <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+  
+                  <li class="nav-item dropdown">
                       {% if request.session.is_authenticated %}
                           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               <i class="fas fa-user fa-2x"></i> <!-- User icon -->
                           </a>
                           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{% url 'userauths:update_profile' %}">My Profile</a></li>
+                              <li><a class="dropdown-item" href="{% url 'userauths:update_profile' %}">My Profile</a></li>
                               <li><hr class="dropdown-divider"></li>
                               <li><a id="logout" class="dropdown-item" href="{% url 'userauths:logout' %}">Logout</a></li>
-
                           </ul>
                       {% else %}
                           <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
@@ -140,7 +143,7 @@
                           [0]
                       </a>
                   </li>
-<style>
+              <style>
   .nav-link {
     display: flex;
     align-items: center; /* Centers the icon and text vertically */

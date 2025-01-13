@@ -1,6 +1,6 @@
 from datetime import timezone
 from django.db import models
-from userauths.models import Login, User_Reg
+from userauths.models import Login, User_Reg, DeliveryPersonnel
 from products.models import Batch, Product
 from django.core.mail import send_mail
 
@@ -60,32 +60,36 @@ class Billing(models.Model):
         return f"{self.first_name} {self.last_name}, {self.district}"
 
 
-# Order Model
+
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('assigned', 'Assigned'),
+        ('picked_up', 'Picked Up'),
+        ('in_transit', 'In Transit'),
+        ('delivered', 'Delivered'),
+    ]
+
     user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
     billing = models.ForeignKey(Billing, on_delete=models.SET_NULL, null=True)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Processing', 'Processing'),
-        ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
-        ('Returned', 'Returned'),
-    ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
-
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     PAYMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Success', 'Success'),
         ('Failed', 'Failed')
     ]
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending') 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     razorpay_order_id = models.CharField(max_length=255, null=True, blank=True)
-    payment_date = models.DateTimeField(blank=True, null=True)
+    payment_date = models.DateTimeField(null=True, blank=True)
     order_date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField(blank=True, null=True)
+    delivery_date = models.DateTimeField(null=True, blank=True)
+    assigned_delivery_person = models.ForeignKey(DeliveryPersonnel, null=True, blank=True, on_delete=models.SET_NULL)
+    delivery_location = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"Order {self.id}"
 
     def __str__(self):
         return f"Order {self.id} by {self.user.email} - Status: {self.status}"
@@ -137,6 +141,12 @@ class OrderItem(models.Model):
 
     def get_total_price_with_discount(self):
         return self.get_total_price() - ((self.get_total_price() * self.discount) / 100)
+
+
+
+
+
+
 
 class Review(models.Model):
     user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)

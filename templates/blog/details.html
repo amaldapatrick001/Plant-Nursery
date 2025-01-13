@@ -1,0 +1,28 @@
+<!-- blog/detail.html -->
+{% extends 'partials/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+
+    <h4>Comments</h4>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea class="form-control" name="comment" rows="3" placeholder="Add a comment"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
+
+    <ul class="list-group mt-4">
+        {% for comment in comments %}
+        <li class="list-group-item">
+            <strong>{{ comment.user.username }}</strong>: {{ comment.comment }} <small class="text-muted">{{ comment.created_at }}</small>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No comments yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
