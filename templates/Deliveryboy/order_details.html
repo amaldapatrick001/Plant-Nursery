@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Order #{{ order.id }} Details</h1>
+
+<p><strong>Delivery Address:</strong></p>
+<p>{{ order.billing.street_address }}</p>
+<p>{{ order.billing.town_city }}</p>
+<p>{{ order.billing.district }}</p>
+<p>{{ order.billing.postcode_zip }}</p>
+<p>{{ order.billing.phone }}</p>
+
+<h2>Order Items</h2>
+<ul>
+    {% for item in order_items %}
+        <li>{{ item.product }} - Quantity: {{ item.quantity }} - Price: {{ item.price }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Order Status: {{ order.status }}</h2>
+
+{% if order.status != 'delivered' %}
+    <a href="{% url 'update_order_status' order.id %}">Update Status</a>
+{% endif %}
+
+{% endblock %}

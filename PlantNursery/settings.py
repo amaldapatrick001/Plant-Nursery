@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'purchase',
     'social_django',
     'django_celery_beat',
+    'widget_tweaks',
     'delivery',
     'blog',
 ]

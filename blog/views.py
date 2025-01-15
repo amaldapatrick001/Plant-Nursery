@@ -34,6 +34,7 @@ def add_blog_post(request):
         form = BlogPostForm(request.POST, request.FILES)
         if form.is_valid():
             blog_post = form.save(commit=False)
+            blog_post.is_public = True
             blog_post.author_id = request.session['user_id']  # Set the author as the logged-in user
             blog_post.save()
             # Ensure `messages.success` is being used correctly
@@ -71,10 +72,69 @@ def delete_blog_post(request, post_id):
     messages.success(request, 'Blog post deleted successfully!')
     return redirect('blog:dashboard')
 
+from django.shortcuts import render, redirect
+from django.utils.timezone import now
+from .models import BlogPost, BlogComment, BlogBookmark
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import BlogPost, BlogComment
+from django.http import HttpResponse
+
+
 def blog_home(request):
-    """Render the public-facing blog homepage."""
+    """Render the blog homepage with blog posts, comments, and allow users to comment after login."""
+    user_logged_in = ensure_user_logged_in(request)  # Check if the user is logged in
+
+    user_id = request.session.get('user_id') if user_logged_in else None  # Get user ID from session if logged in
+
+    # Get the posts with their comments
     posts = BlogPost.objects.filter(is_public=True).order_by('-created_at')
-    return render(request, 'blog/home.html', {'posts': posts})
+    
+    # Handle new comment submission
+    if request.method == 'POST' and user_logged_in:  # Only process comment if the user is logged in
+        comment_text = request.POST.get('comment')
+        post_id = request.POST.get('post_id')
+        parent_comment_id = request.POST.get('parent_comment_id', None)
+        
+        if comment_text:
+            post = BlogPost.objects.get(id=post_id)
+            user = User_Reg.objects.get(uid=user_id)
+
+            if parent_comment_id:
+                parent_comment = BlogComment.objects.get(id=parent_comment_id)
+                new_comment = BlogComment(post=post, user=user, comment=comment_text, parent_comment=parent_comment)
+            else:
+                new_comment = BlogComment(post=post, user=user, comment=comment_text)
+
+            new_comment.save()
+            messages.success(request, 'Your comment has been posted!')
+
+        return redirect('blog:home')  # After submitting the comment, redirect to the homepage
+
+    return render(request, 'blog/home.html', {'posts': posts, 'user_logged_in': user_logged_in})
+
+from django.shortcuts import redirect
+from django.contrib import messages
+
+def add_comment(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(BlogPost, id=post_id)
+        user = User_Reg.objects.get(uid=request.session['user_id'])
+        comment_text = request.POST.get('comment')
+        BlogComment.objects.create(post=post, user=user, comment=comment_text)
+        messages.success(request, 'Comment added successfully!')
+    return redirect('blog:home')
+
+def add_reply(request, comment_id):
+    if request.method == 'POST':
+        parent_comment = get_object_or_404(BlogComment, id=comment_id)
+        user = User_Reg.objects.get(uid=request.session['user_id'])
+        reply_text = request.POST.get('reply')
+        BlogComment.objects.create(post=parent_comment.post, user=user, comment=reply_text, parent_comment=parent_comment)
+        messages.success(request, 'Reply added successfully!')
+    return redirect('blog:home')
+
+from userauths.models import User_Reg
 
 def blog_detail(request, post_id):
     """Render the detailed view of a single blog post with comments."""
@@ -82,19 +142,59 @@ def blog_detail(request, post_id):
     comments = post.comments.all()
 
     if request.method == 'POST':
-        if not request.user.is_authenticated:
-            messages.error(request, 'You must be logged in to leave a comment.')
+        if not ensure_user_logged_in(request):
             return redirect('userauths:login')
 
         comment_text = request.POST.get('comment')
-        BlogComment.objects.create(post=post, user=request.user, comment=comment_text)
-        messages.success(request, 'Comment added successfully!')
+        try:
+            # Fetch the logged-in user using the correct primary key field `uid`
+            user = User_Reg.objects.get(uid=request.session['user_id'])
+            BlogComment.objects.create(post=post, user=user, comment=comment_text)
+            messages.success(request, 'Comment added successfully!')
+        except User_Reg.DoesNotExist:
+            messages.error(request, 'An error occurred while adding your comment. Please try again.')
+            return redirect('userauths:login')
+
         return redirect('blog:detail', post_id=post_id)
 
-    return render(request, 'blog/detail.html', {'post': post, 'comments': comments})
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import BlogPost, BlogPostLike
+import json
+@csrf_exempt
+def like_blog_post(request):
+    """Handle liking/unliking a blog post."""
+    if request.method == 'POST':
+        # Ensure the user is logged in
+        if not ensure_user_logged_in(request):
+            return JsonResponse({'error': 'User not logged in'}, status=403)
+        
+        try:
+            data = json.loads(request.body)
+            post_id = data.get('post_id')
+            post = get_object_or_404(BlogPost, id=post_id)
+            user = get_object_or_404(User_Reg, uid=request.session.get('user_id'))
 
+            # Check if the user has already liked the post
+            existing_like = BlogPostLike.objects.filter(post=post, user=user).first()
 
-# Cart and checkout views with session handling (excluding add_to_cart function)
+            if existing_like:
+                # Unlike the post
+                existing_like.delete()
+                post.like_count -= 1
+                like_added = False
+            else:
+                # Like the post
+                BlogPostLike.objects.create(post=post, user=user)
+                post.like_count += 1
+                like_added = True
 
-# Assuming there are more views to manage cart and checkout, but without the add_to_cart function:
-# Other cart and checkout functions would use ensure_user_logged_in to check session before proceeding.
+            post.save()
+            # Return the like count and if the post was liked
+            return JsonResponse({'like_count': post.like_count, 'like_added': like_added}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

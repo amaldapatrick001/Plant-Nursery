@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Update Order Status - Order #{{ order.id }}</h1>
+
+<p><strong>Current Status:</strong> {{ order.status }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="status">Update Status:</label>
+    <select name="status" id="status" required>
+        <option value="picked_up" {% if order.status == 'picked_up' %}selected{% endif %}>Picked Up</option>
+        <option value="in_transit" {% if order.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+    </select>
+    <button type="submit">Update Status</button>
+</form>
+
+{% endblock %}
