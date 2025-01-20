@@ -80,22 +80,28 @@ from django.contrib import messages
 from .models import BlogPost, BlogComment
 from django.http import HttpResponse
 
+from django.db.models import Q
 
 def blog_home(request):
     """Render the blog homepage with blog posts, comments, and allow users to comment after login."""
     user_logged_in = ensure_user_logged_in(request)  # Check if the user is logged in
-
     user_id = request.session.get('user_id') if user_logged_in else None  # Get user ID from session if logged in
 
-    # Get the posts with their comments
-    posts = BlogPost.objects.filter(is_public=True).order_by('-created_at')
-    
+    # Get the search query from the request
+    query = request.GET.get('q', '')  # Default to empty string if no query is provided
+
+    # Filter posts based on the search query
+    posts = BlogPost.objects.filter(
+        Q(title__icontains=query) |  # Search by title (case-insensitive)
+        Q(content__icontains=query)   # Search by content (case-insensitive)
+    ).filter(is_public=True).order_by('-created_at')
+
     # Handle new comment submission
     if request.method == 'POST' and user_logged_in:  # Only process comment if the user is logged in
         comment_text = request.POST.get('comment')
         post_id = request.POST.get('post_id')
         parent_comment_id = request.POST.get('parent_comment_id', None)
-        
+
         if comment_text:
             post = BlogPost.objects.get(id=post_id)
             user = User_Reg.objects.get(uid=user_id)
@@ -111,7 +117,7 @@ def blog_home(request):
 
         return redirect('blog:home')  # After submitting the comment, redirect to the homepage
 
-    return render(request, 'blog/home.html', {'posts': posts, 'user_logged_in': user_logged_in})
+    return render(request, 'blog/home.html', {'posts': posts, 'user_logged_in': user_logged_in, 'query': query})
 
 from django.shortcuts import redirect
 from django.contrib import messages

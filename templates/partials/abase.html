@@ -236,6 +236,23 @@
                         </a>
                     </div>
                 </div>
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="expertDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-tie mr-2"></i> Manage Experts
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="expertDropdown">
+                        <h6 class="dropdown-header">Experts</h6>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-list mr-2"></i> View Experts
+                        </a>
+                        <a class="dropdown-item" href="{% url 'userauths:add_expert' %}">
+                            <i class="fas fa-plus-circle mr-2"></i> Add New Expert
+                        </a>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-edit mr-2"></i> Update Expert Info
+                        </a>
+                    </div>
+                </div>
                 
 
                 <!-- View Contact Us Submissions -->

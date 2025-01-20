@@ -1,6 +1,9 @@
 import logging
+import random
+import string
 logger = logging.getLogger(__name__)
 
+from django.http import BadHeaderError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -22,7 +25,7 @@ from PlantNursery import settings
 
 from .models import Login, User_Reg, UserType
 from django.views.decorators.cache import cache_control
-from .forms import RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
+from .forms import AddExpertForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -114,6 +117,12 @@ from django.contrib import messages
 from django.views.decorators.cache import cache_control
 from purchase.models import Order
 
+import logging
+from django.utils.timezone import now
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
     if request.method == 'POST':
@@ -124,7 +133,9 @@ def login(request):
             user_login = Login.objects.get(email=email)
 
             if user_login.status:
-                messages.error(request, 'This account is already logged in from another session.')
+                error_message = 'This account is already logged in from another session.'
+                messages.error(request, error_message)
+                logger.error(f"[{now()}] Login Error: {error_message} (Email: {email})")
                 return redirect('userauths:login')
 
             if user_login.check_password(password):
@@ -135,7 +146,7 @@ def login(request):
                 user_login.save()
 
                 # Set session data
-                request.session['user_id'] = user_login.login_id 
+                request.session['user_id'] = user_login.login_id
                 request.session['user_first_name'] = user_login.uid.first_name
                 request.session['user_last_name'] = user_login.uid.last_name
                 request.session['email'] = user_login.email
@@ -151,18 +162,23 @@ def login(request):
                     1: 'userauths:adminindex',
                     2: 'userauths:index',
                     3: 'delivery_dashboard',
-                    4: 'expert_dashboard'
+                    4: 'userauths:update_expert_profile'  # expert
                 }
 
+                success_message = f"User {user_login.uid.first_name} {user_login.uid.last_name} logged in successfully."
+                logger.info(f"[{now()}] Login Success: {success_message} (Email: {email})")
                 return redirect(user_type_redirects.get(user_type, 'userauths:login'))
             else:
-                messages.error(request, 'Incorrect password.')
+                error_message = 'Incorrect password.'
+                messages.error(request, error_message)
+                logger.warning(f"[{now()}] Login Error: {error_message} (Email: {email})")
 
         except Login.DoesNotExist:
-            messages.error(request, 'No account found with this email.')
+            error_message = 'No account found with this email.'
+            messages.error(request, error_message)
+            logger.warning(f"[{now()}] Login Error: {error_message} (Email: {email})")
 
     return render(request, 'userauths/login.html')
-
 
 
 
@@ -661,3 +677,151 @@ def google_callback(request):
         logger.error(f"Google authentication error: {str(e)}")
         messages.error(request, 'Authentication failed. Please try again.')
         return redirect('userauths:login')
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import AddExpertForm
+from django.core.mail import send_mail, BadHeaderError
+from .models import User_Reg, UserType, Login, Expert
+import random
+import string
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
+
+def add_expert(request):
+    if request.method == 'POST':
+        form = AddExpertForm(request.POST)
+        
+        if form.is_valid():
+            fname = form.cleaned_data['fname']
+            lname = form.cleaned_data['lname']
+            email = form.cleaned_data['email']
+            phone = form.cleaned_data['phone']
+
+            # Validate the email format
+            try:
+                EmailValidator()(email)  # Check if the email is valid
+            except ValidationError:
+                messages.error(request, 'Invalid email format! Please enter a valid email address.')
+                return render(request, 'userauths/add_expert.html', {'form': form})  # Stay on the same page
+
+            # Check if the email already exists in the Login model
+            if Login.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists!')
+                return render(request, 'userauths/add_expert.html', {'form': form})  # Stay on the same page
+
+            try:
+                # Get the UserType with utid = 4 (expert)
+                user_type = UserType.objects.get(utid=4)  # Ensure that 'expert' has utid = 4
+                
+                user = User_Reg.objects.create(
+                    first_name=fname,
+                    last_name=lname,
+                    phoneno=phone,
+                    user_type=user_type
+                )
+
+                # Generate a random password
+                raw_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+                # Create the Login entry with a hashed password
+                login = Login.objects.create(
+                    uid=user,
+                    email=email
+                )
+                login.set_password(raw_password)  # Hash the password
+                login.save()
+
+                # Send login credentials via email
+                subject = "Welcome to Expert Platform"
+                message = f"""
+                Hello {fname},
+
+                You have been registered as an expert on our platform. Please use the following credentials to log in:
+                Email: {email}
+                Password: {raw_password}
+
+                Login here: http://yourwebsite.com/login/
+
+                Thank you!
+                """
+                send_mail(subject, message, 'admin@yourwebsite.com', [email], fail_silently=False)
+
+                # Create expert entry with default values
+                Expert.objects.create(user=user, login=login)
+
+                messages.success(request, 'Expert added successfully! Login credentials have been sent.')
+                return redirect('userauths:add_expert')  # Redirect to the same page after successful form submission
+
+            except BadHeaderError:
+                messages.error(request, 'Invalid email header detected.')
+                return render(request, 'userauths/add_expert.html', {'form': form})  # Stay on the same page
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return render(request, 'userauths/add_expert.html', {'form': form})  # Stay on the same page
+
+    else:
+        form = AddExpertForm()
+
+    return render(request, 'userauths/add_expert.html', {'form': form})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Expert
+from .forms import ExpertProfileUpdateForm
+from .models import User_Reg  # Assuming you have a User_Reg model to check for logged-in user
+
+def update_expert_profile(request):
+    # Check if the user is logged in by looking for the 'user_id' in the session
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to update your profile.')
+        return redirect('userauths:login')  # Redirect to login page if not authenticated
+
+    # Retrieve the logged-in user using the 'user_id' from the session
+    uid = request.session['user_id']
+    try:
+        user = User_Reg.objects.get(uid=uid)
+    except User_Reg.DoesNotExist:
+        messages.error(request, 'User not found.')
+        return redirect('userauths:login')  # Redirect to login page if user doesn't exist
+    
+    try:
+        # Ensure the logged-in user is linked to an Expert object
+        expert = get_object_or_404(Expert, user=user)
+
+        if request.method == 'POST':
+            form = ExpertProfileUpdateForm(request.POST, request.FILES, instance=expert)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your profile has been updated successfully!')
+                return redirect('userauths:update_expert_profile')  # Redirect to the expert's profile page
+        else:
+            form = ExpertProfileUpdateForm(instance=expert)
+        
+        return render(request, 'userauths/eupdate_profile.html', {'form': form})
+
+    except Expert.DoesNotExist:
+        messages.error(request, 'Expert profile not found. Please contact support.')
+        return redirect('userauths:login')  # Redirect to login or an appropriate page
+    
+
+
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+def echange_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            messages.success(request, 'Your password has been changed successfully!')
+            return redirect('expert_dashboard')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})

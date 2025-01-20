@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import adminindex, delete_user_view, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, update_profile, user_details, user_details_view, google_login, google_callback
+from .views import add_expert, adminindex, delete_user_view, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback
 from django.contrib.auth import views 
 from django.views.generic import TemplateView 
 
@@ -27,4 +27,10 @@ urlpatterns = [
 path('auth/', include('social_django.urls', namespace='social')),  # Social Auth URLs
     path('google/login', google_login, name='google_login'),
     path('google/callback', google_callback, name='google_callback'),
+
+
+
+    path('admin/add_expert/', add_expert, name='add_expert'),
+path('expert/update-profile/', update_expert_profile, name='update_expert_profile'),
+    path('expert/echange-password/', echange_password, name='echange_password'),
 ]

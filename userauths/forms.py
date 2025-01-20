@@ -161,3 +161,53 @@ class UpdatePasswordForm(forms.Form):
             raise forms.ValidationError("Passwords do not match.")
 
         return cleaned_data
+
+from django import forms
+from .models import User_Reg
+
+class AddExpertForm(forms.Form):
+    fname = forms.CharField(max_length=100, label="First Name")
+    lname = forms.CharField(max_length=100, label="Last Name")
+    email = forms.EmailField(label="Email Address")
+    phone = forms.CharField(max_length=15, label="Phone Number")
+
+from django import forms
+from django import forms
+from .models import Expert
+
+class ExpertProfileUpdateForm(forms.ModelForm):
+    EXPERTISE_CHOICES = [
+        ('plant_diseases', 'Plant Diseases'),
+        ('soil_fertility', 'Soil Fertility'),
+        ('crop_management', 'Crop Management'),
+        ('irrigation', 'Irrigation'),
+        ('other', 'Other'),
+    ]
+
+    QUALIFICATION_CHOICES = [
+        ('degree', 'Degree'),
+        ('certification', 'Certification'),
+        ('diploma', 'Diploma'),
+        ('other', 'Other'),
+    ]
+
+    expertise_area = forms.ChoiceField(choices=EXPERTISE_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    other_expertise_area = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Specify other expertise area'}))
+
+    qualifications = forms.ChoiceField(choices=QUALIFICATION_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    other_qualification = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Specify other qualification'}))
+
+    class Meta:
+        model = Expert
+        fields = ['expertise_area', 'other_expertise_area', 'qualifications', 'other_qualification', 'description', 'profile_picture', 'specialization_tags', 'availability_schedule', 'availability_status', 'consultation_fee', 'certifications', 'contact_email', 'contact_phone', 'location', 'languages']
+
+
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User
+
+class ExpertPasswordChangeForm(PasswordChangeForm):
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password1', 'new_password2']
+
+
