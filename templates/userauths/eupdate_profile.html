@@ -3,238 +3,760 @@
 
 {% block content %}
 <style>
-    /* Custom Styles for the Form */
     body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #f7faf8;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
     }
 
     .container {
-        margin-top: 40px;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        font-weight: 600;
-        color: #444;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        border-radius: 8px;
-        padding: 12px 16px;
-        border: 1px solid #ddd;
+        margin-left: 280px;
+        margin-top: 80px;
+        margin-bottom: 50px;
+        padding: 20px;
+        max-width: calc(100vw - 300px);
         width: 100%;
-        background-color: #f9f9f9;
-        transition: all 0.3s ease;
+        position: relative;
     }
 
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-        border-color: #82ae46;
-        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
-        background-color: #fff;
-    }
-
-    .form-group input::placeholder,
-    .form-group textarea::placeholder {
-        color: #999;
-        font-size: 0.9rem;
-    }
-
-    /* Card Styling */
-    .card {
+    .profile-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
         border: none;
-        border-radius: 15px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
     }
 
-    .card-body {
-        background: linear-gradient(135deg, #ffffff, #ffffff);
-        color: #333;
-        border-radius: 15px;
-        padding: 2rem;
-    }
-
-    .category-list-heading {
-        font-family: 'Roboto', sans-serif;
-        color: #fff;
-        font-size: 1.5rem;
-        text-align: center;
-        margin-bottom: 1.5rem;
-        padding: 0.75rem;
-        background-color: #82ae46;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Button Styling */
-    .btn {
-        border-radius: 25px;
-        padding: 12px 25px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background-color: #82ae46;
-        border-color: #82ae46;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background-color: #6d8a2e;
-        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
-    }
-
-    /* Error Styling */
-    .error-message {
-        color: red;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    /* Popup Styles */
-    .popup-message {
-        display: none;
-        position: fixed;
+    .profile-card::before {
+        content: '';
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #2E7D32, #388E3C, #4CAF50);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        padding: 2.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        justify-content: center;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+        transform: skewX(-45deg);
+    }
+
+    .card-header h2 {
+        color: white;
+        font-size: 2.2rem;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
         align-items: center;
+        gap: 1rem;
     }
 
-    .popup-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        width: 50%;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    .card-header h2 i {
+        font-size: 1.8rem;
     }
 
-    .popup-message .message {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
+    .card-body {
+        padding: 3rem;
     }
 
-    .popup-message .message.success {
-        background-color: #28a745;
-        color: #fff;
+    .form-section {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
     }
 
-    .popup-message .message.error {
-        background-color: #dc3545;
-        color: #fff;
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     }
 
-    .popup-close {
-        text-align: center;
-        margin-top: 15px;
-        font-size: 1.1rem;
+    .section-title {
+        color: #1b5e20;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.8rem;
+        display: flex;
+        align-items: center;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(46, 125, 50, 0.1);
+    }
+
+    .section-title i {
+        margin-right: 0.8rem;
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.5rem;
+    }
+
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.8rem;
+    }
+
+    .form-floating input,
+    .form-floating select,
+    .form-floating textarea {
+        height: 65px;
+        padding: 2rem 1rem 0.5rem;
+        border: 2px solid rgba(46, 125, 50, 0.15);
+        border-radius: 16px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        width: 100%;
+    }
+
+    .form-floating textarea {
+        height: 120px;
+        padding-top: 2.5rem;
+        line-height: 1.5;
+    }
+
+    .form-floating label {
+        position: absolute;
+        top: 8px;
+        left: 0;
+        height: auto;
+        padding: 0 1rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: opacity .15s ease-in-out, transform .15s ease-in-out;
+        color: #666;
+        font-size: 0.9rem;
+        background: none;
+    }
+
+    .form-floating input:focus ~ label,
+    .form-floating input:not(:placeholder-shown) ~ label,
+    .form-floating select:focus ~ label,
+    .form-floating select:not(:placeholder-shown) ~ label,
+    .form-floating textarea:focus ~ label,
+    .form-floating textarea:not(:placeholder-shown) ~ label {
+        transform: scale(0.85) translateY(-1.2rem) translateX(0.15rem);
+        background: none;
+        padding: 0 0.5rem;
+        color: #2E7D32;
+        font-weight: 500;
+        z-index: 1;
+        top: 0;
+    }
+
+    .form-floating input:not(:placeholder-shown),
+    .form-floating select:not(:placeholder-shown),
+    .form-floating textarea:not(:placeholder-shown) {
+        padding-top: 2rem;
+        padding-bottom: 0.625rem;
+    }
+
+    .custom-file-upload {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        border: 2px dashed rgba(46, 125, 50, 0.2);
+        border-radius: 16px;
         cursor: pointer;
-        font-weight: bold;
-        color: #007bff;
+        transition: all 0.3s ease;
+        background: white;
     }
 
-    .popup-close:hover {
-        text-decoration: underline;
+    .custom-file-upload:hover {
+        border-color: #2E7D32;
+        background: rgba(46, 125, 50, 0.02);
     }
+
+    .custom-file-upload i {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-right: 1.5rem;
+    }
+
+    .switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        border: 2px solid rgba(46, 125, 50, 0.15);
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked + .slider {
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1.2rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-update i {
+        font-size: 1.2rem;
+    }
+
+    /* Professional Animations */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-section {
+        animation: slideIn 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    .form-section:nth-child(1) { animation-delay: 0.1s; }
+    .form-section:nth-child(2) { animation-delay: 0.2s; }
+    .form-section:nth-child(3) { animation-delay: 0.3s; }
+    .form-section:nth-child(4) { animation-delay: 0.4s; }
+
+    @media (max-width: 992px) {
+        .container {
+            margin-left: 240px;
+            max-width: calc(100vw - 260px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin-left: 0;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .form-floating input,
+        .form-floating select,
+        .form-floating textarea {
+            height: 58px;
+            padding-top: 1.8rem;
+        }
+
+        .form-floating textarea {
+            height: 100px;
+            padding-top: 2.2rem;
+        }
+
+        .form-floating label {
+            font-size: 0.85rem;
+            top: 6px;
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .is-valid {
+        border-color: #198754 !important;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    .profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-picture img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* Circular display */
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+.upload-section {
+  margin-top: 15px;
+}
+
+.upload-label {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.upload-label:hover {
+  background-color: #45a049;
+}
+
+#profileUpload {
+  display: none; /* Hide input element */
+}
+
 </style>
-<div class="container mt-5">
+
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-sm">
+        <div class="col-lg-10">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-edit"></i> Update Your Profile</h2>
                 </div>
                 <div class="card-body">
-                    
-                    <h2 class="category-list-heading">Update Your Profile</h2>
-                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form method="post" enctype="multipart/form-data" id="profileUpdateForm">
                         {% csrf_token %}
-                        <div class="form-group mb-3">
-                            {{ form.expertise_area.label_tag }}
-                            {{ form.expertise_area }}
-                            {% if form.expertise_area.value == 'other' %}
-                                {{ form.other_expertise_area }}
-                            {% endif %}
+
+                        <!-- Personal Information Section -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-user"></i> Personal Information
+                            </div>
+                            <div class="form-floating">
+                                {{ form.description }}
+                                <label>Description</label>
+                            </div>
+                            <div class="profile-container">
+                                <!-- Display Profile Picture -->
+                                <div class="profile-picture">
+                                  <img id="profileImage" src="default.jpg" alt="Profile Picture">
+                                </div>
+                                
+                                <!-- Upload Profile Picture -->
+                                <div class="upload-section">
+                                  <label for="profileUpload" class="upload-label">
+                                    <i class="fa fa-upload"></i> Update Profile Picture
+                                  </label>
+                                  <input type="file" id="profileUpload" accept="image/*" onchange="previewImage(event)">
+                                </div>
+                              </div>
+                              
                         </div>
-                        <div class="form-group mb-3">
-                            {{ form.qualifications.label_tag }}
-                            {{ form.qualifications }}
-                            {% if form.qualifications.value == 'other' %}
-                                {{ form.other_qualification }}
-                            {% endif %}
+
+                        <!-- Professional Information -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-briefcase"></i> Professional Details
+                            </div>
+                            <div class="form-floating">
+                                {{ form.expertise_area }}
+                                <label>Area of Expertise</label>
+                            </div>
+                            <div class="form-floating">
+                                {{ form.qualifications }}
+                                <label>Qualifications</label>
+                            </div>
+                            <div class="form-floating">
+                                {{ form.certifications }}
+                                <label>Certifications</label>
+                            </div>
                         </div>
-                        <div class="form-group mb-3">
-                            {{ form.description.label_tag }}
-                            {{ form.description }}
+
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-address-card"></i> Contact Information
+                            </div>
+                            <div class="form-floating">
+                                {{ form.contact_email }}
+                                <label>Email</label>
+                            </div>
+                            <div class="form-floating">
+                                {{ form.contact_phone }}
+                                <label>Phone</label>
+                            </div>
+                            <div class="form-floating">
+                                
+                                {{ form.location }}
+                                <label>Location</label>
+                            </div>
                         </div>
-                        <div class="form-group mb-3">
-                            {{ form.profile_picture.label_tag }}
-                            {{ form.profile_picture }}
+
+                        <!-- Availability Section -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-clock"></i> Availability
+                            </div>
+                            <div class="form-floating">
+                                {{ form.availability_schedule }}
+                                <label>Schedule</label>
+                            </div>
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    {{ form.availability_status }}
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Currently Available</span>
+                            </div>
                         </div>
-                        <div class="form-group mb-3">
-                            {{ form.specialization_tags.label_tag }}
-                            {{ form.specialization_tags }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.availability_schedule.label_tag }}
-                            {{ form.availability_schedule }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.availability_status.label_tag }}
-                            {{ form.availability_status }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.consultation_fee.label_tag }}
-                            {{ form.consultation_fee }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.certifications.label_tag }}
-                            {{ form.certifications }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.contact_email.label_tag }}
-                            {{ form.contact_email }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.contact_phone.label_tag }}
-                            {{ form.contact_phone }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.location.label_tag }}
-                            {{ form.location }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.languages.label_tag }}
-                            {{ form.languages }}
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-save me-2"></i> Update Profile
+                        </button>
                     </form>
-                    {% if messages %}
-                        <div class="mt-4">
-                            <ul class="list-group">
-                                {% for message in messages %}
-                                    <li class="list-group-item list-group-item-info">{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+                    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Update the description regex to be more flexible
+    const regex = {
+        description: /^[A-Z].{10,}$/, // Simplified: Start with capital, min 10 chars
+        specializationTags: /^([A-Z][a-z\s]{2,})(,\s[A-Z][a-z\s]{2,})*$/,
+        email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        availabilitySchedule: /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):\s(0?[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM)\s-\s(0?[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM)(,\s(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):\s(0?[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM)\s-\s(0?[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM))*$/,
+        location: /^[A-Z][a-zA-Z\s,]{3,}$/,
+        languages: /^[A-Z][a-z]{2,}(\s*,\s*[A-Z][a-z]{2,})*$/,
+        phone: /^[6-9]\d{9}$/,
+        certifications: /^[A-Z][a-zA-Z\s]{2,}(\s*,\s*[A-Z][a-zA-Z\s]{2,})*$/
+    };
+
+    // Validation Messages with more detailed feedback
+    const messages = {
+        description: {
+            capital: 'Must start with a capital letter',
+            punctuation: 'Must end with proper punctuation (. ? !)',
+            format: 'Each sentence must start with a capital letter'
+        },
+        specializationTags: {
+            format: 'Tags must be capitalized and comma-separated',
+            example: 'Example: Agriculture, Horticulture, Botany'
+        },
+        profilePicture: {
+            required: 'Please select an image',
+            format: 'Only JPG, JPEG, PNG, SVG, or WebP images allowed',
+            size: 'Image size must be less than 5MB'
+        },
+        email: {
+            format: 'Please enter a valid email address',
+            example: 'Example: name@domain.com'
+        },
+        location: {
+            capital: 'Must start with a capital letter',
+            length: 'Must be at least 4 characters long',
+            format: 'Enter a valid location name'
+        },
+        languages: {
+            format: 'Languages must be properly capitalized and comma-separated',
+            example: 'Example: English, Hindi, Spanish'
+        },
+        phone: {
+            format: 'Must be 10 digits starting with 6-9',
+            example: 'Example: 9876543210'
+        },
+        certifications: {
+            format: 'Must be capitalized and comma-separated',
+            example: 'Example: BSc Agriculture, MSc Horticulture'
+        },
+        availabilitySchedule: {
+            format: 'Use format: Day: HH:MM AM/PM - HH:MM AM/PM',
+            example: 'Example: Monday: 9:00 AM - 5:00 PM'
+        }
+    };
+
+    // Create error containers dynamically
+    function createErrorContainer(element) {
+        const container = document.createElement('div');
+        container.className = 'error-message';
+        container.style.display = 'none';
+        element.parentNode.appendChild(container);
+        return container;
+    }
+
+    // Elements with dynamic error containers
+    const elements = {
+        description: {
+            element: document.querySelector('#id_description'),
+            errorContainer: null
+        },
+        specializationTags: {
+            element: document.querySelector('#id_specialization_tags'),
+            errorContainer: null
+        },
+        profilePicture: {
+            element: document.querySelector('#id_profile_picture'),
+            errorContainer: null
+        },
+        email: {
+            element: document.querySelector('#id_contact_email'),
+            errorContainer: null
+        },
+        location: {
+            element: document.querySelector('#id_location'),
+            errorContainer: null
+        },
+        languages: {
+            element: document.querySelector('#id_languages'),
+            errorContainer: null
+        },
+        phone: {
+            element: document.querySelector('#id_contact_phone'),
+            errorContainer: null
+        },
+        availabilitySchedule: {
+            element: document.querySelector('#id_availability_schedule'),
+            errorContainer: null
+        }
+    };
+
+    // Initialize error containers
+    Object.keys(elements).forEach(field => {
+        if (elements[field].element) {
+            elements[field].errorContainer = createErrorContainer(elements[field].element);
+        }
+    });
+
+    // Enhanced validation function
+    function validateField(field, value) {
+        const fieldMessages = messages[field];
+        const fieldRegex = regex[field];
+        let isValid = true;
+        let errorMessage = '';
+
+        // Make profile picture validation optional
+        if (field === 'profilePicture') {
+            const file = elements[field].element.files[0];
+            if (!file) {
+                // No file selected is OK
+                return { isValid: true, errorMessage: '' };
+            }
+            // Only validate if a file is selected
+            const validTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                isValid = false;
+                errorMessage = messages.profilePicture.format;
+            } else if (file.size > 5 * 1024 * 1024) {
+                isValid = false;
+                errorMessage = messages.profilePicture.size;
+            }
+            return { isValid, errorMessage };
+        }
+
+        // Regular validation for other fields
+        if (!value.trim()) {
+            isValid = false;
+            errorMessage = 'This field is required';
+        } else if (fieldRegex && !fieldRegex.test(value)) {
+            isValid = false;
+            errorMessage = fieldMessages.format;
+        }
+
+        return { isValid, errorMessage };
+    }
+
+    // Show/Hide error with animation
+    function toggleError(field, show, message = '') {
+        const container = elements[field].errorContainer;
+        if (!container) return;
+
+        if (show) {
+            container.textContent = message;
+            container.style.display = 'block';
+            container.style.animation = 'slideDown 0.3s ease-out';
+        } else {
+            container.style.animation = 'slideUp 0.3s ease-out';
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    // Real-time validation
+    Object.keys(elements).forEach(field => {
+        const { element } = elements[field];
+        if (element) {
+            element.addEventListener('input', debounce(() => {
+                const { isValid, errorMessage } = validateField(field, element.value);
+                toggleError(field, !isValid, errorMessage);
+                updateFieldStyle(element, isValid);
+            }, 300));
+        }
+    });
+
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Update field style based on validation
+    function updateFieldStyle(element, isValid) {
+        if (isValid) {
+            element.classList.remove('is-invalid');
+            element.classList.add('is-valid');
+        } else {
+            element.classList.remove('is-valid');
+            element.classList.add('is-invalid');
+        }
+    }
+
+    // Form submission
+    document.querySelector('form').addEventListener('submit', (event) => {
+        let isValid = true;
+
+        Object.keys(elements).forEach(field => {
+            const { element } = elements[field];
+            if (element) {
+                const validation = validateField(field, element.value);
+                if (!validation.isValid) {
+                    isValid = false;
+                    toggleError(field, true, validation.errorMessage);
+                    updateFieldStyle(element, false);
+                }
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+            // Scroll to first error
+            const firstError = document.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+});
+function previewImage(event) {
+  const reader = new FileReader();
+  reader.onload = function () {
+    const profileImage = document.getElementById('profileImage');
+    profileImage.src = reader.result; // Set preview to the uploaded image
+  };
+  reader.readAsDataURL(event.target.files[0]);
+}
+
+                    </script>
+                                        {% endblock %}
+

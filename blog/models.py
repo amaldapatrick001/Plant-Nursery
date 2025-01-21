@@ -1,5 +1,6 @@
 from django.db import models
 from userauths.models import Login, User_Reg, DeliveryPersonnel
+
 class BlogPost(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
@@ -11,9 +12,20 @@ class BlogPost(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=[('draft', 'Draft'), ('published', 'Published')], default='draft')
     like_count = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+    def soft_delete(self):
+        """Soft delete the blog post"""
+        self.is_deleted = True
+        self.save()
+
+    def restore(self):
+        """Restore the soft-deleted blog post"""
+        self.is_deleted = False
+        self.save()
 
 
 class BlogPostLike(models.Model):

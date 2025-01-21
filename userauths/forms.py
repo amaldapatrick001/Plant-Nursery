@@ -170,8 +170,6 @@ class AddExpertForm(forms.Form):
     lname = forms.CharField(max_length=100, label="Last Name")
     email = forms.EmailField(label="Email Address")
     phone = forms.CharField(max_length=15, label="Phone Number")
-
-from django import forms
 from django import forms
 from .models import Expert
 
@@ -181,27 +179,102 @@ class ExpertProfileUpdateForm(forms.ModelForm):
         ('soil_fertility', 'Soil Fertility'),
         ('crop_management', 'Crop Management'),
         ('irrigation', 'Irrigation'),
-        ('other', 'Other'),
+        ('other', 'Other (Please Specify)'),  # Updated label
     ]
 
     QUALIFICATION_CHOICES = [
-        ('degree', 'Degree'),
-        ('certification', 'Certification'),
-        ('diploma', 'Diploma'),
-        ('other', 'Other'),
+        ('bachelor_agriculture', 'Bachelor of Agriculture'),
+        ('master_agriculture', 'Master of Agriculture'),
+        ('agriculture_certification', 'Agriculture Certification'),
+        ('horticulture_degree', 'Horticulture Degree'),
+        ('crop_science_degree', 'Crop Science Degree'),
+        ('soil_science_degree', 'Soil Science Degree'),
+        ('plant_pathology_degree', 'Plant Pathology Degree'),
+        ('agronomy_certification', 'Agronomy Certification'),
+        ('irrigation_management_certification', 'Irrigation Management Certification'),
+        ('pest_management_certification', 'Pest Management Certification'),
+        ('diploma_agriculture', 'Diploma in Agriculture'),
+        ('other', 'Other (Please Specify)'),  # Updated label
     ]
 
-    expertise_area = forms.ChoiceField(choices=EXPERTISE_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    other_expertise_area = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Specify other expertise area'}))
+    availability_status = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'availability-status'}),
+        label="Availability Status"
+    )
 
-    qualifications = forms.ChoiceField(choices=QUALIFICATION_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    other_qualification = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Specify other qualification'}))
+    expertise_area = forms.ChoiceField(
+        choices=EXPERTISE_CHOICES, 
+        required=True, 
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'expertise_area',
+            'onchange': 'toggleOtherField(this, "other_expertise_area")'
+        })
+    )
+
+    other_expertise_area = forms.CharField(
+        max_length=255, 
+        required=False, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control mt-2',
+            'id': 'other_expertise_area',
+            'placeholder': 'Please specify your expertise area',
+            'style': 'display: none;'
+        })
+    )
+
+    qualifications = forms.ChoiceField(
+        choices=QUALIFICATION_CHOICES, 
+        required=True, 
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'qualifications',
+            'onchange': 'toggleOtherField(this, "other_qualification")'
+        })
+    )
+
+    other_qualification = forms.CharField(
+        max_length=255, 
+        required=False, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control mt-2',
+            'id': 'other_qualification',
+            'placeholder': 'Please specify your qualification',
+            'style': 'display: none;'
+        })
+    )
+
+    availability_schedule = forms.CharField(
+        required=False, 
+        widget=forms.Textarea(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Enter weekly availability (Sunday-Saturday) with times.'
+        })
+    )
 
     class Meta:
         model = Expert
         fields = ['expertise_area', 'other_expertise_area', 'qualifications', 'other_qualification', 'description', 'profile_picture', 'specialization_tags', 'availability_schedule', 'availability_status', 'consultation_fee', 'certifications', 'contact_email', 'contact_phone', 'location', 'languages']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        expertise_area = cleaned_data.get('expertise_area')
+        other_expertise = cleaned_data.get('other_expertise_area')
+        qualifications = cleaned_data.get('qualifications')
+        other_qualification = cleaned_data.get('other_qualification')
 
+        if expertise_area == 'other' and not other_expertise:
+            raise forms.ValidationError({
+                'other_expertise_area': 'Please specify your expertise area when selecting "Other"'
+            })
+
+        if qualifications == 'other' and not other_qualification:
+            raise forms.ValidationError({
+                'other_qualification': 'Please specify your qualification when selecting "Other"'
+            })
+
+        return cleaned_data
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 
@@ -209,5 +282,3 @@ class ExpertPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = User
         fields = ['old_password', 'new_password1', 'new_password2']
-
-

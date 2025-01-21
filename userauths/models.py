@@ -66,6 +66,11 @@ class Login(models.Model):
 
     def __str__(self):
         return f'Login entry for {self.email}'
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
 
 
 class DeliveryPersonnel(models.Model):
@@ -118,33 +123,34 @@ class DeliveryPersonnel(models.Model):
         """Fetch the phone number from the associated User_Reg model."""
         return self.user.phoneno
 
+from django.db import models
 
 class Expert(models.Model):
-    expert_id = models.AutoField(primary_key=True)  # Unique identifier for the expert
-    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)  # Link to User_Reg for personal details
-    login = models.OneToOneField(Login, on_delete=models.CASCADE)  # Link to Login for authentication and status
-    expertise_area = models.CharField(max_length=255)  # Area of expertise (e.g., "Plant Diseases", "Soil Fertility")
-    qualifications = models.TextField()  # List of qualifications, certifications, or degrees
-    description = models.TextField(null=True, blank=True)  # Detailed description of the expert
-    profile_picture = models.ImageField(upload_to='expert_profiles/', null=True, blank=True)  # Profile picture
-    specialization_tags = models.CharField(max_length=255, null=True, blank=True)  # Tags for expertise areas
-    availability_schedule = models.JSONField(null=True, blank=True)  # Availability schedule (stored as JSON)
+    expert_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
+    login = models.OneToOneField(Login, on_delete=models.CASCADE)
+    expertise_area = models.CharField(max_length=255)
+    qualifications = models.TextField()
+    description = models.TextField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='expert_profiles/', null=True, blank=True)
+    specialization_tags = models.CharField(max_length=255, null=True, blank=True)
+    availability_schedule = models.JSONField(null=True, blank=True)  # Store availability by day and time
     availability_status = models.CharField(
         max_length=20,
         choices=[('available', 'Available'), ('unavailable', 'Unavailable')],
         default='available'
-    )  # Availability status for consultations
-    consultation_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Fee for consultations
-    rating = models.FloatField(default=0.0)  # Average rating of the expert
-    consultation_count = models.IntegerField(default=0)  # Number of consultations provided
-    certifications = models.TextField(null=True, blank=True)  # Additional certifications
-    total_reviews = models.IntegerField(default=0)  # Total number of reviews received
-    blog_count = models.IntegerField(default=0)  # Number of blogs written by the expert
-    contact_email = models.EmailField(null=True, blank=True)  # Contact email for direct queries
-    contact_phone = models.CharField(max_length=15, null=True, blank=True)  # Alternative phone contact
-    location = models.CharField(max_length=255, null=True, blank=True)  # Location of the expert
-    languages = models.CharField(max_length=255, null=True, blank=True)  # Languages spoken by the expert
-    date_time_joined = models.DateTimeField(auto_now_add=True)  # Date and time the expert was added
+    )
+    consultation_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    rating = models.FloatField(default=0.0)
+    consultation_count = models.IntegerField(default=0)
+    certifications = models.TextField(null=True, blank=True)
+    total_reviews = models.IntegerField(default=0)
+    blog_count = models.IntegerField(default=0)
+    contact_email = models.EmailField(null=True, blank=True)
+    contact_phone = models.CharField(max_length=15, null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+    languages = models.CharField(max_length=255, null=True, blank=True)
+    date_time_joined = models.DateTimeField(auto_now_add=True)
 
     # Utility methods
     def update_availability(self, status):

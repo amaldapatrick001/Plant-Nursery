@@ -13,36 +13,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        /* Custom CSS */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom right, #81c784, #c8e6c9);
-            margin: 0;
-            padding: 0;
-            color: #333;
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #4CAF50;
+            --accent-color: #81C784;
+            --dark-color: #1B5E20;
+            --light-color: #E8F5E9;
+            --gradient-start: #2E7D32;
+            --gradient-end: #388E3C;
+            --sidebar-gradient-start: #1B5E20;
+            --sidebar-gradient-end: #2E7D32;
         }
 
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Styles */
         .navbar {
-            background: linear-gradient(45deg, #2b9c56, #81c784);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             position: fixed;
             width: 100%;
             z-index: 1050;
             top: 0;
             left: 0;
+            padding: 0.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .navbar-brand {
-            color: #ffffff;
+            color: #ffffff !important;
             font-size: 2rem;
-            font-weight: bold;
+            font-weight: 600;
             display: flex;
             align-items: center;
+            letter-spacing: 0.5px;
         }
 
         .navbar-brand i {
-            margin-right: 10px;
-            font-size: 2rem;
+            margin-right: 12px;
+            font-size: 2.2rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-nav .nav-link {
@@ -56,76 +72,171 @@
             color: #4caf50;
         }
 
+        /* Left Panel Styles */
         .left-panel {
-            background: rgba(0, 0, 0, 0.85);
+            background: linear-gradient(135deg, var(--sidebar-gradient-start), var(--sidebar-gradient-end));
             position: fixed;
-            top: 70px; /* Adjust for navbar height */
+            top: 70px;
             left: 0;
-            width: 250px;
+            width: 280px;
             height: calc(100% - 70px);
             overflow-y: auto;
-            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
             z-index: 1040;
-            transition: all 0.3s ease;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .left-panel a {
-            color: #ffffff;
+            color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
             display: flex;
             align-items: center;
             text-decoration: none;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
 
         .left-panel a i {
-            margin-right: 10px;
-            font-size: 1.4rem;
+            margin-right: 14px;
+            font-size: 1.3rem;
+            width: 24px;
+            text-align: center;
+            color: var(--accent-color);
         }
 
         .left-panel a:hover {
-            background: #4caf50;
-            color: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(8px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        /* Dropdown Styles */
         .left-panel .dropdown-menu {
-            background-color: rgba(0, 0, 0, 0.9);
-            border: none;
+            background: rgba(27, 94, 32, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 0.8rem;
+            margin-top: 5px;
         }
 
         .dropdown-item {
-            color: #ffffff;
-            transition: background 0.3s ease;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .dropdown-item:hover {
-            background-color: #4caf50;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            transform: translateX(5px);
         }
 
+        /* Container Styles */
         .container {
-            margin-left: 270px; /* Adjust for the left-panel width */
+            margin-left: 300px;
+            margin-top: 90px;
             padding: 30px;
-            animation: fadeIn 1.5s ease-in-out;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-height: calc(100vh - 90px);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
 
+        /* Card Styles */
+        .card {
+            background: #ffffff;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #ffffff;
+            border-radius: 16px 16px 0 0 !important;
+            padding: 20px 25px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Profile Styles */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            margin-left: 20px;
+        }
+
+        .profile-picture {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        /* Footer Styles */
         footer {
-            background-color: #333333;
-            color: #d1d8e0;
-            padding: 20px 0;
+            background: linear-gradient(135deg, var(--sidebar-gradient-start), var(--sidebar-gradient-end));
+            color: #ffffff;
+            padding: 25px 0;
             text-align: center;
+            margin-left: 280px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         footer a {
-            color: #4caf50;
+            color: var(--accent-color);
             text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
         }
 
         footer a:hover {
-            text-decoration: underline;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
         }
 
         /* Animations */
@@ -140,48 +251,46 @@
             }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #4CAF50;
-            border-radius: 10px;
+        /* Glass Morphism Effects */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #81C784;
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .left-panel {
+                width: 240px;
+            }
+            .container {
+                margin-left: 260px;
+            }
+            footer {
+                margin-left: 240px;
+            }
         }
 
-        /* Cards Style */
-        .card {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-header {
-            background: #006400;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .card-body {
-            color: #d1d8e0;
-        }
-
-        .btn-custom {
-            background: #4caf50;
-            color: #ffffff;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-custom:hover {
-            background: #388e3c;
-            color: #ffffff;
+        @media (max-width: 768px) {
+            .left-panel {
+                width: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+            .container {
+                margin-left: 0;
+            }
+            footer {
+                margin-left: 0;
+            }
+            .navbar-brand {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
@@ -197,35 +306,50 @@
             <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'userauths:update_profile' %}" data-bs-toggle="tooltip" title="Update your profile">
-                        <i class="fas fa-user-edit"></i> Update Profile
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if request.user_expert.profile_picture %}
+                            <img src="{{ request.user_expert.profile_picture.url }}" 
+                                 alt="Profile Picture" 
+                                 class="rounded-circle me-2"
+                                 style="width: 40px; height: 40px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle me-2" style="font-size: 40px;"></i>
+                        {% endif %}
+                        {{ request.session.user_first_name }}
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'userauths:logout' %}" data-bs-toggle="tooltip" title="Logout of your account">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'userauths:update_expert_profile' %}">
+                                <i class="fas fa-user-edit me-2"></i> Update Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'userauths:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
+
 <!-- Left Panel -->
 <div class="left-panel">
     <a href=""><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a href="{% url 'userauths:update_profile' %}"><i class="fas fa-user-edit"></i> Update Profile</a>
+    <a href="{% url 'userauths:update_expert_profile' %}"><i class="fas fa-user-edit"></i> Update Profile</a>
     <a href="{% url 'userauths:echange_password' %}"><i class="fas fa-key"></i> Change Password</a>
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="blogDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-blog"></i> Blog
         </a>
         <ul class="dropdown-menu" aria-labelledby="blogDropdown">
-            <li><a class="dropdown-item" href="{% url 'blog:add' %}"><i class="fas fa-plus-circle"></i> Add Blog</a></li>
-            <li><a class="dropdown-item" href=""><i class="fas fa-edit"></i> Edit Blog</a></li>
-
+            <li><a class="dropdown-item" href="{% url 'blog:eadd_blog' %}"><i class="fas fa-plus-circle"></i> Add Blog</a></li>
+            <li><a class="dropdown-item" href="{% url 'blog:blog_dashboard' %}"><i class="fas fa-list"></i> My Blogs</a></li>
         </ul>
     </li>
     <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>

@@ -25,7 +25,7 @@ from PlantNursery import settings
 
 from .models import Login, User_Reg, UserType
 from django.views.decorators.cache import cache_control
-from .forms import AddExpertForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
+from .forms import AddExpertForm, ExpertPasswordChangeForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -804,24 +804,70 @@ def update_expert_profile(request):
         messages.error(request, 'Expert profile not found. Please contact support.')
         return redirect('userauths:login')  # Redirect to login or an appropriate page
     
-
-
-
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 def echange_password(request):
+    # Check if the user is logged in using the session
+    if 'user_id' not in request.session:
+        messages.error(request, 'You must be logged in to change your password.')
+        return redirect('userauths:login')  # Redirect to login page if not authenticated
+
+    user_id = request.session.get('user_id')
+
+    try:
+        # Fetch the logged-in user's Login object
+        user_login = Login.objects.get(pk=user_id)
+    except Login.DoesNotExist:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('userauths:login')
+
     if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)  # Important to keep the user logged in
-            messages.success(request, 'Your password has been changed successfully!')
-            return redirect('expert_dashboard')
-        else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'change_password.html', {'form': form})
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Validate the current password
+        if not user_login.check_password(current_password):
+            messages.error(request, "Your current password is incorrect.")
+            return render(request, 'userauths/echange_password.html', {'status': 'error'})
+
+        # Ensure the new password matches the confirm password
+        if new_password != confirm_password:
+            messages.error(request, "New password and confirm password do not match.")
+            return render(request, 'userauths/echange_password.html', {'status': 'error'})
+
+        # Update the password
+        user_login.set_password(new_password)  # Hash the new password
+        user_login.save()
+
+        # Optionally send an email notification about the password change
+        send_password_change_email(user_login)
+
+        # Success message and redirect
+        messages.success(request, "Your password has been changed successfully.")
+        return render(request, 'userauths/echange_password.html', {'status': 'success'})
+
+    # Render the password change form
+    return render(request, 'userauths/echange_password.html', {'status': 'form'})
+
+def send_password_change_email(user_login):
+    """Send an email notification upon successful password change."""
+    subject = "Your Password Has Been Changed"
+    message = (
+        f"Dear {user_login.uid.first_name},\n\n"
+        "This is a confirmation that your password has been successfully changed.\n\n"
+        "If you did not request this change, please contact our support team immediately.\n\n"
+        "Best Regards,\n"
+        "The Enchanted Eden Team\n"
+        "For further details, please contact us at support@enchantededen.com."
+    )
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user_login.email],
+        fail_silently=False,
+    )
+
+

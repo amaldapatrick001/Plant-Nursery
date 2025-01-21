@@ -28,8 +28,6 @@ path('auth/', include('social_django.urls', namespace='social')),  # Social Auth
     path('google/login', google_login, name='google_login'),
     path('google/callback', google_callback, name='google_callback'),
 
-
-
     path('admin/add_expert/', add_expert, name='add_expert'),
 path('expert/update-profile/', update_expert_profile, name='update_expert_profile'),
     path('expert/echange-password/', echange_password, name='echange_password'),
