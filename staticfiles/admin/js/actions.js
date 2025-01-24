@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-/*global gettext, interpolate, ngettext*/
-=======
 /*global gettext, interpolate, ngettext, Actions*/
->>>>>>> b583b2f (Updated code)
-=======
-/*global gettext, interpolate, ngettext*/
->>>>>>> origin/main
 'use strict';
 {
     function show(selector) {

@@ -7,11 +7,11 @@
     <title>Enchanted Eden - Agricultural Experts</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts for Organic Feel -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #2E7D32;
@@ -19,248 +19,173 @@
             --accent-color: #81C784;
             --dark-color: #1B5E20;
             --light-color: #E8F5E9;
-            --gradient-start: #2E7D32;
-            --gradient-end: #388E3C;
-            --sidebar-gradient-start: #1B5E20;
-            --sidebar-gradient-end: #2E7D32;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--light-color);
-            margin: 0;
-            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            position: relative;
         }
 
-        /* Navbar Styles */
+        /* Enhanced Navbar */
         .navbar {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            position: fixed;
-            width: 100%;
-            z-index: 1050;
-            top: 0;
-            left: 0;
-            padding: 0.8rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-md);
         }
 
         .navbar-brand {
-            color: #ffffff !important;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 600;
+            color: var(--text-light) !important;
             display: flex;
             align-items: center;
-            letter-spacing: 0.5px;
+            gap: 0.8rem;
         }
 
         .navbar-brand i {
-            margin-right: 12px;
-            font-size: 2.2rem;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2rem;
+            color: var(--accent-color);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
-        .navbar-nav .nav-link {
-            color: #ffffff;
-            margin-right: 15px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #4caf50;
-        }
-
-        /* Left Panel Styles */
+        /* Enhanced Left Panel */
         .left-panel {
-            background: linear-gradient(135deg, var(--sidebar-gradient-start), var(--sidebar-gradient-end));
-            position: fixed;
-            top: 70px;
-            left: 0;
+            background: linear-gradient(160deg, var(--dark-color), var(--primary-color));
             width: 280px;
-            height: calc(100% - 70px);
+            height: calc(100vh - 72px);
+            position: fixed;
+            top: 72px;
+            left: 0;
+            padding: 2rem 1.5rem;
             overflow-y: auto;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            z-index: 1040;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
         }
 
         .left-panel a {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
             display: flex;
             align-items: center;
+            padding: 1rem 1.2rem;
+            color: var(--text-light);
             text-decoration: none;
-            padding: 14px 18px;
-            margin-bottom: 10px;
             border-radius: 12px;
-            transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.8rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
         }
 
         .left-panel a i {
-            margin-right: 14px;
-            font-size: 1.3rem;
             width: 24px;
-            text-align: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
             color: var(--accent-color);
         }
 
         .left-panel a:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateX(8px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
         }
 
-        /* Dropdown Styles */
-        .left-panel .dropdown-menu {
-            background: rgba(27, 94, 32, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 0.8rem;
-            margin-top: 5px;
+        /* Enhanced Content Area */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: calc(100vh - 72px);
+            margin-top: 72px;
+            background: transparent;
         }
 
-        .dropdown-item {
-            color: rgba(255, 255, 255, 0.9);
-            padding: 12px 18px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            transform: translateX(5px);
-        }
-
-        /* Container Styles */
-        .container {
-            margin-left: 300px;
-            margin-top: 90px;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.9);
-            min-height: calc(100vh - 90px);
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            min-height: calc(100vh - 180px);
         }
 
-        /* Card Styles */
-        .card {
-            background: #ffffff;
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s ease;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            color: #ffffff;
-            border-radius: 16px 16px 0 0 !important;
-            padding: 20px 25px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .card-body {
-            padding: 25px;
-        }
-
-        /* Profile Styles */
-        .profile-section {
+        /* Enhanced Profile Dropdown */
+        .profile-dropdown {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
             display: flex;
             align-items: center;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            margin-left: 20px;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .profile-picture {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--accent-color);
+            box-shadow: var(--shadow-sm);
             object-fit: cover;
         }
 
-        /* Footer Styles */
+        /* Enhanced Dropdown Menu */
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 0.8rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-color);
+            transform: translateX(5px);
+        }
+
+        /* Enhanced Footer */
         footer {
-            background: linear-gradient(135deg, var(--sidebar-gradient-start), var(--sidebar-gradient-end));
-            color: #ffffff;
-            padding: 25px 0;
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: var(--text-light);
+            padding: 1.5rem;
             text-align: center;
             margin-left: 280px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            bottom: 0;
+            width: calc(100% - 280px);
         }
 
         footer a {
             color: var(--accent-color);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: var(--transition);
             font-weight: 500;
         }
 
         footer a:hover {
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-color);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        /* Glass Morphism Effects */
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: var(--text-light);
+            text-decoration: underline;
         }
 
         /* Responsive Design */
@@ -268,28 +193,29 @@
             .left-panel {
                 width: 240px;
             }
-            .container {
-                margin-left: 260px;
+            .main-content {
+                margin-left: 240px;
             }
             footer {
                 margin-left: 240px;
+                width: calc(100% - 240px);
             }
         }
 
         @media (max-width: 768px) {
             .left-panel {
-                width: 0;
-                padding: 0;
-                overflow: hidden;
+                transform: translateX(-100%);
+                transition: var(--transition);
             }
-            .container {
+            .left-panel.show {
+                transform: translateX(0);
+            }
+            .main-content {
                 margin-left: 0;
             }
             footer {
                 margin-left: 0;
-            }
-            .navbar-brand {
-                font-size: 1.6rem;
+                width: 100%;
             }
         }
     </style>
@@ -297,37 +223,39 @@
 <body>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <i class="fas fa-seedling"></i> Enchanted Eden
+            <i class="fas fa-seedling"></i>
+            Enchanted Eden
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars text-light"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="profile-dropdown" data-bs-toggle="dropdown">
                         {% if request.user_expert.profile_picture %}
-                            <img src="{{ request.user_expert.profile_picture.url }}" 
-                                 alt="Profile Picture" 
-                                 class="rounded-circle me-2"
-                                 style="width: 40px; height: 40px; object-fit: cover;">
+                            <img src="{{ request.user_expert.profile_picture.url }}" alt="Profile" class="profile-picture">
                         {% else %}
-                            <i class="fas fa-user-circle me-2" style="font-size: 40px;"></i>
+                            <i class="fas fa-user-circle text-light" style="font-size: 2rem;"></i>
                         {% endif %}
-                        {{ request.session.user_first_name }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <span class="text-light">{{ request.session.user_first_name }}</span>
+                        <i class="fas fa-chevron-down text-light"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item" href="{% url 'userauths:update_expert_profile' %}">
-                                <i class="fas fa-user-edit me-2"></i> Update Profile
+                                <i class="fas fa-user-edit"></i>
+                                Update Profile
                             </a>
                         </li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'userauths:logout' %}">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
                             </a>
                         </li>
                     </ul>
@@ -337,40 +265,64 @@
     </div>
 </nav>
 
-
 <!-- Left Panel -->
 <div class="left-panel">
-    <a href=""><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a href="{% url 'userauths:update_expert_profile' %}"><i class="fas fa-user-edit"></i> Update Profile</a>
-    <a href="{% url 'userauths:echange_password' %}"><i class="fas fa-key"></i> Change Password</a>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="blogDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-blog"></i> Blog
+    <a href="#"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="{% url 'userauths:update_expert_profile' %}"><i class="fas fa-user-edit"></i>Update Profile</a>
+    <a href="{% url 'userauths:echange_password' %}"><i class="fas fa-key"></i>Change Password</a>
+    <div class="dropdown">
+        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fas fa-blog"></i>Blog Management
         </a>
-        <ul class="dropdown-menu" aria-labelledby="blogDropdown">
-            <li><a class="dropdown-item" href="{% url 'blog:eadd_blog' %}"><i class="fas fa-plus-circle"></i> Add Blog</a></li>
-            <li><a class="dropdown-item" href="{% url 'blog:blog_dashboard' %}"><i class="fas fa-list"></i> My Blogs</a></li>
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="{% url 'blog:eadd_blog' %}">
+                    <i class="fas fa-plus-circle"></i>Add Blog
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{% url 'blog:blog_dashboard' %}">
+                    <i class="fas fa-list"></i>My Blogs
+                </a>
+            </li>
         </ul>
-    </li>
-    <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+    <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
 </div>
 
-    {% block content %}
-    <!-- Add dynamic content here -->
-    {% endblock %}
-</div>
+<!-- Main Content -->
+<main class="main-content">
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+</main>
 
 <!-- Footer -->
 <footer>
-    &copy; 2025 Enchanted Eden | Crafted with love for nature. 
-    <br>Follow us on 
-    <a href="https://www.instagram.com" target="_blank">Instagram</a> and 
-    <a href="https://www.pinterest.com" target="_blank">Pinterest</a>
+    <div class="container">
+        <p>&copy; 2025 Enchanted Eden | Crafted with <i class="fas fa-heart text-danger"></i> for nature</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.pinterest.com" target="_blank"><i class="fab fa-pinterest"></i></a>
+        </div>
+    </div>
 </footer>
 
-<!-- Bootstrap JS and dependencies -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+    // Toggle mobile menu
+    document.querySelector('.navbar-toggler').addEventListener('click', function() {
+        document.querySelector('.left-panel').classList.toggle('show');
+    });
+
+    // Hide mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.left-panel') && !event.target.closest('.navbar-toggler')) {
+            document.querySelector('.left-panel').classList.remove('show');
+        }
+    });
+</script>
 
 </body>
 </html>

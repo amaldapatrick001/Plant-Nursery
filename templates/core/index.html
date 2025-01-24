@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block content %}
     <section id="home-section" class="hero">
@@ -369,92 +370,335 @@
     		</div>
     	</div>
     </section>
-    <section class="ftco-section testimony-section">
-      <div class="container">
-        <div class="row justify-content-center mb-5 pb-3">
-          <div class="col-md-7 heading-section ftco-animate text-center">
-          	<span class="subheading">Testimony</span>
-            <h2 class="mb-4">Our satisfied customer says</h2>
-            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
-          </div>
-        </div>
-        <div class="row ftco-animate">
-          <div class="col-md-12">
-            <div class="carousel-testimony owl-carousel">
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5"><div class="user-img mb-5" style="background-image: url('{% static 'images/person_1.jpg' %}')">
-
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Marketing Manager</span>
-                  </div>
+    <section class="ftco-section expert-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5 pb-3">
+                <div class="col-md-7 heading-section ftco-animate text-center">
+                    <span class="subheading">Our Plant Care Experts</span>
+                    <h2 class="mb-4">Meet Our Green Specialists</h2>
+                    <p class="text-muted">Connect with experienced professionals who are passionate about nurturing your plants</p>
                 </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url('{% static 'images/person_2.jpg' %}')">
-
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Interface Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url(images/person_3.jpg)">                  <div class="user-img mb-5" style="background-image: url('{% static 'images/person_3.jpg' %}')">                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">UI Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url('{% static 'images/person_2.jpg' %}')"></div>
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Web Developer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url('{% static 'images/person_3.jpg' %}')">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">System Analyst</span>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
+            
+            {% if error_message %}
+                <div class="alert alert-warning text-center">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+
+            {% if experts %}
+            <div class="row ftco-animate">
+                <div class="col-md-12">
+                    <div class="carousel-experts owl-carousel">
+                        {% for expert in experts %}
+                        <div class="item">
+                            <div class="expert-card">
+                                <div class="expert-header">
+                                    <div class="expert-img-container">
+                                        {% if expert.profile_picture %}
+                                            <img src="{{ expert.profile_picture.url }}" 
+                                                 alt="{{ expert.user.first_name }}"
+                                                 class="expert-img popup-img"
+                                                 data-bs-toggle="modal"
+                                                 data-bs-target="#imageModal{{ expert.expert_id }}">
+                                        {% else %}
+                                            <img src="{% static 'images/default-profile.jpg' %}" 
+                                                 alt="Default Profile"
+                                                 class="expert-img">
+                                        {% endif %}
+                                        <div class="status-indicator {% if expert.availability_status == 'available' %}available{% endif %}">
+                                            <span class="status-dot"></span>
+                                            {{ expert.availability_status|title }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="expert-body">
+                                    <h3 class="expert-name">{{ expert.user.first_name }} {{ expert.user.last_name }}</h3>
+                                    <div class="expertise-area">
+                                        <i class="fas fa-leaf"></i>
+                                        <span>{{ expert.expertise_area }}</span>
+                                    </div>
+                                    
+                                    {% if expert.specialization_tags %}
+                                        <div class="tags-container">
+                                            {% with tags=expert.specialization_tags|split:"," %}
+                                                {% for tag in tags %}
+                                                    <span class="tag">{{ tag }}</span>
+                                                {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="rating-container">
+                                        {% if expert.rating > 0 %}
+                                            <div class="stars">
+                                                {% for i in "12345"|make_list %}
+                                                    <i class="fas fa-star {% if forloop.counter <= expert.rating %}filled{% endif %}"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <span class="rating-text">
+                                                {{ expert.rating|floatformat:1 }} ({{ expert.total_reviews }} reviews)
+                                            </span>
+                                        {% else %}
+                                            <span class="new-badge">New Expert</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <a href="{% url 'userauths:contact_expert' expert.expert_id %}" 
+                                       class="contact-btn">
+                                        <i class="fas fa-comment-dots"></i> Contact Expert
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Image Modal -->
+                        <div class="modal fade" id="imageModal{{ expert.expert_id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center p-0">
+                                        <img src="{{ expert.profile_picture.url }}" 
+                                             alt="{{ expert.user.first_name }}"
+                                             class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                {% if not error_message %}
+                    <div class="text-center py-5">
+                        <div class="no-experts-container">
+                            <i class="fas fa-user-slash fa-3x mb-3"></i>
+                            <h3>No Experts Available</h3>
+                            <p>Please check back later or contact support for assistance.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
-      </div>
     </section>
     <hr>
 {%endblock content%}
+
+<style>
+.expert-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    margin: 15px;
+}
+
+.expert-card:hover {
+    transform: translateY(-5px);
+}
+
+.expert-header {
+    position: relative;
+    padding-top: 20px;
+    background: linear-gradient(45deg, #82ae46, #6a9139);
+}
+
+.expert-img-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.expert-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.expert-img:hover {
+    transform: scale(1.05);
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc3545;
+}
+
+.status-indicator.available .status-dot {
+    background: #28a745;
+}
+
+.expert-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.expert-name {
+    color: #333;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.expertise-area {
+    color: #666;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85em;
+}
+
+.rating-container {
+    margin-bottom: 20px;
+}
+
+.stars {
+    color: #ffc107;
+    margin-bottom: 5px;
+}
+
+.rating-text {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.new-badge {
+    background: #17a2b8;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9em;
+}
+
+.contact-btn {
+    display: inline-block;
+    background: #82ae46;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.contact-btn:hover {
+    background: #6a9139;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Modal Styling */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #82ae46;
+    padding: 10px;
+}
+
+.btn-close {
+    background-color: white;
+    opacity: 1;
+}
+
+.modal-body img {
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+/* Carousel Customization */
+.owl-carousel .owl-nav button.owl-prev,
+.owl-carousel .owl-nav button.owl-next {
+    background: #82ae46;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.owl-carousel .owl-dots .owl-dot span {
+    background: #d6d6d6;
+}
+
+.owl-carousel .owl-dots .owl-dot.active span {
+    background: #82ae46;
+}
+
+/* No Experts Styling */
+.no-experts-container {
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    color: #6c757d;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+    $('.carousel-experts').owlCarousel({
+        center: true,
+        loop: true,
+        margin: 30,
+        autoplay: true,
+        autoplayTimeout: 4000,
+        autoplayHoverPause: true,
+        nav: true,
+        dots: true,
+        responsive:{
+            0: {
+                items: 1
+            },
+            768: {
+                items: 2
+            },
+            992: {
+                items: 3
+            }
+        }
+    });
+});
+</script>

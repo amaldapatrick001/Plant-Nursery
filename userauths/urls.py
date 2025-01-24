@@ -1,6 +1,6 @@
 from django.urls import include, path
 from .views import add_expert, adminindex, delete_user_view, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback
-from django.contrib.auth import views 
+
 from django.views.generic import TemplateView 
 
 app_name = "userauths"

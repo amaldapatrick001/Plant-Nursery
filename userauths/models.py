@@ -132,7 +132,11 @@ class Expert(models.Model):
     expertise_area = models.CharField(max_length=255)
     qualifications = models.TextField()
     description = models.TextField(null=True, blank=True)
-    profile_picture = models.ImageField(upload_to='expert_profiles/', null=True, blank=True)
+    profile_picture = models.ImageField(
+        upload_to='expert_profiles/',
+        null=True,
+        blank=True
+    )
     specialization_tags = models.CharField(max_length=255, null=True, blank=True)
     availability_schedule = models.JSONField(null=True, blank=True)  # Store availability by day and time
     availability_status = models.CharField(

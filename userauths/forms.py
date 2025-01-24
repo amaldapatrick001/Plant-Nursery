@@ -197,10 +197,12 @@ class ExpertProfileUpdateForm(forms.ModelForm):
         ('other', 'Other (Please Specify)'),  # Updated label
     ]
 
-    availability_status = forms.BooleanField(
-        required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'availability-status'}),
-        label="Availability Status"
+    availability_status = forms.ChoiceField(
+        choices=[('available', 'Available'), ('unavailable', 'Unavailable')],
+        widget=forms.RadioSelect(attrs={
+            'class': 'form-check-input',
+        }),
+        initial='available'
     )
 
     expertise_area = forms.ChoiceField(

@@ -151,13 +151,7 @@ form ul.inline li {
 
 form .aligned p.help,
 form .aligned div.help {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     margin-left: 0;
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
     margin-right: 160px;
     padding-right: 10px;
 }
@@ -171,38 +165,13 @@ form .aligned p.time div.help.timezonewarning {
     padding-right: 0;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-form .wide p.help, form .wide div.help {
-=======
 form .wide p.help,
 form .wide ul.errorlist,
 form .wide div.help {
->>>>>>> b583b2f (Updated code)
-=======
-form .wide p.help, form .wide div.help {
->>>>>>> origin/main
     padding-left: 0;
     padding-right: 50px;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
-form .wide p,
-form .wide ul.errorlist,
-form .wide input + p.help,
-form .wide input + div.help {
-    margin-right: 200px;
-    margin-left: 0px;
-}
-
-<<<<<<< HEAD
-=======
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 .submit-row {
     text-align: right;
 }
@@ -228,22 +197,7 @@ fieldset .fieldBox {
     top: 0;
     left: auto;
     right: 10px;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
-    background: url(../img/calendar-icons.svg) 0 -30px no-repeat;
-}
-
-.calendarbox .calendarnav-previous:focus,
-.calendarbox .calendarnav-previous:hover {
-    background-position: 0 -45px;
-<<<<<<< HEAD
-=======
     background: url(../img/calendar-icons.svg) 0 -15px no-repeat;
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 }
 
 .calendarnav-next {
@@ -253,20 +207,6 @@ fieldset .fieldBox {
     background: url(../img/calendar-icons.svg) 0 0 no-repeat;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
-.calendarbox .calendarnav-next:focus,
-.calendarbox .calendarnav-next:hover {
-    background-position: 0 -15px;
-}
-
-<<<<<<< HEAD
-=======
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 .calendar caption, .calendarbox h2 {
     text-align: center;
 }
@@ -342,16 +282,10 @@ form .form-row p.datetime {
     margin-right: 2px;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 .inline-group .tabular td.original p {
     right: 0;
 }
 
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 .selector .selector-chooser {
     margin: 0;
 }

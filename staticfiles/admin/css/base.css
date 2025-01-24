@@ -13,13 +13,7 @@ html[data-theme="light"],
     --body-fg: #333;
     --body-bg: #fff;
     --body-quiet-color: #666;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     --body-medium-color: #444;
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
     --body-loud-color: #000;
 
     --header-color: #ffc;
@@ -91,14 +85,8 @@ html[data-theme="light"],
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         "Noto Color Emoji";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
     color-scheme: light;
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 }
 
 html, body {
@@ -162,14 +150,6 @@ h1 {
     margin: 0 0 20px;
     font-weight: 300;
     font-size: 1.25rem;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    color: var(--body-quiet-color);
-=======
->>>>>>> b583b2f (Updated code)
-=======
-    color: var(--body-quiet-color);
->>>>>>> origin/main
 }
 
 h2 {
@@ -185,15 +165,7 @@ h2.subhead {
 h3 {
     font-size: 0.875rem;
     margin: .8em 0 .3em 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    color: var(--body-quiet-color);
-=======
     color: var(--body-medium-color);
->>>>>>> b583b2f (Updated code)
-=======
-    color: var(--body-quiet-color);
->>>>>>> origin/main
     font-weight: bold;
 }
 
@@ -201,13 +173,7 @@ h4 {
     font-size: 0.75rem;
     margin: 1em 0 .8em 0;
     padding-bottom: 3px;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     color: var(--body-medium-color);
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 }
 
 h5 {
@@ -254,16 +220,10 @@ fieldset {
     border-top: 1px solid var(--hairline-color);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 details summary {
     cursor: pointer;
 }
 
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 blockquote {
     font-size: 0.6875rem;
     color: #777;
@@ -360,15 +320,7 @@ td, th {
 }
 
 th {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    font-weight: 600;
-=======
     font-weight: 500;
->>>>>>> b583b2f (Updated code)
-=======
-    font-weight: 600;
->>>>>>> origin/main
     text-align: left;
 }
 
@@ -389,15 +341,7 @@ tfoot td {
 }
 
 thead th.required {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    color: var(--body-loud-color);
-=======
     font-weight: bold;
->>>>>>> b583b2f (Updated code)
-=======
-    color: var(--body-loud-color);
->>>>>>> origin/main
 }
 
 tr.alt {
@@ -545,11 +489,6 @@ textarea {
     vertical-align: top;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-input[type=text], input[type=password], input[type=email], input[type=url],
-input[type=number], input[type=tel], textarea, select, .vTextField {
-=======
 /*
 Minifiers remove the default (text) "type" attribute from "input" HTML tags.
 Add input:not([type]) to make the CSS stylesheet work the same.
@@ -557,11 +496,6 @@ Add input:not([type]) to make the CSS stylesheet work the same.
 input:not([type]), input[type=text], input[type=password], input[type=email],
 input[type=url], input[type=number], input[type=tel], textarea, select,
 .vTextField {
->>>>>>> b583b2f (Updated code)
-=======
-input[type=text], input[type=password], input[type=email], input[type=url],
-input[type=number], input[type=tel], textarea, select, .vTextField {
->>>>>>> origin/main
     border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 5px 6px;
@@ -570,12 +504,6 @@ input[type=number], input[type=tel], textarea, select, .vTextField {
     background-color: var(--body-bg);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
-input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus,
-textarea:focus, select:focus, .vTextField:focus {
-=======
 /*
 Minifiers remove the default (text) "type" attribute from "input" HTML tags.
 Add input:not([type]) to make the CSS stylesheet work the same.
@@ -583,12 +511,6 @@ Add input:not([type]) to make the CSS stylesheet work the same.
 input:not([type]):focus, input[type=text]:focus, input[type=password]:focus,
 input[type=email]:focus, input[type=url]:focus, input[type=number]:focus,
 input[type=tel]:focus, textarea:focus, select:focus, .vTextField:focus {
->>>>>>> b583b2f (Updated code)
-=======
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
-input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus,
-textarea:focus, select:focus, .vTextField:focus {
->>>>>>> origin/main
     border-color: var(--body-quiet-color);
 }
 
@@ -972,22 +894,10 @@ a.deletelink:focus, a.deletelink:hover {
     margin-right: -300px;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-#footer {
-    clear: both;
-    padding: 10px;
-=======
 @media (forced-colors: active) {
   #content-related {
       border: 1px solid;
   }
->>>>>>> b583b2f (Updated code)
-=======
-#footer {
-    clear: both;
-    padding: 10px;
->>>>>>> origin/main
 }
 
 /* COLUMN TYPES */
@@ -1035,18 +945,12 @@ a.deletelink:focus, a.deletelink:hover {
     text-decoration: underline;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 @media (forced-colors: active) {
   #header {
       border-bottom: 1px solid;
   }
 }
 
->>>>>>> b583b2f (Updated code)
-=======
->>>>>>> origin/main
 #branding {
     display: flex;
 }

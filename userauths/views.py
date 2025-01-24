@@ -3,7 +3,7 @@ import random
 import string
 logger = logging.getLogger(__name__)
 
-from django.http import BadHeaderError
+from django.http import BadHeaderError, JsonResponse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -23,9 +23,9 @@ from rapidfuzz import fuzz
 
 from PlantNursery import settings
 
-from .models import Login, User_Reg, UserType
+from .models import Login, User_Reg, UserType, Expert
 from django.views.decorators.cache import cache_control
-from .forms import AddExpertForm, ExpertPasswordChangeForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm
+from .forms import AddExpertForm, ExpertPasswordChangeForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm, ExpertProfileUpdateForm
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -42,6 +42,15 @@ from django.db import transaction
 
 from google_auth_oauthlib.flow import Flow
 from django.urls import reverse
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 def register(request):
     if request.method == 'POST':
@@ -772,38 +781,49 @@ from .forms import ExpertProfileUpdateForm
 from .models import User_Reg  # Assuming you have a User_Reg model to check for logged-in user
 
 def update_expert_profile(request):
-    # Check if the user is logged in by looking for the 'user_id' in the session
     if 'user_id' not in request.session:
-        messages.error(request, 'You must be logged in to update your profile.')
-        return redirect('userauths:login')  # Redirect to login page if not authenticated
+        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
 
-    # Retrieve the logged-in user using the 'user_id' from the session
-    uid = request.session['user_id']
     try:
-        user = User_Reg.objects.get(uid=uid)
-    except User_Reg.DoesNotExist:
-        messages.error(request, 'User not found.')
-        return redirect('userauths:login')  # Redirect to login page if user doesn't exist
-    
-    try:
-        # Ensure the logged-in user is linked to an Expert object
+        user = User_Reg.objects.get(uid=request.session['user_id'])
         expert = get_object_or_404(Expert, user=user)
 
         if request.method == 'POST':
             form = ExpertProfileUpdateForm(request.POST, request.FILES, instance=expert)
             if form.is_valid():
-                form.save()
-                messages.success(request, 'Your profile has been updated successfully!')
-                return redirect('userauths:update_expert_profile')  # Redirect to the expert's profile page
+                expert = form.save(commit=False)
+                
+                # Handle profile picture if provided
+                if 'profile_picture' in request.FILES:
+                    expert.profile_picture = request.FILES['profile_picture']
+                
+                # Get availability status from form
+                expert.availability_status = form.cleaned_data['availability_status']
+                
+                expert.save()
+                
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Profile updated successfully'
+                })
+            else:
+                print(form.errors)  # For debugging
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Please correct the following errors:',
+                    'errors': {field: errors[0] for field, errors in form.errors.items()}
+                }, status=400)
         else:
             form = ExpertProfileUpdateForm(instance=expert)
-        
-        return render(request, 'userauths/eupdate_profile.html', {'form': form})
+            return render(request, 'userauths/eupdate_profile.html', {'form': form})
 
-    except Expert.DoesNotExist:
-        messages.error(request, 'Expert profile not found. Please contact support.')
-        return redirect('userauths:login')  # Redirect to login or an appropriate page
-    
+    except Exception as e:
+        print(f"Error updating profile: {str(e)}")  # For debugging
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -869,5 +889,4 @@ def send_password_change_email(user_login):
         [user_login.email],
         fail_silently=False,
     )
-
 
