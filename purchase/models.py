@@ -60,6 +60,10 @@ class Billing(models.Model):
         return f"{self.first_name} {self.last_name}, {self.district}"
 
 
+from django.db import models
+from django.utils.timezone import now
+from userauths.models import DeliveryPersonnel
+
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -87,6 +91,9 @@ class Order(models.Model):
     delivery_date = models.DateTimeField(null=True, blank=True)
     assigned_delivery_person = models.ForeignKey(DeliveryPersonnel, null=True, blank=True, on_delete=models.SET_NULL)
     delivery_location = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"Order {self.id} - {self.user.first_name}"
 
     def __str__(self):
         return f"Order {self.id}"

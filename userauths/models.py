@@ -72,59 +72,6 @@ class Login(models.Model):
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
 
-
-class DeliveryPersonnel(models.Model):
-    delivery_person_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)  # Link to User_Reg for personal details
-    login = models.OneToOneField(Login, on_delete=models.CASCADE)  # Link to Login for authentication and status
-    current_location = models.CharField(max_length=255, null=True, blank=True)  # GPS coordinates or address
-    status = models.CharField(
-        max_length=20, 
-        choices=[('available', 'Available'), ('busy', 'Busy')],
-        default='available'
-    )  # Delivery personnel's availability status
-    assigned_orders = models.IntegerField(default=0)  # Count of currently assigned orders
-    date_time_joined = models.DateTimeField(auto_now_add=True)  # Date and time the delivery person was added
-
-    def update_location(self, latitude, longitude):
-        """Update the current GPS location of the delivery personnel."""
-        self.current_location = f"{latitude}, {longitude}"
-        self.save()
-
-    def mark_as_busy(self):
-        """Mark the delivery personnel's status as busy."""
-        self.status = 'busy'
-        self.save()
-
-    def mark_as_available(self):
-        """Mark the delivery personnel's status as available."""
-        self.status = 'available'
-        self.save()
-
-    def assign_order(self):
-        """Increment the assigned order count."""
-        self.assigned_orders += 1
-        self.mark_as_busy()
-        self.save()
-
-    def complete_order(self):
-        """Decrement the assigned order count, mark as available if no more orders."""
-        if self.assigned_orders > 0:
-            self.assigned_orders -= 1
-        if self.assigned_orders == 0:
-            self.mark_as_available()
-        self.save()
-
-    def __str__(self):
-        return f'Delivery Personnel: {self.user.first_name} {self.user.last_name}'
-
-    @property
-    def phone_number(self):
-        """Fetch the phone number from the associated User_Reg model."""
-        return self.user.phoneno
-
-from django.db import models
-
 class Expert(models.Model):
     expert_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
@@ -187,3 +134,34 @@ class Expert(models.Model):
 
     def __str__(self):
         return f'Expert: {self.user.first_name} {self.user.last_name} - {self.expertise_area}'
+
+
+
+class DeliveryPersonnel(models.Model):
+    delivery_id = models.AutoField(primary_key=True)  # Explicit primary key
+    user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
+    current_latitude = models.FloatField(null=True, blank=True)
+    current_longitude = models.FloatField(null=True, blank=True)
+    area_of_delivery = models.CharField(
+        max_length=255,
+        default='Not Assigned',
+        choices=[
+            ('kottayam', 'Kottayam'),
+            ('pathanamthitta', 'Pathanamthitta'),
+            ('idukki', 'Idukki'),
+            ('thodupuzha', 'Thodupuzha'),
+            ('ernakulam', 'Ernakulam'),
+        ]
+    )
+    date_time_joined = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('available', 'Available'), ('busy', 'Busy')],
+        default='available'
+    )
+    assigned_orders = models.PositiveIntegerField(default=0)
+    completed_orders = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Delivery Personnel"
+        verbose_name_plural = "Delivery Personnel"

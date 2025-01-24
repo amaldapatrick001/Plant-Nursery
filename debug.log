@@ -55501,3 +55501,129 @@ Watching for file changes with StatReloader
 "GET /static/js/bootstrap.min.js.map HTTP/1.1" 404 1883
 "GET /static/js/aos.js.map HTTP/1.1" 404 1853
 "GET /static/js/aos.js.map HTTP/1.1" 404 1853
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 32587
+"GET / HTTP/1.1" 200 32587
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4427
+"GET /favicon.ico HTTP/1.1" 404 4427
+F:\Main project\Plant-Nursery\purchase\models.py changed, reloading.
+F:\Main project\Plant-Nursery\purchase\models.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 36371
+"GET / HTTP/1.1" 200 36371
+"GET / HTTP/1.1" 200 34126
+"GET / HTTP/1.1" 200 34126
+"GET / HTTP/1.1" 200 36397
+"GET / HTTP/1.1" 200 36397
+"GET / HTTP/1.1" 200 36397
+"GET / HTTP/1.1" 200 36397
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET / HTTP/1.1" 200 36399
+"GET / HTTP/1.1" 200 36399
+"GET /static/css/magnific-popup.css HTTP/1.1" 200 7300
+"GET /static/css/magnific-popup.css HTTP/1.1" 200 7300
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 200 18456
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 200 979
+"GET /static/css/bootstrap-datepicker.css HTTP/1.1" 200 18456
+"GET /static/css/owl.theme.default.min.css HTTP/1.1" 200 979
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 200 3445
+"GET /static/css/aos.css HTTP/1.1" 200 25984
+"GET /static/css/animate.css HTTP/1.1" 200 77017
+"GET /static/css/ionicons.min.css HTTP/1.1" 200 46826
+"GET /static/css/owl.carousel.min.css HTTP/1.1" 200 3445
+"GET /static/css/aos.css HTTP/1.1" 200 25984
+"GET /static/css/animate.css HTTP/1.1" 200 77017
+"GET /static/css/ionicons.min.css HTTP/1.1" 200 46826
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 200 1660
+"GET /static/css/jquery.timepicker.css HTTP/1.1" 200 1660
+"GET /static/css/flaticon.css HTTP/1.1" 200 1398
+"GET /static/css/flaticon.css HTTP/1.1" 200 1398
+"GET /static/css/icomoon.css HTTP/1.1" 200 84794
+"GET /static/css/icomoon.css HTTP/1.1" 200 84794
+"GET /static/css/style.css HTTP/1.1" 200 279476
+"GET /static/css/style.css HTTP/1.1" 200 279476
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/images/product-1.jpg HTTP/1.1" 200 56053
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-2.jpg HTTP/1.1" 200 130442
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/images/product-4.jpg HTTP/1.1" 200 78550
+"GET /static/images/product-3.jpg HTTP/1.1" 200 95292
+"GET /static/js/jquery.min.js HTTP/1.1" 200 278290
+"GET /static/js/jquery.min.js HTTP/1.1" 200 278290
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/images/product-5.jpg HTTP/1.1" 200 60272
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 200 11635
+"GET /static/js/jquery-migrate-3.0.1.min.js HTTP/1.1" 200 11635
+"GET /static/js/popper.min.js HTTP/1.1" 200 19036
+"GET /static/js/popper.min.js HTTP/1.1" 200 19036
+"GET /static/js/bootstrap.min.js HTTP/1.1" 200 55781
+"GET /static/js/bootstrap.min.js HTTP/1.1" 200 55781
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 200 8315
+"GET /static/js/jquery.easing.1.3.js HTTP/1.1" 200 8315
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 200 8841
+"GET /static/js/jquery.waypoints.min.js HTTP/1.1" 200 8841
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 200 12598
+"GET /static/js/jquery.stellar.min.js HTTP/1.1" 200 12598
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 200 43243
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 200 20219
+"GET /static/js/owl.carousel.min.js HTTP/1.1" 200 43243
+"GET /static/js/jquery.magnific-popup.min.js HTTP/1.1" 200 20219
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 200 1399
+"GET /static/js/aos.js HTTP/1.1" 200 14245
+"GET /static/js/jquery.animateNumber.min.js HTTP/1.1" 200 1399
+"GET /static/js/aos.js HTTP/1.1" 200 14245
+"GET /static/js/scrollax.min.js HTTP/1.1" 200 7478
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 200 48490
+"GET /static/js/scrollax.min.js HTTP/1.1" 200 7478
+"GET /static/js/bootstrap-datepicker.js HTTP/1.1" 200 48490
+"GET /static/js/google-map.js HTTP/1.1" 200 2007
+"GET /static/js/google-map.js HTTP/1.1" 200 2007
+"GET /static/js/main.js HTTP/1.1" 200 8038
+"GET /static/js/main.js HTTP/1.1" 200 8038
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/product-6.jpg HTTP/1.1" 200 143052
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-7.jpg HTTP/1.1" 200 68329
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/product-8.jpg HTTP/1.1" 200 37224
+"GET /static/images/h21.jpeg HTTP/1.1" 200 9158
+"GET /static/images/h21.jpeg HTTP/1.1" 200 9158
+"GET /static/images/h22.jpeg HTTP/1.1" 200 9766
+"GET /static/images/h22.jpeg HTTP/1.1" 200 9766
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/images/category.jpg HTTP/1.1" 200 150644
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/fonts/flaticon/font/Flaticon.woff HTTP/1.1" 200 4312
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 200 307168
+"GET /static/fonts/icomoon/icomoon.ttf?6tt51o HTTP/1.1" 200 307168
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 200 50592
+"GET /static/fonts/ionicons/fonts/ionicons.woff2?v=4.0.0-19 HTTP/1.1" 200 50592
+"GET /static/images/nur3.jpeg HTTP/1.1" 200 18304
+"GET /static/images/nur3.jpeg HTTP/1.1" 200 18304
+"GET /static/images/tree.jpeg HTTP/1.1" 200 116979
+"GET /static/images/tree.jpeg HTTP/1.1" 200 116979
+"GET /static/images/nur4.jpeg HTTP/1.1" 200 49089
+"GET /static/images/nur4.jpeg HTTP/1.1" 200 49089
+"GET /static/images/h23.jpeg HTTP/1.1" 200 13135
+"GET /static/images/h23.jpeg HTTP/1.1" 200 13135
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4427
+"GET /favicon.ico HTTP/1.1" 404 4427
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET / HTTP/1.1" 200 36399
+"GET / HTTP/1.1" 200 36399
+"GET / HTTP/1.1" 200 45131
+"GET / HTTP/1.1" 200 45131
+"GET / HTTP/1.1" 200 45131
+"GET / HTTP/1.1" 200 45131
