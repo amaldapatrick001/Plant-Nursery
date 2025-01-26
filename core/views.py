@@ -1,9 +1,13 @@
 # views.py
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from products.models import Product
-from userauths.models import User_Reg
+from userauths.models import DeliveryPersonnel, User_Reg
 from purchase.models import Order
+from django.contrib import messages
+from django.http import JsonResponse
+from .models import Contact
+from django.core.mail import send_mail
 
 def index(request):
     return render(request, 'core/index.html')  # Rendering the core/index.html template
@@ -33,10 +37,6 @@ def adminindex(request):
 def about(request):
     return render(request, 'core/about.html') 
 
-from django.shortcuts import render, redirect
-from .models import Contact
-from django.contrib import messages
-
 def contact(request):
     if request.method == 'POST':
         name = request.POST.get('contactName')
@@ -55,11 +55,6 @@ def contact(request):
         else:
             messages.error(request, 'All fields are required.')
     return render(request, 'core/contact.html')
-# views.py
-from django.shortcuts import render, redirect
-from .models import Contact
-from django.core.mail import send_mail
-from django.contrib import messages
 
 def contact_list(request):
     # Fetch contacts sorted by is_responded: False first, True last
@@ -89,3 +84,18 @@ def contact_list(request):
         return redirect('contact_list')
 
     return render(request, 'core/contact_list.html', {'contacts': contacts})
+
+def delivery_dashboard(request):
+    if 'user_id' not in request.session:
+        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
+
+    try:
+        user = User_Reg.objects.get(uid=request.session['user_id'])
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+        
+        context = {
+            'delivery_personnel': delivery_personnel
+        }
+        return render(request, 'core/delivery_dashboard.html', context)
+    except User_Reg.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)

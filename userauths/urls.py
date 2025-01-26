@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import add_expert, adminindex, delete_user_view, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback
+from .views import add_expert, adminindex, delete_user_view, delivery_dashboard, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, register_delivery_personnel, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback, assigned_orders, delivery_history, update_status
 
 from django.views.generic import TemplateView 
 
@@ -31,4 +31,12 @@ path('auth/', include('social_django.urls', namespace='social')),  # Social Auth
     path('admin/add_expert/', add_expert, name='add_expert'),
 path('expert/update-profile/', update_expert_profile, name='update_expert_profile'),
     path('expert/echange-password/', echange_password, name='echange_password'),
+
+     path('register_delivery_personnel/', register_delivery_personnel, name='register_delivery_personnel'),
+#     path('delivery_personnel/update/<int:delivery_personnel_id>/', update_delivery_personnel, name='update_delivery_personnel'),
+# path('delivery_personnel/', delivery_personnel_list, name='delivery_personnel_list'),
+    path('delivery/dashboard/', delivery_dashboard, name='delivery_dashboard'),
+    path('delivery/assigned-orders/', assigned_orders, name='assigned_orders'),
+    path('delivery/history/', delivery_history, name='delivery_history'),
+    path('delivery/update-status/', update_status, name='update_status'),
 ]

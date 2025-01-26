@@ -284,3 +284,53 @@ class ExpertPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = User
         fields = ['old_password', 'new_password1', 'new_password2']
+
+
+
+
+from django import forms
+
+class DeliveryPersonnelRegistrationForm(forms.Form):
+    first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    phoneno = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    area_of_delivery = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    latitude = forms.FloatField(required=False, widget=forms.HiddenInput())  # Hidden input for latitude
+    longitude = forms.FloatField(required=False, widget=forms.HiddenInput())  # Hidden input for longitude
+
+
+# forms.py# forms.py
+from django import forms
+from .models import DeliveryPersonnel, User_Reg
+
+class DeliveryPersonnelUpdateForm(forms.ModelForm):
+    # Include fields for User_Reg fields
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    phoneno = forms.CharField(max_length=15)
+    
+    class Meta:
+        model = DeliveryPersonnel
+        fields = ['first_name', 'last_name', 'phoneno', 'area_of_delivery', 'current_latitude', 'current_longitude']
+
+    def clean_area_of_delivery(self):
+        area = self.cleaned_data.get('area_of_delivery')
+        if len(area) < 5:
+            raise forms.ValidationError("Area of delivery should be at least 5 characters long.")
+        return area
+
+    def save(self, commit=True):
+        # Save the DeliveryPersonnel instance
+        delivery_personnel = super().save(commit=False)
+        if commit:
+            delivery_personnel.save()
+
+        # Now save the changes to the User_Reg instance
+        user = delivery_personnel.user
+        user.first_name = self.cleaned_data.get('first_name')
+        user.last_name = self.cleaned_data.get('last_name')
+        user.phoneno = self.cleaned_data.get('phoneno')
+        user.save()
+
+        return delivery_personnel

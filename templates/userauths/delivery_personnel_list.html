@@ -1,0 +1,31 @@
+<!-- delivery_personnel_list.html -->
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+  <h2>Delivery Personnel List</h2>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Area of Delivery</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for personnel in delivery_personnel_list %}
+        <tr>
+          <td>{{ personnel.user.first_name }} {{ personnel.user.last_name }}</td>
+          <td>{{ personnel.user.email }}</td>
+          <td>{{ personnel.user.phoneno }}</td>
+          <td>{{ personnel.area_of_delivery }}</td>
+          <td>
+            <a href="{% url 'update_delivery_personnel' delivery_personnel_id=personnel.id %}" class="btn btn-primary">Edit</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -23,7 +23,7 @@ from rapidfuzz import fuzz
 
 from PlantNursery import settings
 
-from .models import Login, User_Reg, UserType, Expert
+from .models import Login, User_Reg, UserType, Expert, DeliveryPersonnel
 from django.views.decorators.cache import cache_control
 from .forms import AddExpertForm, ExpertPasswordChangeForm, RegistrationForm, CustomPasswordResetForm, CustomSetPasswordForm, ExpertProfileUpdateForm
 
@@ -170,8 +170,8 @@ def login(request):
                 user_type_redirects = {
                     1: 'userauths:adminindex',
                     2: 'userauths:index',
-                    3: 'delivery_dashboard',
-                    4: 'userauths:update_expert_profile'  # expert
+                    3: 'userauths:delivery_dashboard',
+                    4: 'userauths:update_expert_profile'
                 }
 
                 success_message = f"User {user_login.uid.first_name} {user_login.uid.last_name} logged in successfully."
@@ -671,8 +671,8 @@ def google_callback(request):
             user_type_redirects = {
                 1: 'userauths:adminindex',
                 2: 'userauths:index',
-                3: 'delivery_dashboard',
-                4: 'expert_dashboard'
+                3: 'userauths:delivery_dashboard',
+                4: 'userauths:update_expert_profile'
             }
 
             messages.success(request, f'Welcome {user_reg.first_name}!')
@@ -890,3 +890,169 @@ def send_password_change_email(user_login):
         fail_silently=False,
     )
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import DeliveryPersonnelRegistrationForm
+from .models import User_Reg, Login, DeliveryPersonnel, UserType
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+
+def register_delivery_personnel(request):
+    if request.method == 'POST':
+        form = DeliveryPersonnelRegistrationForm(request.POST)
+        
+        # Check if the form is valid and if the email already exists
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            
+            # Check if the email already exists in the Login model
+            if Login.objects.filter(email=email).exists():
+                # Show an error message if email already exists
+                messages.error(request, 'This email is already registered. Please use a different email.')
+                return render(request, 'userauths/register_delivery_personnel.html', {'form': form})
+            
+            # Create the User_Reg entry
+            user_type = UserType.objects.get(usertype='Delivery')
+            user = User_Reg.objects.create(
+                user_type=user_type,
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                phoneno=form.cleaned_data['phoneno']
+            )
+
+            # Generate login credentials
+            password = get_random_string(length=8)  # Generate a random password
+            login = Login.objects.create(
+                uid=user,
+                email=email,
+                password=password
+            )
+            login.set_password(password)  # Hash the password
+            login.save()
+
+            # Create the DeliveryPersonnel entry
+            DeliveryPersonnel.objects.create(
+                user=user,
+                current_latitude=form.cleaned_data.get('latitude'),
+                current_longitude=form.cleaned_data.get('longitude'),
+                area_of_delivery=form.cleaned_data['area_of_delivery']
+            )
+
+            # Send credentials to the email
+            send_mail(
+                subject='Your Delivery Personnel Login Credentials',
+                message=f"Dear {user.first_name},\n\nYour account has been created.\n\nLogin Email: {email}\nPassword: {password}\n\nPlease change your password after logging in.",
+                from_email='noreply@example.com',
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            # Success message
+            messages.success(request, f'Delivery personnel {form.cleaned_data["first_name"]} added successfully.')
+            
+            # Redirect to the delivery personnel list view (ensure the URL exists)
+            return redirect('delivery_personnel_list')  # Or change to a valid redirect URL
+            
+    else:
+        form = DeliveryPersonnelRegistrationForm()
+
+    return render(request, 'userauths/register_delivery_personnel.html', {'form': form})
+
+def delivery_personnel_list(request):
+    # Logic to display the list of delivery personnel
+    return render(request, 'userauths/delivery_personnel_list.html')
+
+# # views.py
+# # views.py
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.contrib import messages
+# from .forms import DeliveryPersonnelUpdateForm
+# from .models import DeliveryPersonnel
+
+# def update_delivery_personnel(request, delivery_personnel_id):
+#     # Get the delivery personnel using the ID
+#     delivery_personnel = get_object_or_404(DeliveryPersonnel, id=delivery_personnel_id)
+    
+#     if request.method == 'POST':
+#         form = DeliveryPersonnelUpdateForm(request.POST, instance=delivery_personnel)
+#         if form.is_valid():
+#             form.save()  # Save the updated information
+#             messages.success(request, f'Delivery personnel {delivery_personnel.user.first_name} updated successfully.')
+#             return redirect('delivery_personnel_list')  # Redirect to the list view after update
+#     else:
+#         form = DeliveryPersonnelUpdateForm(instance=delivery_personnel)
+    
+#     return render(request, 'userauths/update_delivery_personnel.html', {'form': form, 'delivery_personnel': delivery_personnel})
+
+# from django.shortcuts import render
+# from .models import DeliveryPersonnel
+
+# def delivery_personnel_list(request):
+#     # Fetch all delivery personnel
+#     delivery_personnel_list = DeliveryPersonnel.objects.all()
+#     return render(request, 'userauths/delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
+
+
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def delivery_dashboard(request):
+    if 'user_id' not in request.session:
+        return redirect('userauths:login')
+
+    try:
+        # Get the login object first
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        user = login_user.uid  # Get the User_Reg object
+        
+        # Get delivery personnel details
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+        
+        context = {
+            'delivery_personnel': delivery_personnel,
+            'user': user,
+        }
+        return render(request, 'userauths/delivery_dashboard.html', context)
+    except (Login.DoesNotExist, User_Reg.DoesNotExist) as e:
+        logger.error(f"Error accessing delivery dashboard: {str(e)}")
+        return redirect('userauths:login')
+    except DeliveryPersonnel.DoesNotExist:
+        logger.error(f"User {user.uid} is not registered as delivery personnel")
+        return redirect('userauths:login')
+
+def assigned_orders(request):
+    if 'user_id' not in request.session:
+        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
+    
+    try:
+        user = User_Reg.objects.get(uid=request.session['user_id'])
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+        return render(request, 'core/assigned_orders.html', {'delivery_personnel': delivery_personnel})
+    except User_Reg.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
+
+def delivery_history(request):
+    if 'user_id' not in request.session:
+        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
+    
+    try:
+        user = User_Reg.objects.get(uid=request.session['user_id'])
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+        return render(request, 'core/delivery_history.html', {'delivery_personnel': delivery_personnel})
+    except User_Reg.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
+
+def update_status(request):
+    if 'user_id' not in request.session:
+        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
+    
+    if request.method == 'POST':
+        try:
+            user = User_Reg.objects.get(uid=request.session['user_id'])
+            delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+            delivery_personnel.status = 'busy' if delivery_personnel.status == 'available' else 'available'
+            delivery_personnel.save()
+            return redirect('userauths:delivery_dashboard')
+        except User_Reg.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
+    return redirect('userauths:delivery_dashboard')

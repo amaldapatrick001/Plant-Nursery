@@ -254,6 +254,37 @@
                     </div>
                 </div>
                 
+                <!-- Manage Delivery Personnel Dropdown -->
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="deliveryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-truck mr-2"></i> Manage Delivery
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="deliveryDropdown">
+                        <h6 class="dropdown-header">Delivery Personnel</h6>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-list mr-2"></i> View Delivery Personnel
+                        </a>
+                        <a class="dropdown-item" href="{% url 'userauths:register_delivery_personnel' %}">
+                            <i class="fas fa-plus-circle mr-2"></i> Add Delivery Personnel
+                        </a>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-edit mr-2"></i> Update Personnel Info
+                        </a>
+
+                        <div class="dropdown-divider"></div>
+
+                        <h6 class="dropdown-header">Deliveries</h6>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-shipping-fast mr-2"></i> Active Deliveries
+                        </a>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-history mr-2"></i> Delivery History
+                        </a>
+                        <a class="dropdown-item" href="">
+                            <i class="fas fa-tasks mr-2"></i> Assign Deliveries
+                        </a>
+                    </div>
+                </div>
 
                 <!-- View Contact Us Submissions -->
                 <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
