@@ -203,8 +203,10 @@
 <!-- Left Panel -->
 <div class="left-panel">
     <a href="{% url 'userauths:delivery_dashboard' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-    <a href="{% url 'userauths:assigned_orders' %}"><i class="fas fa-truck"></i>Assigned Orders</a>
-    <a href="{% url 'userauths:delivery_history' %}"><i class="fas fa-history"></i>Delivery History</a>
+    <a href="{% url 'delivery:view_assigned_orders' %}">
+        <i class="fas fa-truck"></i>Assigned Orders
+    </a>
+    <a href="{%url 'delivery:delivery_overview' %}"><i class="fas fa-history"></i>Delivery History</a>
     <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
 </div>
 
