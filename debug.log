@@ -59527,3 +59527,541 @@ Unexpected error in expert dashboard: Invalid block tag on line 263: 'endblock'.
 "GET /userauths/expert/dashboard/ HTTP/1.1" 200 17058
 "GET /media/expert_profiles/bg_2_xVxeSf6.jpg HTTP/1.1" 200 749355
 "GET /media/expert_profiles/bg_2_xVxeSf6.jpg HTTP/1.1" 200 749355
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET / HTTP/1.1" 200 36376
+"GET / HTTP/1.1" 200 36376
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/logout/ HTTP/1.1" 302 0
+"GET /userauths/expert/dashboard/ HTTP/1.1" 302 0
+"GET /userauths/expert/dashboard/ HTTP/1.1" 302 0
+"GET /userauths/login/ HTTP/1.1" 200 24618
+"GET /userauths/login/ HTTP/1.1" 200 24618
+[2025-01-26 11:18:09.687187+00:00] Login Success: User Admin Patrick logged in successfully. (Email: amaldapatrick2025@mca.ajce.in)
+[2025-01-26 11:18:09.687187+00:00] Login Success: User Admin Patrick logged in successfully. (Email: amaldapatrick2025@mca.ajce.in)
+"POST /userauths/login/ HTTP/1.1" 302 0
+"POST /userauths/login/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\forms.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\forms.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+"GET /userauths/adminindex/ HTTP/1.1" 200 15503
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15533
+"GET /userauths/adminindex/ HTTP/1.1" 200 15533
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15533
+"GET /userauths/adminindex/ HTTP/1.1" 200 15533
+Internal Server Error: /userauths/delivery_personnel/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 974, in delivery_personnel_list
+    return render(request, 'delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: delivery_personnel_list.html
+Internal Server Error: /userauths/delivery_personnel/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 974, in delivery_personnel_list
+    return render(request, 'delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: delivery_personnel_list.html
+"GET /userauths/delivery_personnel/ HTTP/1.1" 500 90721
+"GET /userauths/delivery_personnel/ HTTP/1.1" 500 90721
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+Internal Server Error: /userauths/delivery_personnel/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 974, in delivery_personnel_list
+    return render(request, 'userauths/delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'edit_delivery_personnel' not found. 'edit_delivery_personnel' is not a valid view function or pattern name.
+Internal Server Error: /userauths/delivery_personnel/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 974, in delivery_personnel_list
+    return render(request, 'userauths/delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'edit_delivery_personnel' not found. 'edit_delivery_personnel' is not a valid view function or pattern name.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 500 188861
+"GET /userauths/delivery_personnel/ HTTP/1.1" 500 188861
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16161
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16161
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+Internal Server Error: /userauths/edit_delivery_personnel/1/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 986, in edit_delivery_personnel
+    return render(request, 'userauths/edit_delivery_personnel.html', {'form': form})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'delivery_personnel_list' not found. 'delivery_personnel_list' is not a valid view function or pattern name.
+Internal Server Error: /userauths/edit_delivery_personnel/1/
+Traceback (most recent call last):
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\Plant-Nursery\userauths\views.py", line 986, in edit_delivery_personnel
+    return render(request, 'userauths/edit_delivery_personnel.html', {'form': form})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Main project\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'delivery_personnel_list' not found. 'delivery_personnel_list' is not a valid view function or pattern name.
+"GET /userauths/edit_delivery_personnel/1/ HTTP/1.1" 500 173942
+"GET /userauths/edit_delivery_personnel/1/ HTTP/1.1" 500 173942
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/edit_delivery_personnel/1/ HTTP/1.1" 200 15326
+"GET /userauths/edit_delivery_personnel/1/ HTTP/1.1" 200 15326
+"POST /userauths/edit_delivery_personnel/1/ HTTP/1.1" 302 0
+"POST /userauths/edit_delivery_personnel/1/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16167
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16167
+"GET /userauths/delete_delivery_personnel/1/ HTTP/1.1" 302 0
+"GET /userauths/delete_delivery_personnel/1/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16171
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16171
+"GET /userauths/restore_delivery_personnel/1/ HTTP/1.1" 302 0
+"GET /userauths/restore_delivery_personnel/1/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16167
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16167
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/edit_delivery_personnel/3/ HTTP/1.1" 200 15326
+"GET /userauths/edit_delivery_personnel/3/ HTTP/1.1" 200 15326
+"POST /userauths/edit_delivery_personnel/3/ HTTP/1.1" 302 0
+"POST /userauths/edit_delivery_personnel/3/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16173
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16173
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/edit_delivery_personnel/2/ HTTP/1.1" 200 15326
+"GET /userauths/edit_delivery_personnel/2/ HTTP/1.1" 200 15326
+"POST /userauths/edit_delivery_personnel/2/ HTTP/1.1" 302 0
+"POST /userauths/edit_delivery_personnel/2/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16177
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16177
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/edit_delivery_personnel/3/ HTTP/1.1" 200 15335
+"GET /userauths/edit_delivery_personnel/3/ HTTP/1.1" 200 15335
+"POST /userauths/edit_delivery_personnel/3/ HTTP/1.1" 302 0
+"POST /userauths/edit_delivery_personnel/3/ HTTP/1.1" 302 0
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16176
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16176
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16006
+"GET /userauths/delivery_personnel/ HTTP/1.1" 200 16006
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15363
+"GET /userauths/adminindex/ HTTP/1.1" 200 15363
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /userauths/adminindex/ HTTP/1.1" 200 15363
+"GET /userauths/adminindex/ HTTP/1.1" 200 15363
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 25602
+"GET /purchase/admin/manage_reviews/ HTTP/1.1" 200 25602
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /purchase/reports/ HTTP/1.1" 200 22907
+"GET /purchase/reports/ HTTP/1.1" 200 22907
+Error fetching expert profile: Expert matching query does not exist.
+Error fetching expert profile: Expert matching query does not exist.
+"GET /purchase/reports/ HTTP/1.1" 200 22907
+"GET /purchase/reports/ HTTP/1.1" 200 22907
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+F:\Main project\Plant-Nursery\userauths\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader

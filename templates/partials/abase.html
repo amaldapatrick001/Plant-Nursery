@@ -261,14 +261,11 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="deliveryDropdown">
                         <h6 class="dropdown-header">Delivery Personnel</h6>
-                        <a class="dropdown-item" href="">
+                        <a class="dropdown-item" href="{% url 'userauths:delivery_personnel_list' %}">
                             <i class="fas fa-list mr-2"></i> View Delivery Personnel
                         </a>
                         <a class="dropdown-item" href="{% url 'userauths:register_delivery_personnel' %}">
                             <i class="fas fa-plus-circle mr-2"></i> Add Delivery Personnel
-                        </a>
-                        <a class="dropdown-item" href="">
-                            <i class="fas fa-edit mr-2"></i> Update Personnel Info
                         </a>
 
                         <div class="dropdown-divider"></div>

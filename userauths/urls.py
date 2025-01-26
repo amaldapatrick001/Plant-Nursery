@@ -1,5 +1,6 @@
+from django import views
 from django.urls import include, path
-from .views import add_expert, adminindex, delete_user_view, delivery_dashboard, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, register_delivery_personnel, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback, assigned_orders, delivery_history, update_status, expert_dashboard, toggle_expert_availability
+from .views import add_expert, adminindex, delete_delivery_personnel, delete_user_view, delivery_dashboard, delivery_personnel_list, echange_password, edit_delivery_personnel, password_reset_confirm, password_reset_request, register, login, logout, IndexView, register_delivery_personnel, restore_delivery_personnel, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback, expert_dashboard, toggle_expert_availability
 
 from django.views.generic import TemplateView 
 
@@ -34,11 +35,13 @@ path('expert/update-profile/', update_expert_profile, name='update_expert_profil
 
      path('register_delivery_personnel/', register_delivery_personnel, name='register_delivery_personnel'),
 #     path('delivery_personnel/update/<int:delivery_personnel_id>/', update_delivery_personnel, name='update_delivery_personnel'),
-# path('delivery_personnel/', delivery_personnel_list, name='delivery_personnel_list'),
+
     path('delivery/dashboard/', delivery_dashboard, name='delivery_dashboard'),
-    path('delivery/assigned-orders/', assigned_orders, name='assigned_orders'),
-    path('delivery/history/', delivery_history, name='delivery_history'),
-    path('delivery/update-status/', update_status, name='update_status'),
+    path('delivery_personnel/', delivery_personnel_list, name='delivery_personnel_list'),
+    path('edit_delivery_personnel/<int:delivery_id>/', edit_delivery_personnel, name='edit_delivery_personnel'),
+    path('delete_delivery_personnel/<int:delivery_id>/', delete_delivery_personnel, name='delete_delivery_personnel'),
+    path('restore_delivery_personnel/<int:delivery_id>/', restore_delivery_personnel, name='restore_delivery_personnel'),
+
 
     # Expert URLs
     path('expert/dashboard/', expert_dashboard, name='expert_dashboard'),

@@ -964,40 +964,40 @@ def register_delivery_personnel(request):
 
     return render(request, 'userauths/register_delivery_personnel.html', {'form': form})
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import DeliveryPersonnel
+from .forms import DeliveryPersonnelForm
+
 def delivery_personnel_list(request):
-    # Logic to display the list of delivery personnel
-    return render(request, 'userauths/delivery_personnel_list.html')
+    """Display all DeliveryPersonnel."""
+    delivery_personnel_list = DeliveryPersonnel.objects.select_related('user').all()
+    return render(request, 'userauths/delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
 
-# # views.py
-# # views.py
-# from django.shortcuts import render, get_object_or_404, redirect
-# from django.contrib import messages
-# from .forms import DeliveryPersonnelUpdateForm
-# from .models import DeliveryPersonnel
+def edit_delivery_personnel(request, delivery_id):
+    """Edit the details of a DeliveryPersonnel."""
+    delivery_personnel = get_object_or_404(DeliveryPersonnel, pk=delivery_id)
+    if request.method == 'POST':
+        form = DeliveryPersonnelForm(request.POST, instance=delivery_personnel)
+        if form.is_valid():
+            form.save()
+            return redirect('userauths:delivery_personnel_list')
+    else:
+        form = DeliveryPersonnelForm(instance=delivery_personnel)
+    return render(request, 'userauths/edit_delivery_personnel.html', {'form': form})
 
-# def update_delivery_personnel(request, delivery_personnel_id):
-#     # Get the delivery personnel using the ID
-#     delivery_personnel = get_object_or_404(DeliveryPersonnel, id=delivery_personnel_id)
-    
-#     if request.method == 'POST':
-#         form = DeliveryPersonnelUpdateForm(request.POST, instance=delivery_personnel)
-#         if form.is_valid():
-#             form.save()  # Save the updated information
-#             messages.success(request, f'Delivery personnel {delivery_personnel.user.first_name} updated successfully.')
-#             return redirect('delivery_personnel_list')  # Redirect to the list view after update
-#     else:
-#         form = DeliveryPersonnelUpdateForm(instance=delivery_personnel)
-    
-#     return render(request, 'userauths/update_delivery_personnel.html', {'form': form, 'delivery_personnel': delivery_personnel})
+def delete_delivery_personnel(request, delivery_id):
+    """Mark a DeliveryPersonnel as inactive."""
+    delivery_personnel = get_object_or_404(DeliveryPersonnel, pk=delivery_id)
+    delivery_personnel.user.status = False  # Turn off registration status
+    delivery_personnel.user.save()
+    return redirect('userauths:delivery_personnel_list')
 
-# from django.shortcuts import render
-# from .models import DeliveryPersonnel
-
-# def delivery_personnel_list(request):
-#     # Fetch all delivery personnel
-#     delivery_personnel_list = DeliveryPersonnel.objects.all()
-#     return render(request, 'userauths/delivery_personnel_list.html', {'delivery_personnel_list': delivery_personnel_list})
-
+def restore_delivery_personnel(request, delivery_id):
+    """Mark a DeliveryPersonnel as active."""
+    delivery_personnel = get_object_or_404(DeliveryPersonnel, pk=delivery_id)
+    delivery_personnel.user.status = True  # Turn on registration status
+    delivery_personnel.user.save()
+    return redirect('userauths:delivery_personnel_list')
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -1025,42 +1025,9 @@ def delivery_dashboard(request):
         logger.error(f"User {user.uid} is not registered as delivery personnel")
         return redirect('userauths:login')
 
-def assigned_orders(request):
-    if 'user_id' not in request.session:
-        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
-    
-    try:
-        user = User_Reg.objects.get(uid=request.session['user_id'])
-        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
-        return render(request, 'core/assigned_orders.html', {'delivery_personnel': delivery_personnel})
-    except User_Reg.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
 
-def delivery_history(request):
-    if 'user_id' not in request.session:
-        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
-    
-    try:
-        user = User_Reg.objects.get(uid=request.session['user_id'])
-        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
-        return render(request, 'core/delivery_history.html', {'delivery_personnel': delivery_personnel})
-    except User_Reg.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
 
-def update_status(request):
-    if 'user_id' not in request.session:
-        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
-    
-    if request.method == 'POST':
-        try:
-            user = User_Reg.objects.get(uid=request.session['user_id'])
-            delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
-            delivery_personnel.status = 'busy' if delivery_personnel.status == 'available' else 'available'
-            delivery_personnel.save()
-            return redirect('userauths:delivery_dashboard')
-        except User_Reg.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
-    return redirect('userauths:delivery_dashboard')
+
 def expert_dashboard(request):
     """
     View for the expert's dashboard. Shows their profile, stats, and quick actions.
