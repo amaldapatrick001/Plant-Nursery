@@ -100,14 +100,16 @@
             <div class="form-group">
               <label for="status">Order Status</label>
               <select name="status" id="status" class="form-control">
-                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
-                <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Processing</option>
-                <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
-                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
-                <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-                <option value="Returned" {% if order.status == 'Returned' %}selected{% endif %}>Returned</option>
+                  <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="assigned" {% if order.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                  <option value="picked_up" {% if order.status == 'picked_up' %}selected{% endif %}>Picked Up</option>
+                  <option value="in_transit" {% if order.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                  <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                  <option value="cancel" {% if order.status == 'cancel' %}selected{% endif %}>Cancel</option>
+                  <option value="return" {% if order.status == 'return' %}selected{% endif %}>Return</option>
               </select>
-            </div>
+          </div>
+          
             <button type="submit" class="btn btn-success">Update Status</button>
           </form>
         </div>

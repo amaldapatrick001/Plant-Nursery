@@ -178,7 +178,11 @@ class DeliveryPersonnel(models.Model):
     )
     assigned_orders = models.PositiveIntegerField(default=0)
     completed_orders = models.PositiveIntegerField(default=0)
-
+    profile_picture = models.ImageField(
+        upload_to='expert_profiles/',
+        null=True,
+        blank=True
+    )
     class Meta:
         verbose_name = "Delivery Personnel"
         verbose_name_plural = "Delivery Personnel"

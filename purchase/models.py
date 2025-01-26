@@ -67,12 +67,15 @@ from userauths.models import DeliveryPersonnel
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('assigned', 'Assigned'),
-        ('picked_up', 'Picked Up'),
-        ('in_transit', 'In Transit'),
-        ('delivered', 'Delivered'),
-    ]
+    ('pending', 'Pending'),
+    ('assigned', 'Assigned'),
+    ('picked_up', 'Picked Up'),
+    ('in_transit', 'In Transit'),
+    ('delivered', 'Delivered'),
+    ('cancel', 'Cancel'),
+    ('return', 'Return'),
+]
+
 
     user = models.ForeignKey(User_Reg, on_delete=models.CASCADE)
     billing = models.ForeignKey(Billing, on_delete=models.SET_NULL, null=True)

@@ -274,10 +274,10 @@
                         <a class="dropdown-item" href="">
                             <i class="fas fa-shipping-fast mr-2"></i> Active Deliveries
                         </a>
-                        <a class="dropdown-item" href="">
+                        <a class="dropdown-item" href="{% url 'delivery:view_delivery_history' %}">
                             <i class="fas fa-history mr-2"></i> Delivery History
                         </a>
-                        <a class="dropdown-item" href="">
+                        <a class="dropdown-item" href="{% url 'delivery:view_undelivered_orders' %}">
                             <i class="fas fa-tasks mr-2"></i> Assign Deliveries
                         </a>
                     </div>
