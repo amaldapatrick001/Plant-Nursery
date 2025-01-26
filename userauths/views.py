@@ -52,6 +52,11 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Expert, User_Reg, Login
+import logging
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -171,7 +176,7 @@ def login(request):
                     1: 'userauths:adminindex',
                     2: 'userauths:index',
                     3: 'userauths:delivery_dashboard',
-                    4: 'userauths:update_expert_profile'
+                    4: 'userauths:expert_dashboard'
                 }
 
                 success_message = f"User {user_login.uid.first_name} {user_login.uid.last_name} logged in successfully."
@@ -1056,3 +1061,85 @@ def update_status(request):
         except User_Reg.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)
     return redirect('userauths:delivery_dashboard')
+def expert_dashboard(request):
+    """
+    View for the expert's dashboard. Shows their profile, stats, and quick actions.
+    Uses session-based authentication.
+    """
+    if 'user_id' not in request.session:
+        return redirect('userauths:login')
+
+    try:
+        # Get the login object first
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        user = login_user.uid  # Get the User_Reg object
+        
+        # Get expert details
+        expert = get_object_or_404(Expert, user=user)
+        
+        context = {
+            'expert': expert,
+            'phone': user.phoneno,  # From User_Reg model
+            'email': login_user.email,  # From Login model
+            'page_title': 'Expert Dashboard',
+            'active_page': 'dashboard',
+        }
+        
+        return render(request, 'userauths/expert_dashboard.html', context)
+    
+    except Login.DoesNotExist:
+        logger.error(f"Login object not found for user_id: {request.session['user_id']}")
+        return redirect('userauths:login')
+    except Expert.DoesNotExist:
+        logger.error(f"Expert profile not found for user: {user.uid}")
+        return redirect('userauths:login')
+    except Exception as e:
+        logger.error(f"Unexpected error in expert dashboard: {str(e)}")
+        return redirect('userauths:login')
+
+def toggle_expert_availability(request):
+    """
+    AJAX view to toggle expert's availability status.
+    Uses session-based authentication.
+    """
+    if 'user_id' not in request.session:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Not authenticated'
+        }, status=401)
+
+    if request.method == 'POST':
+        try:
+            login_user = Login.objects.get(login_id=request.session['user_id'])
+            user = login_user.uid
+            expert = get_object_or_404(Expert, user=user)
+            
+            new_status = 'unavailable' if expert.availability_status == 'available' else 'available'
+            expert.availability_status = new_status
+            expert.save()
+            
+            return JsonResponse({
+                'status': 'success',
+                'new_status': new_status
+            })
+        except Login.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Login not found'
+            }, status=404)
+        except Expert.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Expert profile not found'
+            }, status=404)
+        except Exception as e:
+            logger.error(f"Error toggling expert availability: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': 'An unexpected error occurred'
+            }, status=500)
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)

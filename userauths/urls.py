@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import add_expert, adminindex, delete_user_view, delivery_dashboard, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, register_delivery_personnel, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback, assigned_orders, delivery_history, update_status
+from .views import add_expert, adminindex, delete_user_view, delivery_dashboard, echange_password, password_reset_confirm, password_reset_request, register, login, logout, IndexView, register_delivery_personnel, undo_delete_view, update_expert_profile, update_profile, user_details, user_details_view, google_login, google_callback, assigned_orders, delivery_history, update_status, expert_dashboard, toggle_expert_availability
 
 from django.views.generic import TemplateView 
 
@@ -39,4 +39,8 @@ path('expert/update-profile/', update_expert_profile, name='update_expert_profil
     path('delivery/assigned-orders/', assigned_orders, name='assigned_orders'),
     path('delivery/history/', delivery_history, name='delivery_history'),
     path('delivery/update-status/', update_status, name='update_status'),
+
+    # Expert URLs
+    path('expert/dashboard/', expert_dashboard, name='expert_dashboard'),
+    path('expert/toggle-availability/', toggle_expert_availability, name='toggle_expert_availability'),
 ]

@@ -2,6 +2,7 @@ from pyexpat.errors import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import BlogComment, BlogPost
 from .forms import BlogPostForm
+from userauths.models import Expert, Login
 
 def ensure_user_logged_in(request):
     """Ensure the user is logged in; if not, redirect to login with an error message."""
@@ -53,7 +54,7 @@ from django.contrib import messages
 from .forms import BlogPostForm
 
 def eadd_blog(request):
-    """Allow the logged-in user to add a new blog post."""
+    """Allow the logged-in expert to add a new blog post and update their blog count."""
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
@@ -64,6 +65,18 @@ def eadd_blog(request):
             blog_post.is_public = True
             blog_post.author_id = request.session['user_id']
             blog_post.save()
+
+            # Update the expert's blog count
+            try:
+                # Get the expert using the login relationship
+                login = Login.objects.get(login_id=request.session['user_id'])
+                expert = Expert.objects.get(login=login)
+                expert.blog_count += 1
+                expert.save()
+            except (Expert.DoesNotExist, Login.DoesNotExist):
+                messages.error(request, 'Expert profile not found.')
+                return redirect('blog:blog_dashboard')
+
             messages.success(request, 'Blog post added successfully!')
             return redirect('blog:blog_dashboard')
     else:

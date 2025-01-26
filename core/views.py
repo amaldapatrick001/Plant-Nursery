@@ -84,18 +84,3 @@ def contact_list(request):
         return redirect('contact_list')
 
     return render(request, 'core/contact_list.html', {'contacts': contacts})
-
-def delivery_dashboard(request):
-    if 'user_id' not in request.session:
-        return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
-
-    try:
-        user = User_Reg.objects.get(uid=request.session['user_id'])
-        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
-        
-        context = {
-            'delivery_personnel': delivery_personnel
-        }
-        return render(request, 'core/delivery_dashboard.html', context)
-    except User_Reg.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Invalid user'}, status=404)

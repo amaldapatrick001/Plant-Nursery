@@ -116,9 +116,26 @@ class Expert(models.Model):
         self.rating = total_rating / self.consultation_count
         self.save()
 
+    def get_published_blog_count(self):
+        """Get count of published, non-deleted blogs by this expert"""
+        return BlogPost.objects.filter(
+            author=self.user,
+            status='published',
+            is_deleted=False
+        ).count()
+
     def update_blog_count(self):
-        """Increment the blog count for the expert."""
-        self.blog_count += 1
+        """Update the blog_count field with actual count of published blogs"""
+        self.blog_count = self.get_published_blog_count()
+        self.save()
+
+    def get_consultation_count(self):
+        """Get the actual count of completed consultations"""
+        return self.consultation_count
+
+    def increment_consultation_count(self):
+        """Increment the consultation count"""
+        self.consultation_count += 1
         self.save()
 
     def increment_reviews(self):
