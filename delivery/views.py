@@ -187,8 +187,31 @@ def delivery_overview(request):
     
      return render(request, 'delivery/ddelivery_overview.html', context)
 
+def ddelivery_history(request):
+    # Check if the user is logged in
+    if 'user_id' not in request.session:
+        return redirect('userauths:login')
 
+    try:
+        # Get the logged-in delivery personnel
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        user = login_user.uid  # Get the User_Reg object
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
 
+        # Fetch all delivered or returned orders assigned to the delivery personnel
+        orders = Order.objects.filter(
+            assigned_delivery_person=delivery_personnel,
+            status__in=['delivered', 'return']
+        ).order_by('-delivery_date')
+
+        return render(request, 'Deliveryboy/ddelivery_history.html', {'orders': orders})
+    except Login.DoesNotExist:
+        return redirect('userauths:login')
+    except DeliveryPersonnel.DoesNotExist:
+        return redirect('userauths:login')
+    except Exception as e:
+        return render(request, 'Deliveryboy/ddelivery_history.html', {'orders': [], 'error': str(e)})
+    
 # Placeholder for assigned orders view
 def assigned_orders():
     pass
