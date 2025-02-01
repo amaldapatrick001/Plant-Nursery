@@ -1,0 +1,239 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Container for the product details */
+    .product-details-container {
+        margin-top: 50px;
+        padding: 30px;
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .product-details-container:hover {
+        transform: scale(1.02);
+    }
+
+    /* Styling for the product image */
+    .product-image {
+        max-width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-family: 'Merriweather', serif;
+        color: #34495e;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 2rem;
+    }
+
+    /* Product Title */
+    .product-title {
+        font-family: 'Merriweather', serif;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    /* Product Description */
+    .product-description {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin-bottom: 20px;
+    }
+
+    /* Styling for the details list */
+    .details-list {
+        list-style: none;
+        padding: 0;
+        font-size: 1rem;
+        color: #34495e;
+    }
+
+    .details-list li {
+        margin-bottom: 12px;
+    }
+
+    /* Star Rating */
+    .star-rating i {
+        font-size: 1.5rem;
+        margin-right: 4px;
+        color: gold;
+    }
+
+    /* Buttons */
+    .btn-custom {
+        background-color: #3498db;
+        color: #fff;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        border: 2px solid #3498db;
+    }
+
+    .btn-custom:hover {
+        background-color: #2980b9;
+        color: #fff;
+        border-color: #2980b9;
+    }
+
+    .btn-secondary {
+        background-color: #ecf0f1;
+        color: #34495e;
+        border-radius: 30px;
+        padding: 12px 30px;
+        border: 2px solid #bdc3c7;
+    }
+
+    .btn-secondary:hover {
+        background-color: #bdc3c7;
+        color: #fff;
+    }
+
+    /* Feedback Card */
+    .feedback-card {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .feedback-card:hover {
+        transform: scale(1.03);
+    }
+
+    .feedback-card p {
+        margin-bottom: 10px;
+    }
+
+    /* Cultivation Method Section */
+    .cultivation-method {
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Divider */
+    .divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 30px 0;
+    }
+
+    /* Collapse button */
+    .collapse-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Custom Scrollbar */
+    .product-details-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .product-details-container::-webkit-scrollbar-thumb {
+        background-color: #3498db;
+        border-radius: 8px;
+    }
+
+    .product-details-container::-webkit-scrollbar-track {
+        background-color: #f0f3f4;
+    }
+</style>
+
+<div class="container product-details-container">
+    <h2 class="section-title">Product Details</h2>
+    <div class="row">
+        <!-- Left Column: Product Image and Feedback -->
+        <div class="col-md-6">
+            <img src="{% if product.image_1 %}{{ product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
+            {% if cultivation_method %}
+            <div class="collapse-btn">
+                <button class="btn btn-info mt-3" type="button" data-toggle="collapse" data-target="#cultivationDetails" aria-expanded="false" aria-controls="cultivationDetails">
+                    Cultivation Method Details
+                </button>
+            </div>
+
+            <div class="collapse mt-4" id="cultivationDetails">
+                <div class="cultivation-method">
+                    <h3>Cultivation Method Details</h3>
+                    <p><strong>Title:</strong> {{ cultivation_method.title }}</p>
+                    <p><strong>Description:</strong> {{ cultivation_method.desc }}</p>
+                    <p><strong>Steps:</strong> {{ cultivation_method.steps }}</p>
+                    <p><strong>Recommended Tools:</strong> {{ cultivation_method.recommended_tools }}</p>
+                    <p><strong>Pit Size:</strong> {{ cultivation_method.pit_size }}</p>
+                    <p><strong>Distance Between Plants:</strong> {{ cultivation_method.distance_between_plants }}</p>
+                    <p><strong>Watering Frequency:</strong> {{ cultivation_method.watering_frequency }}</p>
+                    <p><strong>Fertilization Guidelines:</strong> {{ cultivation_method.fertilization_guidelines }}</p>
+                    <p><strong>Common Issues:</strong> {{ cultivation_method.common_issues }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <h2 class="section-title">Customer Feedback</h2>
+            {% if reviews %}
+            <div class="row">
+                {% for review in reviews %}
+    <div class="feedback-card">
+        <p><strong>{{ review.user.first_name }} {{ review.user.last_name }}</strong></p>
+        <div class="star-rating">
+            {% for i in rating_range %}
+                {% if i <= review.rating %}
+                    <i class="fas fa-star"></i>  <!-- Filled star -->
+                {% else %}
+                    <i class="far fa-star"></i>  <!-- Empty star -->
+                {% endif %}
+            {% endfor %}
+        </div>
+        <p>{{ review.comment }}</p>
+        
+        {% if review.reply %}
+            <div class="reply-section">
+                <p><strong>Reply:</strong> {{ review.reply }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
+            </div>
+            {% else %}
+            <div class="text-center">
+                <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                <a href="#" class="btn btn-custom">Write a Review</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Product Information and Add to Cart -->
+        <div class="col-md-6">
+            <h2 class="product-title">{{ product.name }}</h2>
+            <p class="product-description">{{ product.description }}</p>
+            <ul class="details-list">
+                <li><strong>Category:</strong> {{ plant_category.name }}</li>
+                <li><strong>Sunlight Requirement:</strong> {{ plant_category.sunlight_requirement }}</li>
+                <li><strong>Water Requirement:</strong> {{ plant_category.water_requirement }}</li>
+                <li><strong>Climate Suitability:</strong> {{ plant_category.climate_suitability }}</li>
+                <li><strong>Growth Rate:</strong> {{ plant_category.growth_rate }}</li>
+                <li><strong>Soil Type:</strong> {{ plant_category.soil_type }}</li>
+                <li><strong>Best Time to Plant:</strong> {{ plant_category.best_time_to_plant }}</li>
+                <li><strong>Stock Quantity:</strong> {{ batch.stock_quantity }}</li>
+            </ul>
+            <div class="mt-4">
+                <a href="{% url 'purchase:add_to_cart' batch.id %}" class="btn btn-custom mr-2">Add to Cart</a>
+                <a href="{% url 'products:cproduct_list' %}" class="btn btn-secondary">Back to Product List</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

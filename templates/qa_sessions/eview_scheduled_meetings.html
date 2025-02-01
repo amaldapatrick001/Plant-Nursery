@@ -1,0 +1,185 @@
+{% extends "partials/ebase.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .card-header h3 {
+        font-weight: 600;
+        margin: 0;
+        color: #fff;
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        padding: 2rem;
+    }
+
+    /* Table Styling */
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        color: #444;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #82ae46;
+        border-color: #82ae46;
+    }
+
+    .btn-success:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- Scheduled Meetings -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary">
+                    <h3 class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>Scheduled Meetings
+                        <span class="badge bg-light text-primary float-end">{{ scheduled_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if scheduled_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in scheduled_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>{{ meeting.start_time|date:"M d, Y" }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>{{ meeting.current_participants }}/{{ meeting.max_participants }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if meeting.google_meet_link %}
+                                                    <a href="{{ meeting.google_meet_link }}" 
+                                                       target="_blank" 
+                                                       class="btn btn-success btn-sm">
+                                                        <i class="fas fa-video me-1"></i>Join
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{% url 'qa_sessions:eview_meeting_detail' meeting.session_id %}" 
+                                                   class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye me-1"></i>View Details
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No scheduled meetings.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Ongoing Meetings -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success">
+                    <h3 class="mb-0">
+                        <i class="fas fa-play-circle me-2"></i>Ongoing Meetings
+                        <span class="badge bg-light text-success float-end">{{ ongoing_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if ongoing_meetings %}
+                        <!-- Similar table structure as scheduled meetings -->
+                    {% else %}
+                        <p class="text-center mb-0">No ongoing meetings.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Completed Meetings -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-secondary">
+                    <h3 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>Completed Meetings
+                        <span class="badge bg-light text-secondary float-end">{{ completed_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if completed_meetings %}
+                        <!-- Similar table structure as scheduled meetings -->
+                    {% else %}
+                        <p class="text-center mb-0">No completed meetings.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Cancelled Meetings -->
+            <div class="card shadow">
+                <div class="card-header bg-danger">
+                    <h3 class="mb-0">
+                        <i class="fas fa-ban me-2"></i>Cancelled Meetings
+                        <span class="badge bg-light text-danger float-end">{{ cancelled_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if cancelled_meetings %}
+                        <!-- Similar table structure as scheduled meetings -->
+                    {% else %}
+                        <p class="text-center mb-0">No cancelled meetings.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

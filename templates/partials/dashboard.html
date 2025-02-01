@@ -1,0 +1,18 @@
+{% block content %}
+<h2>Welcome, {{ user.first_name }}!</h2>
+
+<div>
+    <h3>Next Meeting</h3>
+    {% if meetings %}
+    <p>
+        <strong>Title:</strong> {{ meetings.0.title }}<br>
+        <strong>Start Time:</strong> {{ meetings.0.start_time }}<br>
+        <a href="{{ meetings.0.google_meet_link }}" target="_blank">Join Meeting</a>
+    </p>
+    {% else %}
+    <p>No upcoming meetings.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'qna:customer_notifications' %}">View All Notifications</a>
+{% endblock %}

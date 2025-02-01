@@ -1,0 +1,311 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        width: 100%;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* Error Styling */
+    .error-message {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Popup Styles */
+    .popup-message {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 50%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup-message .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .popup-message .message.success {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .popup-message .message.error {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .popup-close {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .popup-close:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body">
+                        <h2 class="category-list-heading">Add New Expert</h2>
+                        <form method="POST" onsubmit="return validateForm()">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="{{ form.fname.id_for_label }}">First Name</label>
+                                {{ form.fname }}
+                                <div id="fname-error" class="error-message"></div>
+                                {% if form.fname.errors %}
+                                    <div class="text-danger">{{ form.fname.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.lname.id_for_label }}">Last Name</label>
+                                {{ form.lname }}
+                                <div id="lname-error" class="error-message"></div>
+                                {% if form.lname.errors %}
+                                    <div class="text-danger">{{ form.lname.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.email.id_for_label }}">Email</label>
+                                {{ form.email }}
+                                <div id="email-error" class="error-message"></div>
+                                {% if form.email.errors %}
+                                    <div class="text-danger">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.phone.id_for_label }}">Phone</label>
+                                {{ form.phone }}
+                                <div id="phone-error" class="error-message"></div>
+                                {% if form.phone.errors %}
+                                    <div class="text-danger">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary">Add Expert</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popup Message -->
+<div id="popup-message" class="popup-message">
+    <div class="popup-content">
+        <div id="popup-messages-container"></div>
+        <div class="popup-close" onclick="closePopup()">Close</div>
+    </div>
+</div>
+<script>
+    document.getElementById('id_fname').addEventListener('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z]/g, ''); // Allow only letters and no spaces
+        this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+        validateName('fname');
+    });
+
+    document.getElementById('id_lname').addEventListener('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z]/g, ''); // Allow only letters and no spaces
+        this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+        validateName('lname');
+    });
+
+    document.getElementById('id_phone').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, ''); // Allow only digits
+        validatePhone();
+    });
+
+    document.getElementById('id_email').addEventListener('input', function() {
+        validateEmail();
+    });
+
+    function validateName(field) {
+        var value = document.getElementById('id_' + field).value;
+        var errorElement = document.getElementById(field + '-error');
+        if (value !== '' && !/^[a-zA-Z]+$/.test(value)) {
+            errorElement.textContent = 'Only letters are allowed (no spaces)';
+        } else {
+            errorElement.textContent = '';
+        }
+    }
+
+    function validatePhone() {
+        var value = document.getElementById('id_phone').value;
+        var errorElement = document.getElementById('phone-error');
+        if (value !== '' && !/^[6-9]\d{9}$/.test(value)) {
+            errorElement.textContent = 'Phone number should start with a digit between 6 and 9 and be 10 digits long';
+        } else {
+            errorElement.textContent = '';
+        }
+    }
+
+    function validateEmail() {
+        var value = document.getElementById('id_email').value;
+        var errorElement = document.getElementById('email-error');
+        var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (value !== '' && !regex.test(value)) {
+            errorElement.textContent = 'Invalid email format';
+        } else {
+            errorElement.textContent = '';
+        }
+    }
+
+    function validateForm() {
+        var valid = true;
+        var errorMessages = [];
+
+        // Check if any of the fields have errors
+        if (document.getElementById('fname-error').textContent || document.getElementById('lname-error').textContent || document.getElementById('phone-error').textContent || document.getElementById('email-error').textContent) {
+            valid = false;
+            errorMessages.push('Please correct the errors in the form.');
+        }
+
+        // If any errors, show the popup and prevent form submission
+        if (!valid) {
+            showPopup(errorMessages);
+            return false;
+        }
+
+        // If no errors, proceed with form submission
+        return true;
+    }
+
+    function showPopup(messages) {
+        var container = document.getElementById('popup-messages-container');
+        container.innerHTML = ''; // Clear previous messages
+
+        messages.forEach(function(message) {
+            var messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'error');
+            messageDiv.textContent = message;
+            container.appendChild(messageDiv);
+        });
+
+        document.getElementById('popup-message').style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('popup-message').style.display = 'none';
+    }
+</script>
+{% endblock %}

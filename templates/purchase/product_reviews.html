@@ -1,0 +1,20 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2>Reviews for {{ product.name }}</h2>
+    {% if reviews %}
+    <ul class="list-group">
+        {% for review in reviews %}
+        <li class="list-group-item">
+            <strong>{{ review.user.fname }}</strong> 
+            <span class="badge badge-success">{{ review.rating }}/5</span>
+            <p>{{ review.comment }}</p>
+            <small>Reviewed on {{ review.review_date|date:"F j, Y" }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No reviews yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Category List</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f5;
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #82ae46;
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+    }
+
+    td {
+        font-family: 'Lato', sans-serif;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+        /* Button Styles */
+        .view-cultivation {
+            background-color: #0000ff; /* Green */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .view-cultivation:hover {
+            background-color: #0066ff; /* Darker green on hover */
+        }
+
+        /* Popup Styles */
+        #cultivation-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            overflow-y: auto; /* Enable scroll if needed */
+            justify-content: center; /* Centering the popup */
+            align-items: center; /* Centering the popup */
+        }
+
+        #cultivation-content {
+            background-color: white;
+            margin: auto; /* Center the popup */
+            padding: 20px;
+            width: 70%;
+            max-width: 600px; /* Max width for larger screens */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            position: relative; /* For positioning the close button */
+            overflow-y: auto; /* Allow scrolling if content overflows */
+        }
+
+        h2 {
+            color: #4CAF50; /* Green color for headings */
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: square; /* Square bullets */
+            padding-left: 20px; /* Indent the list */
+        }
+
+        li {
+            margin-bottom: 10px; /* Space between items */
+        }
+
+        strong {
+            color: #333; /* Dark color for strong emphasis */
+        }
+
+        #close-popup {
+            display: block;
+            background-color: #f44336; /* Red */
+            color: white;
+            border: none;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin-top: 20px; /* Add space above the button */
+        }
+
+        #close-popup:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+        }
+    </style>
+</head>
+<body>
+    <section class="ftco-section py-5">
+        <div class="container">
+           
+    <h2 class="category-list-heading">Explore Our Plant Varities</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Sunlight Requirement</th>
+                <th>Water Requirement</th>
+                <th>Soil Type</th>
+                <th>Climate Suitability</th>
+                <th>Best Time to Plant</th>
+                <th>View Cultivation Method</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in plant_categories %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.sunlight_requirement }}</td>
+                <td>{{ category.water_requirement }}</td>
+                <td>{{ category.soil_type }}</td>
+                <td>{{ category.climate_suitability }}</td>
+                <td>{{ category.best_time_to_plant }}</td>
+                <td>
+                    {% if category.cultivation_methods.count > 0 %}
+                    <button class="view-cultivation" data-category="{{ category.id }}">View Cultivation Method</button>
+                    {% else %}
+                    <span>No Cultivation Method</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div></section>
+
+    <!-- Popup for Cultivation Methods -->
+    <div id="cultivation-popup">
+        <div id="cultivation-content">
+            <!-- Cultivation methods will be loaded here -->
+            <button id="close-popup">Close</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.view-cultivation').click(function() {
+                var categoryId = $(this).data('category');
+                $.ajax({
+                    url: "{% url 'products:get_cultivation_methods' '0' %}".replace('0', categoryId),  // Use Django's URL tag
+                    method: 'GET',
+                    success: function(data) {
+                        $('#cultivation-content').html(data + '<button id="close-popup">Close</button>'); // Load data and add the close button
+                        $('#cultivation-popup').show(); // Show the popup
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);  // Log the error response for debugging
+                        alert('Error retrieving cultivation methods: ' + xhr.status + ' ' + xhr.statusText);
+                    }
+                });
+            });
+        
+            // Close the popup when the close button is clicked
+            $(document).on('click', '#close-popup', function() {
+                $('#cultivation-popup').hide(); // Hide the popup when close button is clicked
+            });
+        });
+    </script>
+
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,132 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Use the same styles as other pages */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #82ae46, #6d8a2e);
+        color: #fff;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .card-body {
+        background: #ffffff;
+        padding: 2rem;
+    }
+
+    .info-group {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Meeting Details</h3>
+                        <span class="badge bg-{{ meeting.status|lower }}-subtle text-{{ meeting.status|lower }}">
+                            {{ meeting.status|title }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Meeting Information -->
+                    <div class="info-group">
+                        <h5 class="text-success mb-3">Meeting Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Title:</strong> {{ meeting.title }}</p>
+                                <p><strong>Date:</strong> {{ meeting.start_time|date:"F d, Y" }}</p>
+                                <p><strong>Time:</strong> {{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Status:</strong> {{ meeting.status|title }}</p>
+                                <p><strong>Participants:</strong> {{ meeting.current_participants }}/{{ meeting.max_participants }}</p>
+                                {% if meeting.google_meet_link %}
+                                    <a href="{{ meeting.google_meet_link }}" target="_blank" class="btn btn-success">
+                                        <i class="fas fa-video me-2"></i>Join Meeting
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="info-group">
+                        <h5 class="text-success mb-3">Description</h5>
+                        <p class="mb-0">{{ meeting.description }}</p>
+                    </div>
+
+                    <!-- Participants List -->
+                    <div class="info-group">
+                        <h5 class="text-success mb-3">Registered Participants</h5>
+                        {% if participants %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>User Type</th>
+                                            <th>Joined At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for participant in participants %}
+                                        <tr>
+                                            <td>{{ participant.first_name }} {{ participant.last_name }}</td>
+                                            <td>{{ participant.email }}</td>
+                                            <td>{{ participant.user_type.usertype }}</td>
+                                            <td>{{ participant.date_joined|date:"M d, Y H:i" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-center mb-0">No participants registered yet.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Back Button -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'qa_sessions:eview_scheduled_meetings' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Meetings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

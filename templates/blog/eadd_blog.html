@@ -1,0 +1,421 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    body {
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+    }
+
+    .container {
+        margin-bottom: 50px;
+        padding: 20px;
+        max-width: calc(100vw - 300px);
+        width: 100%;
+        position: relative;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border: none;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .profile-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #2E7D32, #388E3C, #4CAF50);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        padding: 2.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+        transform: skewX(-45deg);
+    }
+
+    .card-header h2 {
+        color: white;
+        font-size: 2.2rem;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        height: 65px;
+        padding: 1.5rem 1rem 0.5rem;
+        border: 2px solid rgba(46, 125, 50, 0.15);
+        border-radius: 16px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        width: 100%;
+    }
+
+    textarea.form-control {
+        height: 150px;
+        padding: 1rem;
+        resize: vertical;
+    }
+
+    .form-control:focus {
+        border-color: #2E7D32;
+        box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-control-file {
+        padding: 1rem;
+        border: 2px dashed rgba(46, 125, 50, 0.15);
+        border-radius: 16px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-file:hover {
+        border-color: #2E7D32;
+        background-color: rgba(46, 125, 50, 0.05);
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1.2rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        background-color: rgba(220, 53, 69, 0.1);
+        display: none;
+    }
+
+    @media (max-width: 992px) {
+        .container {
+            margin-left: 240px;
+            max-width: calc(100vw - 260px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin-left: 0;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-blog"></i> Create New Blog Post</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="blogForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-pen"></i> Blog Details
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Blog Title</label>
+                                {{ form.title|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Blog Content</label>
+                                {{ form.content|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-image"></i> Media Content
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Upload Images</label>
+                                {{ form.images|add_class:"form-control-file" }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Video URL</label>
+                                {{ form.videos|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-toggle-on"></i> Publication Status
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                {{ form.status|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-paper-plane"></i> Publish Blog Post
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        const titleInput = document.querySelector('#id_title');
+        const contentInput = document.querySelector('#id_content');
+        const imageInput = document.querySelector('#id_images');
+        const videoInput = document.querySelector('#id_videos');
+        const errorMessages = {};
+        const contentInput = document.querySelector('#id_content');
+        const setError = (input, message) => {
+            let error = input.nextElementSibling;
+            if (!error || !error.classList.contains('error')) {
+                error = document.createElement('span');
+                error.className = 'error text-danger';
+                input.parentElement.appendChild(error);
+            }
+            error.textContent = message;
+        };
+
+        const clearError = (input) => {
+            const error = input.nextElementSibling;
+            if (error && error.classList.contains('error')) {
+                error.remove();
+            }
+        };
+                input.parentElement.appendChild(error);
+        const validateTitle = () => {
+            const value = titleInput.value.trim();
+            if (value && value[0] !== value[0].toUpperCase()) {
+                setError(titleInput, "The first letter of the title must be uppercase.");
+                return false;
+            }
+            clearError(titleInput);
+            return true;
+        };
+
+        const validateContent = () => {
+            const value = contentInput.value.trim();
+            const sentences = value.split(/(?<=[.!?])\s+/);
+            for (const sentence of sentences) {
+                if (sentence && sentence[0] !== sentence[0].toUpperCase()) {
+                    setError(contentInput, "Each sentence must start with an uppercase letter.");
+                    return false;
+                }
+            }
+            clearError(contentInput);
+            return true;
+        };
+
+        const validateImages = () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const validFormats = ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/tiff", "image/bmp", "image/webp"];
+                if (!validFormats.includes(file.type)) {
+                    setError(imageInput, "Only JPEG, PNG, GIF, SVG, TIFF, BMP, and WEBP formats are allowed.");
+                    return false;
+                }
+            }
+            clearError(imageInput);
+            return true;
+        };
+            }
+        const validateVideos = () => {
+            const file = videoInput.files[0];
+            if (file) {
+                const validFormats = ["video/mp4", "video/mov", "video/avi", "video/wmv", "video/webm", "video/x-msvideo", "video/x-flv"];
+                if (!validFormats.includes(file.type)) {
+                    setError(videoInput, "Only MP4, MOV, AVI, WMV, WebM, and FLV formats are allowed.");
+                    return false;
+                }
+            }
+            clearError(videoInput);
+            return true;
+        };
+
+        const validateAtLeastOneField = () => {
+            if (!titleInput.value && !contentInput.value && !imageInput.files.length && !videoInput.files.length) {
+                setError(form, "At least one of 'Content', 'Images', or 'Videos' must be filled.");
+                return false;
+                if (sentence && sentence[0] !== sentence[0].toUpperCase()) {
+            clearError(form);
+            return true;
+        };
+
+        titleInput.addEventListener('input', validateTitle);
+        contentInput.addEventListener('input', validateContent);
+        imageInput.addEventListener('change', validateImages);
+        videoInput.addEventListener('change', validateVideos);
+                    return false;
+        form.addEventListener('submit', (event) => {
+            const isValid = validateTitle() && validateContent() && validateImages() && validateVideos() && validateAtLeastOneField();
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+                const validFormats = ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/tiff", "image/bmp", "image/webp"];
+
+                if (!validFormats.includes(file.type)) {
+                    setError(imageInput, "Only JPEG, PNG, GIF, SVG, TIFF, BMP, and WEBP formats are allowed.");
+                    return false;
+                }
+            }
+            clearError(imageInput);
+            return true;
+        };
+
+        const validateVideos = () => {
+            const file = videoInput.files[0];
+            if (file) {
+                const validFormats = ["video/mp4", "video/mov", "video/avi", "video/wmv", "video/webm", "video/x-msvideo", "video/x-flv"];
+                if (!validFormats.includes(file.type)) {
+                    setError(videoInput, "Only MP4, MOV, AVI, WMV, WebM, and FLV formats are allowed.");
+                    return false;
+                }
+            }
+            clearError(videoInput);
+            return true;
+        };
+
+        const validateAtLeastOneField = () => {
+            if (!titleInput.value && !contentInput.value && !imageInput.files.length && !videoInput.files.length) {
+                setError(form, "At least one of 'Content', 'Images', or 'Videos' must be filled.");
+                return false;
+            }
+            clearError(form);
+            return true;
+        };
+
+        titleInput.addEventListener('input', validateTitle);
+        contentInput.addEventListener('input', validateContent);
+        imageInput.addEventListener('change', validateImages);
+        videoInput.addEventListener('change', validateVideos);
+
+        form.addEventListener('submit', (event) => {
+            const isValid = validateTitle() && validateContent() && validateImages() && validateVideos() && validateAtLeastOneField();
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

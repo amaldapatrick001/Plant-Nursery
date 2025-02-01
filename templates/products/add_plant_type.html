@@ -1,0 +1,385 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 15px;
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2f5131;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        border-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* H2 Styling */
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem; /* Decrease font size */
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Alert Box */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-color: #f5c2c7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Placeholder Text */
+    .form-group input::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+        }
+
+        .category-list-heading {
+            font-size: 1.3rem; /* Adjust heading for mobile */
+        }
+    }
+
+    /* Custom Toggle Switch Styles */
+    .custom-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-control-input {
+        display: none; /* Hide the default checkbox */
+    }
+
+    .custom-label {
+        position: relative;
+        display: inline-block;
+        width: 50px; /* Width of the switch */
+        height: 26px; /* Height of the switch */
+        background-color: #ddd; /* Background color when unchecked */
+        border-radius: 50px; /* Rounded corners */
+        cursor: pointer; /* Change cursor to pointer */
+        transition: background-color 0.3s; /* Smooth transition */
+    }
+
+    .custom-control-input:checked + .custom-label {
+        background-color: #82ae46; /* Background color when checked */
+    }
+
+    .custom-control-input:checked + .custom-label::before {
+        transform: translateX(24px); /* Move the switch knob to the right */
+    }
+
+    .custom-label::before {
+        content: '';
+        position: absolute;
+        width: 22px; /* Width of the switch knob */
+        height: 22px; /* Height of the switch knob */
+        background-color: white; /* Color of the switch knob */
+        border-radius: 50%; /* Rounded knob */
+        top: 2px; /* Center it vertically */
+        left: 2px; /* Center it horizontally */
+        transition: transform 0.3s; /* Smooth transition for moving knob */
+    }
+
+    /* Optional: Styling for the switch label */
+    .switch-label {
+        margin-left: 10px; /* Space between switch and label */
+        font-weight: bold;
+    }
+       /* Dropdown Styling */
+       .form-select {
+    appearance: none; /* Remove default styling */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="0 0 16 16"><path d="M4.3 5.3a.5.5 0 0 1 .7 0L8 8.6l3-3a.5.5 0 1 1 .7.7l-3.4 3.4a.5.5 0 0 1-.7 0L4.3 6a.5.5 0 0 1 0-.7z"/></svg>'); /* Down arrow on the right */
+    background-repeat: no-repeat; /* No repeat for the image */
+    background-position: right 1rem center; /* Align the right arrow */
+    background-size: 1.5rem; /* Size of the arrow */
+    padding-right: 2.5rem; /* Space for the right icon */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ddd; /* Default border */
+    transition: all 0.3s ease; /* Smooth transition */
+    width: 100%; /* Full width */
+}
+
+
+/* Enhancing the dropdown */
+.form-select:focus {
+    border-color: #82ae46; /* Border color on focus */
+    box-shadow: 0 0 5px rgba(130, 174, 70, 0.3); /* Subtle shadow on focus */
+}
+
+/* Additional styling for select element */
+.form-select option {
+    padding: 10px; /* Add padding to options */
+}
+
+    
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body">
+                        <h2 class="category-list-heading">Add Plant Type</h2>
+
+                        <form method="post" id="categoryForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                <div id="categoryNameError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.description.label_tag }}
+                                {{ form.description }}
+                                <div id="descriptionError" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3 form-group dropdown-container">
+                                <label for="plant_type" class="form-label">Category</label>
+                                <select class="form-select" id="plant_type" name="category" required>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bootstrap Modal for Messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if status == 'success' %}
+                    <p>Category added successfully!</p>
+                {% elif status == 'error' %}
+                    <p>A category with the name '{{ form.name.value }}' already exists.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for handling validation and modal display -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkbox = document.getElementById('{{ form.is_plant.id_for_label }}');
+        const switchLabel = document.querySelector('.switch-label');
+
+        // Update switch label text based on the checkbox state
+        function updateSwitchLabel() {
+            switchLabel.textContent = checkbox.checked ? 'Yes' : 'No';
+        }
+
+        // Initial label text
+        updateSwitchLabel();
+
+        // Update the label text when the checkbox state changes
+        checkbox.addEventListener('change', updateSwitchLabel);
+    });
+     document.addEventListener('DOMContentLoaded', function () {
+        const status = '{{ status }}';
+
+        // Show modal if form status is success or error
+        if (status === 'success' || status === 'error') {
+            $('#messageModal').modal('show');
+
+            $('#messageModal').on('hidden.bs.modal', function () {
+                if (status === 'success') {
+                    window.location.href = "{% url 'products:category-list' %}"; // Redirect to category list page on success
+                }
+            });
+        }
+
+        // Form validation
+        const categoryNameField = document.getElementById('id_name'); // Adjusted ID
+        const descriptionField = document.getElementById('id_description');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Error containers
+        const categoryNameError = document.getElementById('categoryNameError');
+        const descriptionError = document.getElementById('descriptionError');
+
+        function validateCategoryName() {
+            const categoryName = categoryNameField.value.trim();
+            let errorMessage = '';
+
+            // Check order: Uppercase -> Min Length -> Max Length
+            if (categoryName[0] !== categoryName[0].toUpperCase()) {
+                errorMessage = 'Category name must start with a capital letter.';
+            } else if (categoryName.length < 3) {
+                errorMessage = 'Category name must be at least 3 characters long.';
+            } else if (categoryName.length > 100) { // Adjusted to match max_length in model
+                errorMessage = 'Category name must be less than 100 characters.';
+            }
+
+            categoryNameError.textContent = errorMessage;
+            return errorMessage === ''; // Return true if no error
+        }
+
+        function validateDescription() {
+            const description = descriptionField.value.trim();
+            let errorMessage = '';
+
+            // Check order: Start with uppercase -> Min Length -> End with full stop -> Max Length -> Sentence uppercase
+            if (description[0] !== description[0].toUpperCase()) {
+                errorMessage = 'Description must begin with an uppercase letter.';
+            } else if (description.length < 20) {
+                errorMessage = 'Description must be at least 20 characters long.';
+            } else if (!description.endsWith('.')) {
+                errorMessage = 'Description must end with a full stop (.)';
+            } else if (description.length > 500) { // Adjusted to match max_length in model
+                errorMessage = 'Description must be less than 500 characters.';
+            } else {
+                // Check if each sentence starts with a capital letter
+                const sentences = description.split('.');
+                for (let i = 0; i < sentences.length - 1; i++) { // Last element is empty after the split on full stop
+                    const sentence = sentences[i].trim();
+                    if (sentence.length > 0 && sentence[0] !== sentence[0].toUpperCase()) {
+                        errorMessage = 'Each sentence must start with a capital letter.';
+                        break;
+                    }
+                }
+            }
+
+            descriptionError.textContent = errorMessage;
+            return errorMessage === ''; // Return true if no error
+        }
+
+        // Event listeners for real-time validation
+        categoryNameField.addEventListener('input', validateCategoryName);
+        descriptionField.addEventListener('input', validateDescription);
+
+        // Form submit event
+        document.getElementById('categoryForm').addEventListener('submit', function (event) {
+            const isCategoryNameValid = validateCategoryName();
+            const isDescriptionValid = validateDescription();
+
+            // Prevent form submission if validation fails
+            if (!isCategoryNameValid || !isDescriptionValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

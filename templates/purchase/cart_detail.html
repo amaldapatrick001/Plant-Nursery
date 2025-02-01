@@ -1,0 +1,188 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section with Cart Title -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="index.html">Home</a></span>
+                    <span>Cart</span>
+                </p>
+                <h1 class="mb-0 bread">Shopping Cart</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Section --><section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="cart-list">
+                    <form method="POST" action="{% url 'purchase:update_cart' %}">
+                        {% csrf_token %}
+                        <table class="table">
+                            <thead class="thead-primary">
+                                <tr class="text-center">
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr class="text-center">
+                                    <td class="image-prod">
+                                        {% if item.batch.product.image_1 %}
+                                            <img src="{{ item.batch.product.image_1.url }}" alt="{{ item.batch.product.name }}" style="max-width: 100px;" class="img-fluid">
+                                        {% else %}
+                                            <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" style="max-width: 100px;" class="img-fluid">
+                                        {% endif %}
+                                    </td>
+                                    <td class="product-name">{{ item.batch.product.name }}</td>
+                                    <td class="price">Rs. {{ item.batch.price }}</td>
+                                    <td class="quantity">
+                                        <input type="number" name="quantities_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control text-center" style="width: 60px;">
+                                        <small class="text-muted">Available: {{ item.batch.stock_quantity }}</small> <!-- Display available stock from Batch -->
+                                    </td>
+                                    <td class="total">Rs. {{ item.get_total_price_with_discount }}</td>
+                                    <td>
+                                        <a href="{% url 'purchase:remove_from_cart' item.id %}" class="btn btn-danger btn-custom"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+
+                        {% if cart_items %}
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <strong>Total: </strong>
+                            <span class="total-price">Rs. {{ total_after_discount }}</span>
+                        </div>
+                        
+                        <!-- Submit button for updating quantities -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary">Update Cart</button>
+                        </div>
+                        {% else %}
+                            <p>Your cart is empty.</p>
+                        {% endif %}
+                    </form>
+
+                    {% if cart_items %}
+                    {% endif %}
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'products:cproduct_list' %}" class="btn btn-primary btn-lg btn-custom">
+                        <i class="fa fa-shopping-bag"></i> Go to Shop
+                    </a>
+                  </div>
+                <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+                    <div class="cart-total mb-3">
+                        <h3>Cart Totals</h3>
+                        <p class="d-flex">
+                            <span>Subtotal (Before Discount)</span>
+                            <span>Rs. {{ actual_subtotal }}</span> <!-- Display the actual subtotal without discount -->
+                        </p>
+                        <p class="d-flex">
+                            <span>Discount</span>
+                            <span>Rs. {{ total_discount }}</span> <!-- Display total discount -->
+                        </p>
+                        <p class="d-flex">
+                            <span>Delivery</span>
+                            <span>Rs. {{ delivery_price }}</span> <!-- Dynamic Delivery cost -->
+                        </p>
+                        <hr>
+                        <p class="d-flex total-price">
+                            <span>Total</span>
+                            <span>Rs.  {{ total_price_with_delivery_and_discount }}</span> <!-- Total with delivery and discount -->
+                        </p>
+                    </div>
+                    
+                    <p><a href="{% url 'purchase:checkout' %}" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
+
+{% block styles %}
+<style>
+     .btn-custom {
+        font-size: 16px;
+        padding: 12px 30px;
+        border-radius: 50px; /* Rounded corners for a modern look */
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600; /* Slightly lighter weight for elegance */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for a lifted effect */
+        transition: all 0.3s ease; /* Smooth transition for hover effects */
+        letter-spacing: 0.5px; /* Add a slight spacing between letters */
+    }
+
+    /* Remove button style */
+    .btn-danger {
+        background: linear-gradient(145deg, #ff6a00, #ff3f00); /* Warm, eye-catching gradient */
+        border: 2px solid #ff3f00; 
+        color: white;
+        text-align: center;
+        padding: 12px 30px;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(145deg, #ff3f00, #ff6a00);
+        transform: translateY(-4px); /* Hover lift effect */
+        box-shadow: 0 8px 16px rgba(255, 67, 41, 0.3); /* Stronger shadow on hover */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    .cart-list .table th, 
+    .cart-list .table td {
+        padding: 20px; /* Padding for cells */
+        vertical-align: middle; /* Vertically center content */
+    }
+
+    .cart-list .table .image-prod img {
+        border-radius: 8px; /* Round the image corners */
+    }
+
+    .total-price {
+        font-size: 1.5rem; /* Increase font size for total price */
+        font-weight: bold; /* Make total price bold */
+    }
+
+    /* Adjust button placement */
+    .btn-primary {
+        padding: 10px 20px; /* Larger padding for the button */
+        font-size: 1rem; /* Increase font size */
+        font-weight: bold; /* Bold text */
+    }
+
+    .d-flex.justify-content-between {
+        margin-top: 20px;
+    }
+
+    .d-flex.justify-content-end {
+        margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .total-price {
+            font-size: 1.2rem; /* Adjust font size for smaller screens */
+        }
+    }
+</style>
+{% endblock %}

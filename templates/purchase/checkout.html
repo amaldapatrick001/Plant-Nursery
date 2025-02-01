@@ -1,0 +1,702 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM3W51FfJeCbeYbZC4GZrKBRXWOsPEKjpRoA6u" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+        }
+
+        .address-list, .payment-method, .review-order {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+
+        .modal-header {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #28a745;
+        }
+
+        .total-cost {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 90%;
+            }
+        }
+
+
+.addresses-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.address-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 20px);
+    margin-bottom: 20px;
+}
+
+.address-card p {
+    margin: 5px 0;
+}
+
+
+    /* Modal container styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1050; /* Places modal above most elements, including navbar */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* Darkened background */
+    }
+
+    /* Modal content box with increased height and centered */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto; /* Reduced margin to raise modal on page */
+        padding: 20px;
+        border-radius: 8px;
+        width: 85%; /* Slightly wider */
+        max-height: 90vh; /* Increased height to 90% of viewport */
+        overflow-y: auto; /* Enables vertical scrolling */
+        overflow-x: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Adds subtle shadow */
+    }
+
+    /* Close button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover, .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .delete-btn {
+    background-color: #4d9c35; /* Red background color */
+    color: #fff; /* White text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for the button */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease-in-out;   
+ /* Smooth transition on hover */
+}
+
+.delete-btn:hover {
+    background-color: #c00; /* Darker red on hover */
+}
+</style>
+
+
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Checkout</span></p>
+            <h1 class="mb-0 bread">Checkout</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="ftco-section">
+        <div class="row justify-content-center">
+            <div class="col-xl-7 ftco-animate">
+                {% if addresses %}
+                    <h2>Select Your Billing Address</h2>
+                    <form method="POST" action="{% url 'purchase:set_delivery_address' %}" id="address-form">
+                        {% csrf_token %}
+                        <div class="addresses-container" id="address-list">
+                            {% for billing_address in addresses %}
+                                <div class="address-card" data-address-id="{{ billing_address.id }}">
+                                    <input type="radio" id="address{{ billing_address.id }}" name="selected_address"
+                                           value="{{ billing_address.id }}" required
+                                           {% if billing_address.id|stringformat:"s" == selected_address_id|stringformat:"s" %} checked {% endif %}
+                                           onchange="selectAddress({{ billing_address.id }});">
+                                    <label for="address{{ billing_address.id }}">
+                                        <p><strong>{{ billing_address.first_name }} {{ billing_address.last_name }}</strong></p>
+                                        <p>{{ billing_address.street_address }}</p>
+                                        <p>{{ billing_address.town_city }}, {{ billing_address.district }}</p>
+                                        <p>{{ billing_address.postcode_zip }}</p>
+                                        <p>Phone: {{ billing_address.phone }}</p>
+                                        <p>Email: {{ billing_address.email }}</p>
+                                    </label>
+    
+                                    <!-- Address Deletion Form -->
+                                    <form method="POST" action="{% url 'purchase:delete_address' billing_address.id %}" class="delete-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="delete-btn">
+                                            <i class="fa fa-trash"></i> <!-- Font Awesome trash icon -->
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </form>
+                {% else %}
+                    <p>No billing address found. Please add one before checking out.</p>
+                {% endif %}
+                
+                <button id="addAddressBtn">Add a new address</button>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        function selectAddress(addressId) {
+            fetch("{% url 'purchase:set_delivery_address' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: new URLSearchParams({
+                    selected_address: addressId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll('input[name="selected_address"]').forEach(radio => {
+                        radio.checked = (radio.value == data.address_id);
+                    });
+                    document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
+                    document.querySelector(`.address-card[data-address-id="${data.address_id}"]`).classList.add('selected');
+    
+                    // Call the function to check if the checkout button should be enabled
+                    enableCheckoutButton();
+                } else if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+    
+<style>
+    /* Highlight style for the selected address */
+    .address-card.selected {
+        border: 2px solid #ff6600;
+        background-color: #f9f9f9;
+    }
+</style>
+
+
+
+
+<!-- The Modal -->
+<div id="addressModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New Address</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="POST" id="checkoutForm" action="{% url 'purchase:set_delivery_address' %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    {{ form.first_name }}
+                    <small id="fnameError" class="text-danger"></small>
+                    {{ form.first_name.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    {{ form.last_name }}
+                    <small id="lnameError" class="text-danger"></small>
+                    {{ form.last_name.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="district">District:</label>
+                    {{ form.district }}
+                    {{ form.district.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="street_address">Street Address:</label>
+                    {{ form.street_address }}
+                    <small id="streetError" class="text-danger"></small>
+                    {{ form.street_address.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="town_city">Town/City:</label>
+                    {{ form.town_city }}
+                    <small id="cityError" class="text-danger"></small>
+                    {{ form.town_city.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="postcode_zip">Postcode/Zip:</label>
+                    {{ form.postcode_zip }}
+                    <small id="postcodeError" class="text-danger"></small>
+                    {{ form.postcode_zip.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    {{ form.phone }}
+                    <small id="phoneError" class="text-danger"></small>
+                    {{ form.phone.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    {{ form.email }}
+                    <small id="emailError" class="text-danger"></small>
+                    {{ form.email.errors }}
+                </div>
+                
+                <button type="submit">Save Address</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn close">Close</button>
+        </div>
+    </div>
+</div>
+			  
+			  
+			  
+			  <!-- END -->
+					</div>
+
+
+
+
+
+<div class="col-md-12 d-flex mb-5">
+    <div class="cart-detail cart-total p-3 p-md-4">
+        <h3 class="billing-heading mb-4">Cart Total</h3>
+        
+        <!-- Display Subtotal before Discount -->
+        <p class="d-flex">
+            <span>Subtotal (Before Discount)</span>
+            <span>Rs. {{ actual_subtotal }}</span>
+        </p>
+        
+        <!-- Display Total Discount -->
+        <p class="d-flex">
+            <span>Discount</span>
+            <span>Rs. {{ total_discount }}</span>
+        </p>
+        
+        <!-- Display Delivery Price -->
+        <p class="d-flex">
+            <span>Delivery</span>
+            <span>Rs. {{ delivery_price }}</span>
+        </p>
+        
+        <hr>
+
+        <!-- Display Final Total Price -->
+        <p class="d-flex total-price">
+            <span>Total</span>
+            <span>Rs. {{ total_price_with_delivery_and_discount }}</span>
+        </p>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="col-md-12">
+    <div class="cart-detail p-3 p-md-4">
+        <button id="rzp-button1" class="btn btn-outline-dark btn-lg">
+            <i class="fas fa-money-bill"></i> Own Checkout
+        </button>
+
+        <!-- Modal for Address Selection Reminder -->
+        <div id="addressReminderModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Address Required</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Please select a delivery address before proceeding to checkout.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn close">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Function to open the address reminder modal
+            function openAddressReminderModal() {
+                var modal = document.getElementById('addressReminderModal');
+                modal.style.display = 'block';
+
+                // Auto-close after 2 seconds (2000 milliseconds)
+                setTimeout(function() {
+                    modal.style.display = 'none';
+                }, 2000);
+            }
+
+            // Close modal function
+            function closeModal() {
+                document.getElementById('addressReminderModal').style.display = 'none';
+            }
+
+            // Event listener for the Razorpay checkout button
+            document.getElementById('rzp-button1').onclick = function(e) {
+                e.preventDefault();
+                
+                // Check if an address is selected
+                var selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+                
+                if (selectedAddress) {
+                    rzp1.open();
+                } else {
+                    openAddressReminderModal();
+                }
+            };
+
+            // Event listener for close buttons
+            document.querySelectorAll('.close').forEach(function(btn) {
+                btn.onclick = closeModal; // Use the closeModal function
+            });
+
+            // Close modal on outside click
+            window.onclick = function(event) {
+                var modal = document.getElementById('addressReminderModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+        </script>
+
+<script>
+    console.log("Razorpay amount:", "{{ razorpay_amount }}");
+
+    var options = {
+        "key": "rzp_test_DRyi6K0A68qkc4",
+        "amount": "{{ total_price_with_delivery_and_discounts }}", // Use the razorpay_amount from the context
+        "currency": "INR",
+        "name": "Enchanted Eden Plant Nursery",
+        "description": "Order Payment",
+        "image": "{% static 'images/logo.png' %}",
+        "handler": function (response) {
+            console.log("Razorpay Payment ID:", response.razorpay_payment_id);
+            console.log("Order ID:", "{{ order.id }}");
+
+            fetch("{% url 'purchase:razorpay_checkout' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    order_id: "{{ order.id }}"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Payment successful!");
+                    window.location.href = `/purchase/order_summary/${data.order_id}/`;
+                } else {
+                    alert("Payment failed: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred during payment processing");
+            });
+        },
+        "prefill": {
+            "name": "{{ request.user.first_name }} {{ request.user.last_name }}",
+            "email": "{{ request.user.email }}",
+            "contact": "{{ billing.phone }}"
+        },
+        "theme": {
+            "color": "#28a745"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+
+    // Function to enable the checkout button if an address is selected
+    function enableCheckoutButton() {
+        const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+        const checkoutButton = document.getElementById('rzp-button1');
+
+        if (selectedAddress) {
+            checkoutButton.disabled = false;
+        } else {
+            checkoutButton.disabled = true;
+        }
+    }
+
+    // Attach the event listener to each radio button
+    document.querySelectorAll('input[name="selected_address"]').forEach((radio) => {
+        radio.addEventListener('change', enableCheckoutButton);
+    });
+</script>
+
+</div>
+</div>
+
+	          	</div>
+	          </div>
+          </div> <!-- .col-md-8 -->
+        </div>
+      </div>
+    </section> 
+	
+
+
+	
+ <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const checkoutForm = document.getElementById("checkoutForm");
+
+    // Attach input event listeners for real-time validation
+    document.getElementById('{{ form.first_name.id_for_label }}').addEventListener("input", function () {
+        validateName(this, "fnameError");
+    });
+    document.getElementById('{{ form.last_name.id_for_label }}').addEventListener("input", function () {
+        validateName(this, "lnameError");
+    });
+    document.getElementById('{{ form.street_address.id_for_label }}').addEventListener("input", function () {
+        validateStreetAddress(this, "streetError");
+    });
+    document.getElementById('{{ form.town_city.id_for_label }}').addEventListener("input", function () {
+        validateTownCity(this);
+    });
+    document.getElementById('{{ form.postcode_zip.id_for_label }}').addEventListener("input", function () {
+        validatePostcode(this);
+    });
+    document.getElementById('{{ form.phone.id_for_label }}').addEventListener("input", function () {
+        validatePhone(this);
+    });
+    document.getElementById('{{ form.email.id_for_label }}').addEventListener("input", function () {
+        validateEmail(this);
+    });
+});
+
+// Validation functions
+function validateName(input, errorFieldId) {
+    const nameRegex = /^[A-Z][a-zA-Z]*$/;
+    const value = input.value.trim();
+    document.getElementById(errorFieldId).innerText = nameRegex.test(value) ? "" : "Must start with a capital letter and contain only letters.";
+}
+
+function validateStreetAddress(input, errorFieldId) {
+    const value = input.value.trim();
+    document.getElementById(errorFieldId).innerText = (value.length >= 5 && /^[A-Z]/.test(value)) ? "" : "Must start with a capital letter and be greater than 5 characters.";
+}
+
+function validateTownCity(input) {
+    const cityErrorField = document.getElementById("cityError");
+    const value = input.value.trim();
+    cityErrorField.innerText = (value.length >= 3 && /^[A-Z]/.test(value)) ? "" : "Town/City must start with a capital letter and be at least 3 characters long.";
+}
+
+function validatePostcode(input) {
+    const postcodeErrorField = document.getElementById("postcodeError");
+    const value = input.value.trim();
+    const postcodeRegex = /^\d{5,6}$/;
+    postcodeErrorField.innerText = postcodeRegex.test(value) ? "" : "Postcode/Zip must be 5 or 6 digits.";
+}
+
+function validatePhone(input) {
+    const phoneErrorField = document.getElementById("phoneError");
+    const value = input.value.trim();
+    const phoneRegex = /^\d{10}$/;
+    phoneErrorField.innerText = phoneRegex.test(value) ? "" : "Phone number must be exactly 10 digits.";
+}
+
+function validateEmail(input) {
+    const emailErrorField = document.getElementById("emailError");
+    const value = input.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    emailErrorField.innerText = emailRegex.test(value) ? "" : "Enter a valid email address.";
+}
+
+    // Modal functionality for adding new address
+    const modal = document.getElementById('addressModal');
+    const addAddressBtn = document.getElementById('addAddressBtn');
+    const closeModalBtns = document.querySelectorAll('.close');
+
+    addAddressBtn.onclick = function () {
+        modal.style.display = "block";
+    };
+
+    closeModalBtns.forEach(function (btn) {
+        btn.onclick = function () {
+            modal.style.display = "none";
+        };
+    });
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+<script>
+    document.getElementById('useAddressBtn').addEventListener('click', function() {
+        const addressDropdown = document.getElementById('addressDropdown');
+        if (addressDropdown.value) {
+            // Show gift options after selecting address
+            document.getElementById('giftOptionsSection').style.display = 'block';
+        } else {
+            alert('Please select an address');
+        }
+    });
+
+    document.getElementById('saveGiftOptionsBtn').addEventListener('click', function() {
+        // Show payment options after saving gift options
+        document.getElementById('paymentMethodSection').style.display = 'block';
+    });
+
+    document.getElementById('continueToPaymentBtn').addEventListener('click', function() {
+        const paymentDropdown = document.getElementById('paymentDropdown');
+        if (paymentDropdown.value) {
+            // Show review order section after selecting payment method
+            document.getElementById('reviewOrderSection').style.display = 'block';
+        } else {
+            alert('Please select a payment method');
+        }
+    });
+
+
+
+
+    // Function to enable the checkout button if an address is selected
+function enableCheckoutButton() {
+    const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+    const checkoutButton = document.getElementById('rzp-button1');
+
+    if (selectedAddress) {
+        checkoutButton.disabled = false;
+    } else {
+        checkoutButton.disabled = true;
+    }
+}
+
+// Attach the event listener to each radio button
+document.querySelectorAll('input[name="selected_address"]').forEach((radio) => {
+    radio.addEventListener('change', enableCheckoutButton);
+});
+
+</script>
+
+</body>
+</html>
+
+{% endblock %}

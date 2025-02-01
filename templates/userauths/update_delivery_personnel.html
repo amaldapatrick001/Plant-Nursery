@@ -1,0 +1,31 @@
+<!-- update_delivery_personnel.html -->
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+  <h2>Update Delivery Personnel</h2>
+  
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+
+  <hr>
+
+  <h3>Current Details:</h3>
+  <p><strong>Name:</strong> {{ delivery_personnel.user.first_name }} {{ delivery_personnel.user.last_name }}</p>
+  <p><strong>Email:</strong> {{ delivery_personnel.user.email }}</p>
+  <p><strong>Phone Number:</strong> {{ delivery_personnel.user.phoneno }}</p>
+  <p><strong>Area of Delivery:</strong> {{ delivery_personnel.area_of_delivery }}</p>
+  <p><strong>Coordinates:</strong> Latitude: {{ delivery_personnel.current_latitude }}, Longitude: {{ delivery_personnel.current_longitude }}</p>
+{% endblock %}

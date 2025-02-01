@@ -1,0 +1,253 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Overall page style */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f7fc;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Heading style */
+    h2 {
+        text-align: center;
+        color: #2d3e50;
+        margin-bottom: 30px;
+        font-size: 36px;
+        font-weight: bold;
+    }
+
+    /* Search bar */
+    .search-bar {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .search-input {
+        padding: 12px 20px;
+        width: 350px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #82ae46;
+        outline: none;
+    }
+
+    .search-button {
+        padding: 12px 20px;
+        background-color: #82ae46;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .search-button:hover {
+        background-color: #6f8e34;
+    }
+
+    /* Table styling */
+    .table {
+        width: 100%;
+        margin: 0 auto 50px;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    thead {
+        background-color: #82ae46;
+        color: white;
+    }
+
+    th, td {
+        padding: 14px 18px;
+        text-align: center;
+        border: 1px solid #f0f0f0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    th {
+        font-weight: bold;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    tbody tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    /* Badge for rating */
+    .badge-warning {
+        background-color: #ffc107;
+        color: black;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 20px;
+    }
+
+    /* No reviews message */
+    .no-reviews {
+        text-align: center;
+        color: #555;
+        font-size: 18px;
+        margin-top: 30px;
+    }
+
+    /* Textarea for replies */
+    .form-control {
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        resize: none;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #82ae46;
+        outline: none;
+    }
+
+    /* Action buttons */
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 20px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #0000ff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0000ff;
+    }
+
+    .btn-danger {
+        background-color: #ff4747;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #e03e3e;
+    }
+
+    /* Add subtle shadow and hover effect for action buttons */
+    .btn:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #82ae46;
+    }
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+<br>
+<h2 class="category-list-heading">Manage Customer Reviews</h2>
+
+<div class="container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form method="GET" action="">
+            <input type="text" name="q" class="search-input" placeholder="Search reviews or customers..."
+                   value="{{ search_query|default:'' }}">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Review Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if reviews %}
+                    {% for review in reviews %}
+                    <tr>
+                        <td>
+                            <strong>{{ review.user.first_name }} {{ review.user.last_name }}</strong><br>
+                            <small class="text-muted">{{ review.user.email }}</small>
+                        </td>
+                        <td>{{ review.product.name }}</td>
+                        <td>
+                            <span class="badge badge-warning">{{ review.rating }} Stars</span>
+                        </td>
+                        <td>{{ review.comment|default:"No comment provided." }}</td>
+                        <td>{{ review.review_date|date:"M d, Y - h:i A" }}</td>
+                        <td>
+                            <form method="POST" class="actions">
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ review.id }}">
+                                <!-- Display the existing reply (if any) -->
+                                <textarea name="reply" class="form-control" rows="2" placeholder="Write a reply...">{{ review.reply|default:"" }}</textarea>
+                                <div class="actions">
+                                    <button type="submit" name="action" value="reply" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-reply"></i> Reply
+                                    </button>
+                                    <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <p class="no-reviews">No reviews available.</p>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

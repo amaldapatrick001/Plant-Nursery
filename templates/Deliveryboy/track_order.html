@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Track Your Order</title>
+</head>
+<body>
+    <h2>Track Your Order #{{ order.id }}</h2>
+    <iframe
+        src="https://www.google.com/maps?q={{ delivery_personnel.current_latitude }},{{ delivery_personnel.current_longitude }}&output=embed"
+        width="600"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy">
+    </iframe>
+</body>
+</html>
