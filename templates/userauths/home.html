@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'partials/base.html' %}
 {% load static %}
 
@@ -14,3 +15,21 @@
 </html>
 
 {% endblock %}
+=======
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome, {{ user_first_name }}!</h2>
+    <a href="{% url 'userauths:logout' %}">Logout</a>
+</body>
+</html>
+
+{% endblock %}
+>>>>>>> 1f7ed6f7831d74d3de04e0424065c63794fd8d85
