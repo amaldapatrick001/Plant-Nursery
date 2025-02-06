@@ -1,0 +1,514 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .expert-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2E7D32;
+    }
+
+    .expert-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .expert-table th {
+        background: #2E7D32;
+        color: white;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .expert-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .expert-table tr:hover {
+        background: #f5f5f5;
+    }
+
+    .status-badge {
+        padding: 0.5em 0.8em;
+        border-radius: 20px;
+        font-size: 0.875rem;
+    }
+
+    .status-active {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+
+    .status-inactive {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-activate {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-deactivate {
+        background: #F44336;
+        color: white;
+    }
+
+    .action-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .btn-group .btn {
+        margin-right: 0.25rem;
+    }
+    
+    .toggle-status-btn:hover {
+        opacity: 0.9;
+    }
+    
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        min-width: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="page-title">Expert Management</h2>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-primary-light">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h3 class="mb-0">{{ total_experts|default:"0" }}</h3>
+                            <p class="text-muted mb-0">Total Experts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-success-light">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h3 class="mb-0">{{ active_experts }}</h3>
+                            <p class="text-muted mb-0">Active Experts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-danger-light">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h3 class="mb-0">{{ inactive_experts }}</h3>
+                            <p class="text-muted mb-0">Inactive Experts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-info-light">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h3 class="mb-0">{{ avg_rating|default:"0.0" }}</h3>
+                            <p class="text-muted mb-0">Avg Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this after the statistics cards and before the Experts Table -->
+    <!-- <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Filter by Expertise</label>
+                    <select class="form-select" id="expertiseFilter">
+                        <option value="">All Expertise Areas</option>
+                        {% for expert in experts %}
+                            <option value="{{ expert.expertise_area }}">{{ expert.expertise_area }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Sort By</label>
+                    <select class="form-select" id="sortBy">
+                        <option value="name">Name</option>
+                        <option value="rating">Rating</option>
+                        <option value="consultations">Consultations</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" id="applyFilters">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Experts Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Expert List</h5>
+            <!-- <div class="table-controls">
+                <button class="btn btn-sm btn-outline-primary me-2" id="refreshTable">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="exportData">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div> -->
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="expertsTable">
+                    <thead>
+                        <tr>
+                            <th>Expert</th>
+                            <th>Expertise</th>
+                            <th>Contact</th>
+                            <th>Stats</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expert in experts %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if expert.profile_picture %}
+                                        <img src="{{ expert.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40">
+                                    {% else %}
+                                        <div class="no-image rounded-circle me-2 bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ expert.user.first_name }} {{ expert.user.last_name }}</h6>
+                                        <small class="text-muted">{{ expert.login.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ expert.expertise_area }}</span>
+                                {% if expert.specialization_tags %}
+                                    <br>
+                                    <small class="text-muted">{{ expert.specialization_tags }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div><i class="fas fa-phone me-2"></i>{{ expert.user.phoneno }}</div>
+                                <div><i class="fas fa-envelope me-2"></i>{{ expert.login.email }}</div>
+                            </td>
+                            <td>
+                                <div><i class="fas fa-star me-2 text-warning"></i>{{ expert.rating|floatformat:1 }}</div>
+                                <div><i class="fas fa-users me-2"></i>{{ expert.consultation_count }} consultations</div>
+                            </td>
+                            <td>
+                                <span class="badge {% if expert.user.status %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if expert.user.status %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" 
+                                            class="btn {% if expert.user.status %}btn-danger{% else %}btn-success{% endif %} btn-sm toggle-status-btn"
+                                            data-expert-id="{{ expert.expert_id }}"
+                                            onclick="toggleExpertStatus('{{ expert.expert_id }}', '{{ expert.user.status|yesno:'deactivate,activate' }}')">
+                                        {% if expert.user.status %}
+                                            <i class="fas fa-ban me-1"></i>Deactivate
+                                        {% else %}
+                                            <i class="fas fa-check me-1"></i>Activate
+                                        {% endif %}
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" 
+                                            onclick="viewExpertDetails('{{ expert.expert_id }}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-users fa-3x mb-3"></i>
+                                    <h5>No Experts Found</h5>
+                                    <p>There are no experts registered in the system.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Expert Details -->
+<div class="modal fade" id="expertDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Expert Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="expertDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add loading spinner for AJAX requests -->
+<div id="loadingSpinner" class="position-fixed top-50 start-50 translate-middle d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    .bg-primary-light { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .bg-success-light { background: rgba(25, 135, 84, 0.1); color: #198754; }
+    .bg-danger-light { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .bg-info-light { background: rgba(13, 202, 240, 0.1); color: #0dcaf0; }
+    
+    .table > :not(caption) > * > * {
+        padding: 1rem 0.75rem;
+    }
+    .badge {
+        padding: 0.5em 0.8em;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Show loading spinner during AJAX requests
+    $(document).ajaxStart(function() {
+        $('#loadingSpinner').removeClass('d-none');
+    }).ajaxStop(function() {
+        $('#loadingSpinner').addClass('d-none');
+    });
+
+    function toggleExpertStatus(expertId, action) {
+        if (confirm(`Are you sure you want to ${action} this expert?`)) {
+            // Get CSRF token from cookie
+            const csrftoken = getCookie('csrftoken');
+            
+            $.ajax({
+                url: `/userauths/toggle-expert-status/${expertId}/`,
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Show success message
+                        showAlert('success', response.message);
+                        
+                        // Update button and status badge
+                        const row = $(`button[data-expert-id="${expertId}"]`).closest('tr');
+                        const statusBadge = row.find('.status-badge');
+                        const toggleButton = row.find('.toggle-status-btn');
+                        
+                        if (response.new_status === 'active') {
+                            statusBadge.removeClass('bg-danger').addClass('bg-success').text('Active');
+                            toggleButton.removeClass('btn-success').addClass('btn-danger')
+                                     .html('<i class="fas fa-ban me-1"></i>Deactivate');
+                        } else {
+                            statusBadge.removeClass('bg-success').addClass('bg-danger').text('Inactive');
+                            toggleButton.removeClass('btn-danger').addClass('btn-success')
+                                     .html('<i class="fas fa-check me-1"></i>Activate');
+                        }
+                        
+                        // Reload the page after a short delay
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showAlert('error', response.message || 'An error occurred');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    showAlert('error', 'An error occurred while updating the status');
+                }
+            });
+        }
+    }
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Alert helper function
+    function showAlert(type, message) {
+        const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Remove any existing alerts
+        $('.alert').remove();
+        
+        // Add new alert at the top of the container
+        $('.container-fluid').prepend(alertHtml);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            $('.alert').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 3000);
+    }
+
+    // Initialize DataTable
+    $(document).ready(function() {
+        const table = $('#expertsTable').DataTable({
+            order: [[4, 'desc']],
+            pageLength: 10,
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search experts..."
+            }
+        });
+
+        // Refresh table data
+        $('#refreshTable').click(function() {
+            $('#loadingSpinner').removeClass('d-none');
+            location.reload();
+        });
+
+        // Export data
+        $('#exportData').click(function() {
+            table.button('.buttons-excel').trigger();
+        });
+    });
+
+    function viewExpertDetails(expertId) {
+        $.ajax({
+            url: `/userauths/expert-details/${expertId}/`,
+            method: 'GET',
+            success: function(response) {
+                $('#expertDetailsContent').html(response);
+                new bootstrap.Modal(document.getElementById('expertDetailsModal')).show();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                showAlert('error', 'Error loading expert details');
+            }
+        });
+    }
+</script>
+{% endblock %}
+{% endblock %} 

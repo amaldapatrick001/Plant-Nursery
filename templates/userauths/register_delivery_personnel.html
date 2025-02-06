@@ -1,0 +1,438 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Delivery Personnel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <!-- Leaflet Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.css" />
+    <style>
+        /* Custom Styles matching add_expert.html */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7faf8;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #444;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 8px;
+            padding: 1px 16px;
+            border: 1px solid #ddd;
+            width: 100%;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #82ae46;
+            box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+            background-color: #fff;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            background: linear-gradient(135deg, #ffffff, #ffffff);
+            color: #333;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .category-list-heading {
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            background-color: #82ae46;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #82ae46;
+            border-color: #82ae46;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #6d8a2e;
+            box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-heading h4 {
+            color: #82ae46;
+            border-bottom: 2px solid #82ae46;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+            border-color: #82ae46;
+            box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        }
+
+        .category-list-heading {
+            background-color: #82ae46;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+    </style>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body">
+                        <h2 class="category-list-heading">Register Delivery Personnel</h2>
+                        
+                        {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form method="POST" id="deliveryPersonnelForm" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Personal Information -->
+                            <div class="section-heading mb-4">
+                                <h4>Personal Information</h4>
+                            </div>
+
+                            <!-- First Name -->
+                            <div class="form-group">
+                                <label for="{{ form.first_name.id_for_label }}">First Name*</label>
+                                {{ form.first_name }}
+                                <div class="invalid-feedback" id="firstNameError"></div>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label for="{{ form.last_name.id_for_label }}">Last Name*</label>
+                                {{ form.last_name }}
+                                <div class="invalid-feedback" id="lastNameError"></div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="{{ form.email.id_for_label }}">Email Address*</label>
+                                {{ form.email }}
+                                <div class="invalid-feedback" id="emailError"></div>
+                            </div>
+
+                            <!-- Delivery Information -->
+                            <div class="section-heading mb-4 mt-5">
+                                <h4>Delivery Information</h4>
+                            </div>
+
+                            <!-- Delivery Area -->
+                            <div class="form-group">
+                                <label for="{{ form.area_of_delivery.id_for_label }}">Delivery Area*</label>
+                                {{ form.area_of_delivery }}
+                                <div class="invalid-feedback" id="areaError"></div>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="{{ form.status.id_for_label }}">Availability Status*</label>
+                                {{ form.status }}
+                                <div class="invalid-feedback" id="statusError"></div>
+                            </div>
+
+                            <!-- Order Limits -->
+                            <div class="form-group">
+                                <label for="{{ form.max_daily_orders.id_for_label }}">Maximum Daily Orders</label>
+                                {{ form.max_daily_orders }}
+                                <div class="invalid-feedback" id="maxOrdersError"></div>
+                                <small class="text-muted">Maximum number of orders that can be assigned per day</small>
+                            </div>
+
+                            <!-- Location Selection -->
+                            <div class="section-heading mb-4 mt-5">
+                                <h4>Current Location</h4>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="locationSearch">Search Location:</label>
+                                <input type="text" id="locationSearch" class="form-control" placeholder="Search for a location">
+                            </div>
+
+                            <div id="map"></div>
+                            <input type="hidden" name="latitude" id="latitude">
+                            <input type="hidden" name="longitude" id="longitude">
+
+                            <div class="form-group text-center mt-4">
+                                <button type="submit" class="btn btn-primary px-5">Register Delivery Personnel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet and Geocoder JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.js"></script>
+
+    <script>
+        // Initialize map centered on Kerala
+        var map = L.map('map').setView([9.5882, 76.6335], 12);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker = L.marker([9.5882, 76.6335]).addTo(map);
+        
+        // Add Geocoder control
+        var geocoder = L.Control.Geocoder.nominatim();
+        var searchControl = L.Control.geocoder({
+            geocoder: geocoder,
+            defaultMarkGeocode: false
+        })
+        .on('markgeocode', function(e) {
+            var latlng = e.geocode.center;
+            marker.setLatLng(latlng);
+            map.setView(latlng, 13);
+            updateCoordinates(latlng);
+        })
+        .addTo(map);
+
+        // Update coordinates on map click
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateCoordinates(e.latlng);
+        });
+
+        function updateCoordinates(latlng) {
+            document.getElementById('latitude').value = latlng.lat;
+            document.getElementById('longitude').value = latlng.lng;
+        }
+    </script>
+
+    <!-- Updated form validation script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('deliveryPersonnelForm');
+            const firstNameInput = document.getElementById('{{ form.first_name.id_for_label }}');
+            const lastNameInput = document.getElementById('{{ form.last_name.id_for_label }}');
+            const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+            const areaSelect = document.getElementById('{{ form.area_of_delivery.id_for_label }}');
+            const statusSelect = document.getElementById('{{ form.status.id_for_label }}');
+            const maxOrdersInput = document.getElementById('{{ form.max_daily_orders.id_for_label }}');
+
+            // Name validation function
+            function validateName(input, errorDivId) {
+                const value = input.value.trim();
+                const errorDiv = document.getElementById(errorDivId);
+                const nameRegex = /^[A-Z][a-zA-Z]*$/;
+
+                if (!value) {
+                    errorDiv.textContent = 'This field is required';
+                    input.classList.add('is-invalid');
+                    return false;
+                } else if (!nameRegex.test(value)) {
+                    errorDiv.textContent = 'Must start with capital letter and contain only letters';
+                    input.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorDiv.textContent = '';
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    return true;
+                }
+            }
+
+            // Email validation function
+            function validateEmail() {
+                const value = emailInput.value.trim();
+                const errorDiv = document.getElementById('emailError');
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+                if (!value) {
+                    errorDiv.textContent = 'Email is required';
+                    emailInput.classList.add('is-invalid');
+                    return false;
+                } else if (!emailRegex.test(value)) {
+                    errorDiv.textContent = 'Please enter a valid email address';
+                    emailInput.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorDiv.textContent = '';
+                    emailInput.classList.remove('is-invalid');
+                    emailInput.classList.add('is-valid');
+                    return true;
+                }
+            }
+
+            // Max orders validation function
+            function validateMaxOrders() {
+                const value = parseInt(maxOrdersInput.value);
+                if (isNaN(value) || value < 5 || value > 15) {
+                    maxOrdersInput.classList.add('is-invalid');
+                    maxOrdersInput.nextElementSibling.textContent = 'Please enter a number between 5 and 15';
+                    return false;
+                } else {
+                    maxOrdersInput.classList.remove('is-invalid');
+                    maxOrdersInput.classList.add('is-valid');
+                    maxOrdersInput.nextElementSibling.textContent = '';
+                    return true;
+                }
+            }
+
+            // Select fields validation function
+            function validateSelect(select, fieldName) {
+                if (!select.value) {
+                    select.classList.add('is-invalid');
+                    select.nextElementSibling.textContent = `Please select a ${fieldName}`;
+                    return false;
+                } else {
+                    select.classList.remove('is-invalid');
+                    select.classList.add('is-valid');
+                    select.nextElementSibling.textContent = '';
+                    return true;
+                }
+            }
+
+            // Location validation function
+            function validateLocation() {
+                const latitude = document.getElementById('{{ form.latitude.id_for_label }}').value;
+                const longitude = document.getElementById('{{ form.longitude.id_for_label }}').value;
+                const mapDiv = document.getElementById('map');
+
+                if (!latitude || !longitude) {
+                    mapDiv.classList.add('border', 'border-danger');
+                    return false;
+                } else {
+                    mapDiv.classList.remove('border', 'border-danger');
+                    return true;
+                }
+            }
+
+            // Add event listeners for real-time validation
+            firstNameInput.addEventListener('input', () => validateName(firstNameInput, 'firstNameError'));
+            lastNameInput.addEventListener('input', () => validateName(lastNameInput, 'lastNameError'));
+            emailInput.addEventListener('input', validateEmail);
+            areaSelect.addEventListener('change', () => validateSelect(areaSelect, 'delivery area'));
+            statusSelect.addEventListener('change', () => validateSelect(statusSelect, 'status'));
+            maxOrdersInput.addEventListener('input', validateMaxOrders);
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                isValid = validateName(firstNameInput, 'firstNameError') && isValid;
+                isValid = validateName(lastNameInput, 'lastNameError') && isValid;
+                isValid = validateEmail() && isValid;
+                isValid = validateSelect(areaSelect, 'delivery area') && isValid;
+                isValid = validateSelect(statusSelect, 'status') && isValid;
+                isValid = validateMaxOrders() && isValid;
+                isValid = validateLocation() && isValid;
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please correct the errors in the form before submitting.');
+                }
+            });
+
+            // Add CSS for validation styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .is-invalid {
+                    border-color: #dc3545 !important;
+                    padding-right: calc(1.5em + 0.75rem) !important;
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
+                    background-repeat: no-repeat !important;
+                    background-position: right calc(0.375em + 0.1875rem) center !important;
+                    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+                }
+                .is-valid {
+                    border-color: #198754 !important;
+                    padding-right: calc(1.5em + 0.75rem) !important;
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+                    background-repeat: no-repeat !important;
+                    background-position: right calc(0.375em + 0.1875rem) center !important;
+                    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+                }
+                .invalid-feedback {
+                    display: block;
+                    color: #dc3545;
+                    font-size: 0.875em;
+                    margin-top: 0.25rem;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

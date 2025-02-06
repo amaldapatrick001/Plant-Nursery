@@ -1,0 +1,91 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h2>Review Products</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.order_items.all %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.batch.product.image_1 %}
+                                            <img src="{{ item.batch.product.image_1.url }}" alt="{{ item.batch.product.name }}" 
+                                                 class="img-thumbnail me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% else %}
+                                            <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" 
+                                                 class="img-thumbnail me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% endif %}
+                                        <span>{{ item.batch.product.name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="star-rating" style="display: flex; align-items: center;">
+                                        <input type="radio" id="star5_{{ item.id }}" name="rating_{{ item.id }}" value="5" />
+                                        <label for="star5_{{ item.id }}" title="5 stars">☆</label>
+                                        <input type="radio" id="star4_{{ item.id }}" name="rating_{{ item.id }}" value="4" />
+                                        <label for="star4_{{ item.id }}" title="4 stars">☆</label>
+                                        <input type="radio" id="star3_{{ item.id }}" name="rating_{{ item.id }}" value="3" />
+                                        <label for="star3_{{ item.id }}" title="3 stars">☆</label>
+                                        <input type="radio" id="star2_{{ item.id }}" name="rating_{{ item.id }}" value="2" />
+                                        <label for="star2_{{ item.id }}" title="2 stars">☆</label>
+                                        <input type="radio" id="star1_{{ item.id }}" name="rating_{{ item.id }}" value="1" />
+                                        <label for="star1_{{ item.id }}" title="1 star">☆</label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <textarea name="comment_{{ item.id }}" rows="2" class="form-control" 
+                                              placeholder="Write your feedback..."></textarea>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg mt-4">Submit Reviews</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    .star-rating label {
+        font-size: 1.5rem;
+        color: #ccc;
+        cursor: pointer;
+        padding: 0 0.1rem;
+    }
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffc107;
+    }
+</style>
+{% endblock %}

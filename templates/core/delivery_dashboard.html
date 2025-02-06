@@ -1,0 +1,73 @@
+{% extends 'partials/dbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 p-4 text-white">
+        <h1 class="text-2xl font-bold">Delivery Dashboard</h1>
+    </header>
+
+    <main class="p-6">
+        <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Welcome, {{ delivery_personnel.user.first_name }}</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Profile Section -->
+                <div class="bg-gray-50 shadow rounded p-4">
+                    <h3 class="font-bold text-lg mb-2">Profile Information</h3>
+                    <ul class="space-y-2">
+                        <li><strong>Name:</strong> {{ delivery_personnel.user.first_name }} {{ delivery_personnel.user.last_name }}</li>
+                        <li><strong>Phone:</strong> {{ delivery_personnel.user.phoneno }}</li>
+                        <li><strong>Area:</strong> {{ delivery_personnel.area_of_delivery }}</li>
+                        <li><strong>Status:</strong> 
+                            <span class="px-2 py-1 rounded text-white {% if delivery_personnel.status == 'available' %}bg-green-500{% else %}bg-red-500{% endif %}">
+                                {{ delivery_personnel.status|title }}
+                            </span>
+                        </li>
+                        <li><strong>Joined On:</strong> {{ delivery_personnel.date_time_joined|date:"F j, Y" }}</li>
+                    </ul>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="bg-gray-50 shadow rounded p-4">
+                    <h3 class="font-bold text-lg mb-2">Delivery Statistics</h3>
+                    <ul class="space-y-2">
+                        <li><strong>Assigned Orders:</strong> {{ delivery_personnel.assigned_orders }}</li>
+                        <li><strong>Completed Orders:</strong> {{ delivery_personnel.completed_orders }}</li>
+                        <li><strong>Success Rate:</strong> 
+                            {% if delivery_personnel.assigned_orders > 0 %}
+                                {{ delivery_personnel.completed_orders|multiply:100|divisibleby:delivery_personnel.assigned_orders }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-6 flex flex-col sm:flex-row justify-between gap-4">
+                <a href="{% url 'userauths:assigned_orders' %}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 text-center">
+                    View Assigned Orders
+                </a>
+                <form method="POST" action="{% url 'userauths:update_status' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full sm:w-auto bg-gray-600 text-white px-4 py-2 rounded shadow hover:bg-gray-700">
+                        {% if delivery_personnel.status == 'available' %}
+                            Mark as Busy
+                        {% else %}
+                            Mark as Available
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

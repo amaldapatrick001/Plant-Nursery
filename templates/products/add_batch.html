@@ -1,0 +1,262 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px; /* Adds spacing from the top */
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        display: block; /* Changed to block for better spacing */
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        width: 100%;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem; /* Added padding for inner spacing */
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* Alert Box */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-color: #f5c2c7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem; /* Reduced padding for smaller screens */
+        }
+
+        .category-list-heading {
+            font-size: 1.3rem; /* Adjusted heading for mobile */
+        }
+
+        .btn {
+            font-size: 1rem; /* Adjusted button size for mobile */
+        }
+    }
+</style>
+
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body">
+                        <h2 class="category-list-heading">Add New Batch</h2>
+                        <form method="POST" id="batchForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.product.label_tag }}
+                                {{ form.product }}
+                                {% if form.product.errors %}
+                                    <div class="text-danger">{{ form.product.errors }}</div>
+                                {% endif %}
+                            </div>
+                        
+                            <div class="form-group">
+                                <!-- Update label to show 'Current Height (m)' -->
+                                <label for="{{ form.current_height.id_for_label }}">Current Height (m)</label>
+                                {{ form.current_height }}
+                                <div id="currentHeightError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <!-- Update label to show 'Price (Rs.)' -->
+                                <label for="{{ form.price.id_for_label }}">Price (Rs.)</label>
+                                {{ form.price }}
+                                <div id="priceError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                {{ form.stock_quantity.label_tag }}
+                                {{ form.stock_quantity }}
+                                <div id="stockError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="{{ form.discount.id_for_label }}">Discount (%)</label>
+                                {{ form.discount }}
+                                <div id="discountError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                {{ form.no_of_plants.label_tag }}
+                                {{ form.no_of_plants }}
+                                <div id="plantsError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                {{ form.short_description.label_tag }}
+                                {{ form.short_description }}
+                                <div id="descriptionError" class="text-danger"></div>
+                            </div>
+                        
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary">Add Batch</button>
+                            </div>
+                        </form>
+                                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Validation Functions
+    function validateCurrentHeight() {
+        const currentHeight = document.getElementById('{{ form.current_height.id_for_label }}').value;
+        const error = document.getElementById('currentHeightError');
+        if (isNaN(currentHeight) || currentHeight < 2) {
+            error.innerText = "Current height must be a number and greater than 2.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validatePrice() {
+        const price = document.getElementById('{{ form.price.id_for_label }}').value;
+        const error = document.getElementById('priceError');
+        if (isNaN(price) || price < 1 || price > 1000) {
+            error.innerText = "Price must be between 1 and 1000.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateStock() {
+        const stockQuantity = document.getElementById('{{ form.stock_quantity.id_for_label }}').value;
+        const error = document.getElementById('stockError');
+        if (isNaN(stockQuantity) || stockQuantity < 0 || stockQuantity > 10000) {
+            error.innerText = "Stock quantity must be between 0 and 10,000.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateDiscount() {
+        const discount = document.getElementById('{{ form.discount.id_for_label }}').value;
+        const error = document.getElementById('discountError');
+        if (isNaN(discount) || discount < 0 || discount > 85) {
+            error.innerText = "Discount must be between 0 and 85%.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validatePlants() {
+        const noOfPlants = document.getElementById('{{ form.no_of_plants.id_for_label }}').value;
+        const error = document.getElementById('plantsError');
+        if (isNaN(noOfPlants) || noOfPlants < 1 || noOfPlants > 12) {
+            error.innerText = "Number of plants must be between 1 and 12.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    function validateDescription() {
+        const description = document.getElementById('{{ form.short_description.id_for_label }}').value;
+        const error = document.getElementById('descriptionError');
+        const regex = /^[A-Z][\s\S]*\.$/; // Starts with capital and ends with period
+        if (!regex.test(description) || description.length < 5) {
+            error.innerText = "Description must start with a capital letter, end with a period, and contain at least 5 characters.";
+        } else {
+            error.innerText = "";
+        }
+    }
+
+    // Event Listeners for Real-time Validation
+    document.getElementById('{{ form.current_height.id_for_label }}').addEventListener('input', validateCurrentHeight);
+    document.getElementById('{{ form.price.id_for_label }}').addEventListener('input', validatePrice);
+    document.getElementById('{{ form.stock_quantity.id_for_label }}').addEventListener('input', validateStock);
+    document.getElementById('{{ form.discount.id_for_label }}').addEventListener('input', validateDiscount);
+    document.getElementById('{{ form.no_of_plants.id_for_label }}').addEventListener('input', validatePlants);
+    document.getElementById('{{ form.short_description.id_for_label }}').addEventListener('input', validateDescription);
+</script>
+{% endblock %}

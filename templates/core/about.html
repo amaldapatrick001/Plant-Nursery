@@ -1,0 +1,189 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static 'images\nur3.jpeg' %}');">
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>About us</span></p>
+              <h1 class="mb-0 bread">About us</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section class="ftco-section ftco-no-pb ftco-no-pt bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url({% static 'images/officer.png' %});">
+                    <a href="https://youtu.be/84ubjodxr2U?si=Qtw3LIWDoliPYxK5" class="icon d-flex justify-content-center align-items-center" target="_blank">
+                        <span class="icon-play"></span>
+                    </a>
+                </div>
+                <div class="col-md-7 py-5 wrap-about pb-md-5 ftco-animate fadeInUp ftco-animated">
+                    <div class="heading-section-bold mb-4 mt-md-5">
+                        <div class="ml-md-0">
+                            <h2 class="mb-4">Welcome to Enchanted Eden, Your Digital Plant Nursery</h2>
+                        </div>
+                    </div>
+                    <div class="pb-md-5">
+                        <p>
+                            Welcome to Enchanted Eden, where technology meets nature! Our platform is designed for plant lovers, gardeners, and hobbyists alike, providing access to a wide range of plants and tools to nurture your passion. From our extensive plant catalog to expert gardening advice, Enchanted Eden is your gateway to cultivating a greener world.
+                        </p>
+                        <p>
+                            Whether you’re growing plants for your home or managing a large-scale garden, our community is here to support you with the best resources and tools, including our innovative virtual garden design and pest detection features.
+                        </p>
+                        <p><a href="{% url 'products:product_list' %}" class="btn btn-primary">Shop Now</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="ftco-section testimony-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5 pb-3">
+                <div class="col-md-7 heading-section ftco-animate text-center fadeInUp ftco-animated">
+                    <span class="subheading">Testimonials</span>
+                    <h2 class="mb-4">What Our Happy Gardeners Say</h2>
+                    <p>From lush backyards to thriving urban gardens, our community of plant lovers has plenty to share about their Enchanted Eden experience.</p>
+                </div>
+            </div>
+            <div class="row ftco-animate fadeInUp ftco-animated">
+                <div class="col-md-12">
+                    <div class="carousel-testimony owl-carousel owl-loaded owl-drag">
+                        <div class="owl-stage-outer">
+                            <div class="owl-stage" style="transition: all; width: 4180px; transform: translate3d(-760px, 0px, 0px);">
+                                
+                                <!-- Testimonial 1 -->
+                                <div class="owl-item active center" style="width: 350px; margin-right: 30px;">
+                                    <div class="item">
+                                        <div class="testimony-wrap p-4 pb-5">
+                                            <div class="user-img mb-5" style="background-image: url(images/gardener_1.jpg)">
+                                                <span class="quote d-flex align-items-center justify-content-center">
+                                                    <i class="icon-quote-left"></i>
+                                                </span>
+                                            </div>
+                                            <div class="text text-center">
+                                                <p class="mb-5 pl-4 line">"My vegetable garden has never looked healthier! Enchanted Eden made it easy to get the right advice and products at just the right time."</p>
+                                                <p class="name">Sophia Bennett</p>
+                                                <span class="position">Home Gardener</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <!-- Testimonial 2 -->
+                                <div class="owl-item active" style="width: 350px; margin-right: 30px;">
+                                    <div class="item">
+                                        <div class="testimony-wrap p-4 pb-5">
+                                            <div class="user-img mb-5" style="background-image: url(images/gardener_2.jpg)">
+                                                <span class="quote d-flex align-items-center justify-content-center">
+                                                    <i class="icon-quote-left"></i>
+                                                </span>
+                                            </div>
+                                            <div class="text text-center">
+                                                <p class="mb-5 pl-4 line">"The virtual garden planner is a game changer! It helped me visualize and design my entire backyard before I even started planting."</p>
+                                                <p class="name">James Wilson</p>
+                                                <span class="position">Urban Farmer</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <!-- Testimonial 3 -->
+                                <div class="owl-item active" style="width: 350px; margin-right: 30px;">
+                                    <div class="item">
+                                        <div class="testimony-wrap p-4 pb-5">
+                                            <div class="user-img mb-5" style="background-image: url(images/gardener_3.jpg)">
+                                                <span class="quote d-flex align-items-center justify-content-center">
+                                                    <i class="icon-quote-left"></i>
+                                                </span>
+                                            </div>
+                                            <div class="text text-center">
+                                                <p class="mb-5 pl-4 line">"I was able to get personalized plant recommendations, and the customer support was fantastic. Now, my indoor plants are thriving!"</p>
+                                                <p class="name">Emily Davis</p>
+                                                <span class="position">Indoor Plant Enthusiast</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                            </div>
+                        </div>
+                        <div class="owl-nav disabled">
+                            <button role="presentation" class="owl-prev">
+                                <span class="ion-ios-arrow-back"></span>
+                            </button>
+                            <button role="presentation" class="owl-next">
+                                <span class="ion-ios-arrow-forward"></span>
+                            </button>
+                        </div>
+                        <div class="owl-dots">
+                            <button class="owl-dot active"><span></span></button>
+                            <button class="owl-dot"><span></span></button>
+                            <button class="owl-dot"><span></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="ftco-section bg-light">
+        <div class="container">
+          <div class="row no-gutters ftco-services">
+            <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate fadeInUp ftco-animated">
+              <div class="media block-6 services mb-md-0 mb-4">
+                <div class="icon bg-color-1 active d-flex justify-content-center align-items-center mb-2">
+                  <span class="flaticon-shipped"></span>
+                </div>
+                <div class="media-body">
+                  <h3 class="heading">Free Plant Delivery</h3>
+                  <span>On orders over $100</span>
+                </div>
+              </div>      
+            </div>
+            <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate fadeInUp ftco-animated">
+              <div class="media block-6 services mb-md-0 mb-4">
+                <div class="icon bg-color-2 d-flex justify-content-center align-items-center mb-2">
+                    <span class="fas fa-seedling"></span>
+                  </div>
+                  
+                <div class="media-body">
+                  <h3 class="heading">Always Vibrant</h3>
+                  <span>Healthy and carefully packaged plants</span>
+                </div>
+              </div>    
+            </div>
+            <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate fadeInUp ftco-animated">
+              <div class="media block-6 services mb-md-0 mb-4">
+                <div class="icon bg-color-3 d-flex justify-content-center align-items-center mb-2">
+                  <span class="flaticon-award"></span>
+                </div>
+                <div class="media-body">
+                  <h3 class="heading">Premium Quality</h3>
+                  <span>Top-rated, eco-friendly products</span>
+                </div>
+              </div>      
+            </div>
+            <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate fadeInUp ftco-animated">
+              <div class="media block-6 services mb-md-0 mb-4">
+                <div class="icon bg-color-4 d-flex justify-content-center align-items-center mb-2">
+                  <span class="flaticon-customer-service"></span>
+                </div>
+                <div class="media-body">
+                  <h3 class="heading">Expert Guidance</h3>
+                  <span>24/7 horticultural support</span>
+                </div>
+              </div>      
+            </div>
+          </div>
+        </div>
+      </section>
+      
+
+
+{% endblock %}

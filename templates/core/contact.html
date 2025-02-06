@@ -1,0 +1,232 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+        /* Apply the background gradient to the entire page */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+    </style>
+
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images\nur3.jpeg' %}');">
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-center justify-content-center">
+      <div class="col-md-9 ftco-animate text-center">
+        <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Contact Us</span></p>
+        <h1 class="mb-0 bread">Don’t Hesitate To Contact Us</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="ftco-section contact-section bg-light">
+  <div class="container py-5">
+    <div class="row d-flex mb-5 contact-info justify-content-center text-center">
+        
+        <div class="col-md-4 d-flex mb-4">
+            <div class="info bg-light p-4 shadow rounded text-center">
+                <i class="fas fa-phone-alt fa-2x mb-3" style="color: #007bff;"></i> <!-- Phone icon -->
+                <p><span class="font-weight-bold">Phone Us:</span><br> <a href="tel://8078076679">+91 8078076679</a>, <a href="tel://9447139679">+91 9447139679</a></p>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex mb-4">
+            <div class="info bg-light p-4 shadow rounded text-center">
+                <i class="fas fa-envelope fa-2x mb-3 text-danger"></i> <!-- Email icon -->
+                <p><span class="font-weight-bold">Email Us:</span><br> <a href="mailto:info@vadakechirayath.com">info@vadakechirayath.com</a></p>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex mb-4">
+          <div class="info bg-light p-4 shadow rounded text-center">
+              <i class="fas fa-map-marker-alt fa-2x mb-3 text-success"></i> <!-- Location icon -->
+              <p><span class="font-weight-bold">Location:</span><br> Vadakechirayath Nursery and Farms<br> Panackappalam Plassanal P. O., Erattupetta Kottayam</p>
+          </div>
+      </div>
+    </div>
+    
+</div>
+
+</div>
+<div class="row block-9">
+  <div class="col-md-6 order-md-last d-flex">
+    <form action="{% url 'contact' %}" method="POST" id="contactForm" class="bg-white p-5 contact-form">
+
+      {% csrf_token %}
+      <h2>Get In Touch</h2>
+        
+      <!-- Name Input -->
+      <div class="form-group">
+        <input type="text" id="contactName" name="contactName" class="form-control" placeholder="Name" required>
+        <div id="contactNameError" class="text-danger"></div>
+      </div>
+        
+      <!-- Email Input -->
+      <div class="form-group">
+        <input type="email" id="contactEmail" name="contactEmail" class="form-control" placeholder="Email" required>
+        <div id="contactEmailError" class="text-danger"></div>
+      </div>
+        
+      <!-- Subject Input -->
+      <div class="form-group">
+        <input type="text" id="contactSubject" name="contactSubject" class="form-control" placeholder="Subject" required>
+        <div id="contactSubjectError" class="text-danger"></div>
+      </div>
+        
+      <!-- Message Input -->
+      <div class="form-group">
+        <textarea id="contactMessage" name="contactMessage" cols="30" rows="7" class="form-control" placeholder="Message" required></textarea>
+        <div id="contactMessageError" class="text-danger"></div>
+      </div>
+        
+      <!-- Submit Button -->
+      <div class="form-group">
+        <input type="submit" value="Send Message" class="btn btn-primary py-3 px-5">
+      </div>
+  
+      <!-- Display messages from Django -->
+      
+  </form>
+  
+  </div>
+
+  <div class="col-md-6 d-flex">
+    <div class="bg-white" style="width: 100%;">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387139.1791869697!2d76.6107098!3d9.6994556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b07cb93dc4eecbd%3A0x9f09e7a927b129d9!2sVadakechirayath%20Nursery%20and%20Farms!5e0!3m2!1sen!2sin!4v1696757341232!5m2!1sen!2sin"
+        width="100%" height="700" style="border:0;" allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</div>
+<script>
+  const contactForm = document.getElementById('contactForm');
+  
+  const contactFields = {
+    name: {
+      element: document.getElementById('contactName'),
+      errorElement: document.getElementById('contactNameError'),
+      validate: function() {
+        const value = this.element.value.trim();
+        // Step 2: Check if the first letter is capital
+        if (!/^[A-Z]/.test(value)) {
+          this.errorElement.textContent = 'Name must start with a capital letter.';
+          return false;
+        }
+        // Step 1: Check if name has at least 2 characters
+        if (value.length < 2) {
+          this.errorElement.textContent = 'Name must be at least 2 characters long.';
+          return false;
+        }
+
+        
+
+        // Step 3: Check if name contains only letters and spaces
+        if (!/^[A-Za-z\s]+$/.test(value)) {
+          this.errorElement.textContent = 'Name can only contain letters and spaces (no numbers or special characters).';
+          return false;
+        }
+
+        // If all checks pass
+        this.errorElement.textContent = '';
+        return true;
+      }
+    },
+
+    email: {
+      element: document.getElementById('contactEmail'),
+      errorElement: document.getElementById('contactEmailError'),
+      validate: function() {
+        const value = this.element.value.trim();
+        
+        // Step 1: Check if it's a valid email format
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          this.errorElement.textContent = 'Enter a valid email address.';
+          return false;
+        }
+
+        this.errorElement.textContent = '';
+        return true;
+      }
+    },
+
+    subject: {
+      element: document.getElementById('contactSubject'),
+      errorElement: document.getElementById('contactSubjectError'),
+      validate: function() {
+        const value = this.element.value.trim();
+        
+        // Step 1: Subject must be between 5 and 25 characters long
+        if (value.length < 5 || value.length >25) {
+          this.errorElement.textContent = 'Subject must be between 5 and 25 characters long.';
+          return false;
+        }
+
+        // Step 2: First letter must be capital
+        if (!/^[A-Z]/.test(value)) {
+          this.errorElement.textContent = 'Subject must start with a capital letter.';
+          return false;
+        }
+
+        // Step 3: Subject must end with a full stop
+        if (!/\.$/.test(value)) {
+          this.errorElement.textContent = 'Subject must end with a full stop.';
+          return false;
+        }
+
+        this.errorElement.textContent = '';
+        return true;
+      }
+    },
+
+    message: {
+      element: document.getElementById('contactMessage'),
+      errorElement: document.getElementById('contactMessageError'),
+      validate: function() {
+        const value = this.element.value.trim();
+        
+        // Step 1: Message must be between 5 and 500 characters long
+        if (value.length < 5 || value.length > 500) {
+          this.errorElement.textContent = 'Message must be between 5 and 500 characters long.';
+          return false;
+        }
+
+        // Step 2: First letter must be capital
+        if (!/^[A-Z]/.test(value)) {
+          this.errorElement.textContent = 'Message must start with a capital letter.';
+          return false;
+        }
+
+        // Step 3: Message must end with a full stop
+        if (!/\.$/.test(value)) {
+          this.errorElement.textContent = 'Message must end with a full stop.';
+          return false;
+        }
+
+        this.errorElement.textContent = '';
+        return true;
+      }
+    }
+  };
+  
+  // Real-time validation
+  Object.values(contactFields).forEach(field => {
+    field.element.addEventListener('input', () => field.validate());
+  });
+
+  // Form validation on submit
+  contactForm.addEventListener('submit', (event) => {
+    const isValid = Object.values(contactFields).every(field => field.validate());
+    if (!isValid) {
+      event.preventDefault();
+      alert('Please fix the errors in the contact form before submitting.');
+    }
+  });
+</script>
+
+{% endblock %}
+

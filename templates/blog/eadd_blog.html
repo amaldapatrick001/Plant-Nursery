@@ -1,0 +1,484 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    body {
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+    }
+
+    .container {
+        margin-bottom: 50px;
+        padding: 20px;
+        max-width: calc(100vw - 300px);
+        width: 100%;
+        position: relative;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border: none;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .profile-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #2E7D32, #388E3C, #4CAF50);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        padding: 2.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+        transform: skewX(-45deg);
+    }
+
+    .card-header h2 {
+        color: white;
+        font-size: 2.2rem;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        height: 65px;
+        padding: 1.5rem 1rem 0.5rem;
+        border: 2px solid rgba(46, 125, 50, 0.15);
+        border-radius: 16px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        width: 100%;
+    }
+
+    textarea.form-control {
+        height: 150px;
+        padding: 1rem;
+        resize: vertical;
+    }
+
+    .form-control:focus {
+        border-color: #2E7D32;
+        box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        background-color: #ffffff;
+    }
+
+    .form-control-file {
+        padding: 1rem;
+        border: 2px dashed rgba(46, 125, 50, 0.15);
+        border-radius: 16px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-file:hover {
+        border-color: #2E7D32;
+        background-color: rgba(46, 125, 50, 0.05);
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1.2rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        background-color: rgba(220, 53, 69, 0.1);
+        display: none;
+    }
+
+    @media (max-width: 992px) {
+        .container {
+            margin-left: 240px;
+            max-width: calc(100vw - 260px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin-left: 0;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-blog"></i> Create New Blog Post</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="blogForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-pen"></i> Blog Details
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Blog Title</label>
+                                {{ form.title|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Blog Content</label>
+                                {{ form.content|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-image"></i> Media Content
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Upload Images</label>
+                                {{ form.images|add_class:"form-control-file" }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <!-- <div class="form-group">
+                                <label class="form-label">Video URL</label>
+                                {{ form.videos|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div> -->
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-toggle-on"></i> Publication Status
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                {{ form.status|add_class:"form-control" }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-paper-plane"></i> Publish Blog Post
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        const titleInput = document.querySelector('#id_title');
+        const contentInput = document.querySelector('#id_content');
+        const imageInput = document.querySelector('#id_images');
+        
+        // Error display functions
+        function setError(input, message) {
+            const formGroup = input.closest('.form-group');
+            let error = formGroup.querySelector('.error-message');
+            if (!error) {
+                error = document.createElement('div');
+                error.className = 'error-message text-danger mt-1';
+                formGroup.appendChild(error);
+            }
+            error.textContent = message;
+            input.classList.add('is-invalid');
+            input.classList.remove('is-valid');
+        }
+
+        function setSuccess(input) {
+            const formGroup = input.closest('.form-group');
+            const error = formGroup.querySelector('.error-message');
+            if (error) {
+                error.textContent = '';
+            }
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+
+        // Title validation
+        function validateTitle() {
+            const value = titleInput.value.trim();
+            
+            if (value.length === 0) {
+                setError(titleInput, 'Blog title is required');
+                return false;
+            }
+            
+            if (value.length < 3) {
+                setError(titleInput, 'Title must be at least 3 characters long');
+                return false;
+            }
+            
+            if (value.length > 30) {
+                setError(titleInput, 'Title cannot exceed 30 characters');
+                return false;
+            }
+            
+            if (value[0] !== value[0].toUpperCase()) {
+                setError(titleInput, 'Title must start with a capital letter');
+                return false;
+            }
+            
+            setSuccess(titleInput);
+            return true;
+        }
+
+        // Content validation
+        function validateContent() {
+            const value = contentInput.value.trim();
+            const words = value.split(/\s+/).filter(word => word.length > 0);
+            const sentences = value.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+            
+            if (words.length < 50) {
+                setError(contentInput, `Content must have at least 50 words. Current: ${words.length} words`);
+                return false;
+            }
+            
+            if (words.length > 1000) {
+                setError(contentInput, `Content cannot exceed 1000 words. Current: ${words.length} words`);
+                return false;
+            }
+            
+            if (value[0] !== value[0].toUpperCase()) {
+                setError(contentInput, 'Content must start with a capital letter');
+                return false;
+            }
+            
+            // Check each sentence
+            for (let sentence of sentences) {
+                sentence = sentence.trim();
+                if (sentence.length > 0) {
+                    if (sentence[0] !== sentence[0].toUpperCase()) {
+                        setError(contentInput, 'Each sentence must start with a capital letter');
+                        return false;
+                    }
+                }
+            }
+            
+            // Check for proper spacing after periods
+            const periodsRegex = /\.\s*[a-zA-Z]/g;
+            const matches = value.match(periodsRegex);
+            if (matches) {
+                for (const match of matches) {
+                    if (match[1] !== ' ') {
+                        setError(contentInput, 'Please leave one space after each period');
+                        return false;
+                    }
+                }
+            }
+            
+            setSuccess(contentInput);
+            return true;
+        }
+
+        // Image validation
+        function validateImage() {
+            const file = imageInput.files[0];
+            if (!file) {
+                setError(imageInput, 'Please select an image');
+                return false;
+            }
+
+            const validFormats = [
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/svg+xml',
+                'image/tiff',
+                'image/bmp',
+                'image/webp'
+            ];
+
+            if (!validFormats.includes(file.type)) {
+                setError(imageInput, 'Please upload an image in JPEG, PNG, GIF, SVG, TIFF, BMP, or WEBP format');
+                return false;
+            }
+
+            // Check file size (max 5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            if (file.size > maxSize) {
+                setError(imageInput, 'Image size should not exceed 5MB');
+                return false;
+            }
+
+            setSuccess(imageInput);
+            return true;
+        }
+
+        // Real-time validation
+        titleInput.addEventListener('input', validateTitle);
+        contentInput.addEventListener('input', validateContent);
+        imageInput.addEventListener('change', validateImage);
+
+        // Word counter for content
+        contentInput.addEventListener('input', function() {
+            const words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            const formGroup = this.closest('.form-group');
+            let counter = formGroup.querySelector('.word-counter');
+            
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.className = 'word-counter text-muted mt-1';
+                formGroup.appendChild(counter);
+            }
+            
+            counter.textContent = `${wordCount} words (min: 50, max: 1000)`;
+            counter.style.color = wordCount < 50 || wordCount > 1000 ? '#dc3545' : '#6c757d';
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            const isTitleValid = validateTitle();
+            const isContentValid = validateContent();
+            const isImageValid = validateImage();
+
+            if (!isTitleValid || !isContentValid || !isImageValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+<style>
+.error-message {
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+.word-counter {
+    font-size: 0.875rem;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-valid {
+    border-color: #198754;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Ongoing Sessions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-success text-white">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-video me-2"></i>Currently Active Sessions
+                        <span class="badge bg-light text-success float-end">{{ ongoing_meetings.count }} Active</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if ongoing_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Started At</th>
+                                        <th>Ends At</th>
+                                        <th>Meeting Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in ongoing_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>
+                                            <i class="fas fa-user-tie me-1"></i>
+                                            {{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}
+                                        </td>
+                                        <td>{{ meeting.start_time|time:"H:i" }}</td>
+                                        <td>{{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>
+                                            {% if meeting.google_meet_link %}
+                                            <a href="{{ meeting.google_meet_link }}" target="_blank" class="btn btn-light btn-sm">
+                                                <i class="fas fa-video me-1"></i>Join Session
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No sessions are currently active.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduled Sessions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>Upcoming Scheduled Sessions
+                        <span class="badge bg-light text-primary float-end">{{ scheduled_meetings.count }} Scheduled</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if scheduled_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Capacity</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in scheduled_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>
+                                            <i class="fas fa-user-tie me-1"></i>
+                                            {{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}
+                                        </td>
+                                        <td>{{ meeting.start_time|date:"M d, Y" }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if meeting.current_participants >= meeting.max_participants %}bg-danger{% else %}bg-success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {% widthratio meeting.current_participants meeting.max_participants 100 %}%"
+                                                     aria-valuenow="{{ meeting.current_participants }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="{{ meeting.max_participants }}">
+                                                    {{ meeting.current_participants }}/{{ meeting.max_participants }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-truncate d-inline-block" style="max-width: 200px;" 
+                                                  title="{{ meeting.description }}">
+                                                {{ meeting.description }}
+                                            </span>
+                                        </td>
+                                        
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if meeting.session_id in booked_sessions %}
+                                                    <!-- User has booked this session -->
+                                                    <form method="post" 
+                                                          action="{% url 'qa_sessions:remove_slot' meeting.session_id %}" 
+                                                          class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger btn-sm booking-btn">
+                                                            <i class="fas fa-times me-1"></i>Cancel Booking
+                                                        </button>
+                                                    </form>
+                                                {% else %}
+                                                    <!-- User hasn't booked this session -->
+                                                    {% if meeting.current_participants < meeting.max_participants %}
+                                                        <form method="post" 
+                                                              action="{% url 'qa_sessions:book_slot' meeting.session_id %}" 
+                                                              class="d-inline">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-primary btn-sm booking-btn">
+                                                                <i class="fas fa-plus me-1"></i>Book Slot
+                                                            </button>
+                                                        </form>
+                                                    {% else %}
+                                                        <button class="btn btn-secondary btn-sm" disabled>
+                                                            <i class="fas fa-ban me-1"></i>Full
+                                                        </button>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No upcoming sessions are scheduled.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0;
+        padding: 1rem;
+    }
+    
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .btn-group .btn {
+        margin-right: 5px;
+    }
+    
+    .btn-group form {
+        display: inline-block;
+    }
+    
+    .btn[disabled] {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+    
+    .progress {
+        height: 20px !important;
+        border-radius: 10px;
+        margin-bottom: 0;
+    }
+    
+    .progress-bar {
+        line-height: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .table-dark {
+        background-color: transparent;
+    }
+    
+    .table-dark td {
+        border-color: rgba(255,255,255,0.1);
+    }
+    
+    .badge {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+    }
+    
+    .booking-btn {
+        min-width: 120px;
+        transition: all 0.3s ease;
+    }
+    
+    .booking-btn:disabled {
+        cursor: not-allowed;
+    }
+    
+    .booking-btn i {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .progress {
+        height: 20px !important;
+        border-radius: 10px;
+    }
+    
+    .progress-bar {
+        transition: width 0.3s ease;
+    }
+    
+    /* Animation for button state change */
+    @keyframes buttonTransition {
+        from { transform: scale(1); }
+        50% { transform: scale(0.95); }
+        to { transform: scale(1); }
+    }
+    
+    .booking-btn.transitioning {
+        animation: buttonTransition 0.3s ease;
+    }
+</style>
+
+<!-- Add this for success/error messages -->
+{% if messages %}
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    {% for message in messages %}
+        <div class="toast show bg-{{ message.tags }} text-white" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                {{ message }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+    // Auto-hide toasts after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle form submissions
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const isBooking = this.action.includes('book-slot');
+                const isUnbooking = this.action.includes('remove-slot');
+                
+               
+                
+                const button = this.querySelector('button');
+                const row = this.closest('tr');
+                
+                if (isBooking) {
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Booking...';
+                    button.disabled = true;
+                } else if (isUnbooking) {
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cancelling...';
+                    button.disabled = true;
+                }
+            });
+        });
+
+        // Auto-hide toasts after 3 seconds
+        setTimeout(function() {
+            document.querySelectorAll('.toast').forEach(function(toastEl) {
+                toastEl.classList.remove('show');
+            });
+        }, 3000);
+    });
+
+    // Function to update capacity progress bar
+    function updateCapacityBar(meetingId, currentParticipants, maxParticipants) {
+        const progressBar = document.querySelector(`#capacity-${meetingId} .progress-bar`);
+        const percentage = (currentParticipants / maxParticipants) * 100;
+        
+        progressBar.style.width = `${percentage}%`;
+        progressBar.setAttribute('aria-valuenow', currentParticipants);
+        progressBar.textContent = `${currentParticipants}/${maxParticipants}`;
+        
+        if (currentParticipants >= maxParticipants) {
+            progressBar.classList.remove('bg-success');
+            progressBar.classList.add('bg-danger');
+        } else {
+            progressBar.classList.remove('bg-danger');
+            progressBar.classList.add('bg-success');
+        }
+    }
+</script>
+{% endblock %}

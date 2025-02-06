@@ -1,0 +1,145 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+            <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Wishlist</span></p>
+          <h1 class="mb-0 bread">Wishlist</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="cart-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                            <tr class="text-center">
+                                <th>Image</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in wishlist_items %}
+                            <tr class="text-center">
+                                <td class="image-prod">
+                                    {% if item.batch.product.image_1 %}
+                                        <img src="{{ item.batch.product.image_1.url }}" alt="{{ item.batch.product.name }}" style="max-width: 100px;" class="img">
+                                    {% else %}
+                                        <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" style="max-width: 100px;">
+                                    {% endif %}
+                                </td>
+                                <td class="product-name">
+                                    <h3>{{ item.batch.product.name }}</h3>
+                                </td>
+                                <td class="price">${{ item.batch.price }}</td>
+                                <td>
+                                    <a href="{% url 'products:remove_from_wishlist' item.batch.id %}" class="btn btn-danger btn-custom">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                    
+                                    
+                                    <a href="{% url 'products:wishlist_addtocart' item.batch.id %}" class="btn btn-success btn-custom">
+                                        <i class="fa fa-cart-plus"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if not wishlist_items %}
+                        <p>Your wishlist is empty.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Add 'Go to Shop' button here -->
+  <div class="text-center">
+    <a href="{% url 'products:cproduct_list' %}" class="btn btn-primary btn-lg btn-custom">
+        <i class="fa fa-shopping-bag"></i> Go to Shop
+    </a>
+  </div>
+
+{% endblock %}
+{% block styles %}
+<style>
+    /* General button style */
+    .btn-custom {
+        font-size: 16px;
+        padding: 12px 30px;
+        border-radius: 50px; /* Rounded corners for a modern look */
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600; /* Slightly lighter weight for elegance */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for a lifted effect */
+        transition: all 0.3s ease; /* Smooth transition for hover effects */
+        letter-spacing: 0.5px; /* Add a slight spacing between letters */
+    }
+
+    /* Remove button style */
+    .btn-danger {
+        background: linear-gradient(145deg, #ff6a00, #ff3f00); /* Warm, eye-catching gradient */
+        border: 2px solid #ff3f00; 
+        color: white;
+        text-align: center;
+        padding: 12px 30px;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(145deg, #ff3f00, #ff6a00);
+        transform: translateY(-4px); /* Hover lift effect */
+        box-shadow: 0 8px 16px rgba(255, 67, 41, 0.3); /* Stronger shadow on hover */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    /* Add to Cart button style */
+    .btn-success {
+        background: linear-gradient(145deg, #6ee07d, #4caf50); /* Fresh, vibrant gradient */
+        border: 2px solid #4caf50;
+        color: white;
+        text-align: center;
+    }
+
+    .btn-success:hover {
+        background: linear-gradient(145deg, #4caf50, #6ee07d);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3); /* Subtle shadow on hover */
+        cursor: pointer;
+    }
+
+    /* Go to Shop button style */
+    .btn-primary {
+        background: linear-gradient(145deg, #007bff, #0056b3); /* Clean, cool gradient */
+        border: 2px solid #0056b3;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(145deg, #0056b3, #007bff);
+        transform: translateY(-4px); /* Hover lift effect */
+        box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3); /* Light blue shadow on hover */
+        cursor: pointer;
+    }
+
+    /* Icon spacing */
+    .btn i {
+        margin-right: 8px;
+    }
+
+    /* Optional: Add some spacing around buttons */
+    .btn-custom {
+        margin: 5px;
+    }
+</style>
+{% endblock %}

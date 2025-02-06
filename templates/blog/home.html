@@ -1,0 +1,891 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Blogs</span></p>
+                <h1 class="mb-0 bread">Blogs</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <!-- Search Bar -->
+<form method="GET" class="search-bar">
+    <div class="search-container">
+        <div class="input-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Search for blogs..." aria-label="Search for blogs">
+        </div>
+        <button class="search-button" type="submit">
+            <span>Search</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+
+<!-- Style -->
+<style>
+    /* Elegant Typography */
+    body {
+        font-family: 'Playfair Display', 'Poppins', serif;
+        color: #2c3e50;
+        background-color: #f8f9fa;
+    }
+
+    /* Hero Section Enhancement */
+    .hero-wrap {
+        position: relative;
+        height: 60vh;
+        min-height: 400px;
+        background-position: center 30%;
+        background-size: cover;
+        overflow: hidden;
+    }
+
+    .hero-wrap::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+        z-index: 1;
+    }
+
+    .hero-wrap .slider-text {
+        position: relative;
+        z-index: 2;
+        height: 60vh;
+        min-height: 400px;
+    }
+
+    .hero-wrap .breadcrumbs {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 8px 15px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 30px;
+        display: inline-block;
+    }
+
+    .hero-wrap .breadcrumbs a {
+        color: #ffffff;
+        transition: color 0.3s ease;
+    }
+
+    .hero-wrap .breadcrumbs a:hover {
+        color: #82ae46;
+        text-decoration: none;
+    }
+
+    .hero-wrap h1.bread {
+        font-size: 4rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin-top: 1rem;
+    }
+
+    /* Search Bar Enhancement */
+    .search-bar {
+        margin: -30px auto 40px;
+        max-width: 800px;
+        position: relative;
+        z-index: 3;
+        padding: 0 20px;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .input-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 5px 20px;
+        transition: all 0.4s ease;
+        border: 2px solid transparent;
+    }
+
+    .input-container:hover {
+        box-shadow: 0 15px 40px rgba(130, 174, 70, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .input-container:focus-within {
+        border-color: rgba(130, 174, 70, 0.3);
+        box-shadow: 0 15px 40px rgba(130, 174, 70, 0.2);
+    }
+
+    .search-icon {
+        font-size: 1.3rem;
+        color: #82ae46;
+        margin-right: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .input-container:focus-within .search-icon {
+        color: #6b8e23;
+        transform: scale(1.1);
+    }
+
+    .search-bar input[type="text"] {
+        border: none;
+        padding: 15px 0;
+        font-size: 1.1rem;
+        background: transparent;
+        color: #2c3e50;
+        font-family: 'Poppins', sans-serif;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-bar input[type="text"]::placeholder {
+        color: #95a5a6;
+        font-weight: 300;
+        font-style: italic;
+    }
+
+    .search-bar input[type="text"]:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .search-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 15px 30px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #ffffff;
+        background: linear-gradient(135deg, #82ae46, #6b8e23);
+        border: none;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(130, 174, 70, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .search-button:hover {
+        background: linear-gradient(135deg, #6b8e23, #82ae46);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(130, 174, 70, 0.4);
+    }
+
+    .search-button:active {
+        transform: translateY(1px);
+    }
+
+    .search-button i {
+        transition: transform 0.3s ease;
+    }
+
+    .search-button:hover i {
+        transform: translateX(4px);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .search-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-container {
+            width: 100%;
+        }
+
+        .search-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Dark Mode Support */
+    @media (prefers-color-scheme: dark) {
+        .input-container {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .search-bar input[type="text"] {
+            color: #2c3e50;
+        }
+
+        .search-bar input[type="text"]::placeholder {
+            color: #95a5a6;
+        }
+
+        .search-results {
+            background: rgba(255, 255, 255, 0.98);
+        }
+    }
+
+    /* Custom Animations */
+    @keyframes searchBarEntrance {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .search-bar {
+        animation: searchBarEntrance 0.5s ease-out forwards;
+    }
+
+    /* Card Enhancements */
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        background: rgba(255, 255, 255, 0.98);
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, rgba(130, 174, 70, 0.05), rgba(130, 174, 70, 0.1));
+        border-bottom: 1px solid rgba(130, 174, 70, 0.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Media Container Styling */
+    .media-container img, 
+    .media-container video {
+        border-radius: 12px;
+        transition: transform 0.5s ease;
+    }
+
+    .media-container:hover img,
+    .media-container:hover video {
+        transform: scale(1.03);
+    }
+
+    /* Text Content Styling */
+    .text-container {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #4a5568;
+    }
+
+    .read-more {
+        color: #82ae46;
+        font-weight: 600;
+        text-decoration: none;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .read-more::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #82ae46;
+        transition: width 0.3s ease;
+    }
+
+    .read-more:hover::after {
+        width: 100%;
+    }
+
+    /* Interaction Elements */
+    .btn-like {
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 2px solid #82ae46;
+        color: #82ae46;
+    }
+
+    .btn-like:hover {
+        background: #82ae46;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Share Dropdown Enhancement */
+    .share-dropdown .dropdown-menu {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        min-width: 200px;
+    }
+
+    .dropdown-item {
+        padding: 0.8rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background: linear-gradient(135deg, rgba(130, 174, 70, 0.1), rgba(130, 174, 70, 0.2));
+        color: #82ae46;
+        transform: translateX(5px);
+    }
+
+    .dropdown-item i {
+        width: 25px;
+        text-align: center;
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* Comments Section Enhancement */
+    .comments-section {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Author Avatar */
+    .author-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #82ae46;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* Responsive Enhancements */
+    @media (max-width: 768px) {
+        .hero-wrap {
+            height: 50vh;
+        }
+        
+        .hero-wrap h1.bread {
+            font-size: 2.5rem;
+        }
+        
+        .search-bar {
+            margin-top: -20px;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #82ae46;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #6b8e23;
+    }
+</style>
+
+<!-- Font Awesome CDN -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    {% for post in posts %}
+    <div class="card mb-4 shadow-lg rounded-4 border-0 bg-light">
+        <div class="card-header bg-transparent border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0 text-dark font-weight-bold">{{ post.title }}</h4>
+                    <small class="text-muted">{{ post.created_at|date:"F j, Y" }}</small>
+                </div>
+                <div class="author-name text-muted">
+                    <small><strong>{{ post.author.first_name }} {{ post.author.last_name }}</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body d-flex flex-wrap align-items-start">
+            {% if post.images or post.videos %}
+            <div class="media-container me-4 col-md-4 d-flex flex-column">
+                {% if post.images %}
+                <img src="{{ post.images.url }}" alt="{{ post.title }}" class="img-fluid rounded-3 mb-3 shadow-sm" style="height: 200px; width: 100%; object-fit: cover;">
+
+                {% endif %}
+                {% if post.videos %}
+                <video controls class="img-fluid mb-3 rounded-3 shadow-sm">
+                    <source src="{{ post.videos.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="text-container col-md-8">
+                <p class="text-muted">{{ post.content|truncatewords:40 }}
+                    {% if post.content|length > 150 %}
+                    <a href="#" class="text-primary read-more" data-post-id="{{ post.id }}">Read More</a>
+                    {% endif %}
+                </p>
+                <div id="content-{{ post.id }}" class="d-none">{{ post.content }}</div>
+                
+            </div>
+        </div>
+        <div class="card-footer border-0 bg-transparent">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Left: Like Button -->
+                <div class="me-3">
+                    {% if request.session.user_id %}
+                    <button class="btn btn-outline-secondary btn-sm btn-like" type="button" data-post-id="{{ post.id }}">
+                        <i class="fas fa-thumbs-up"></i>
+                    </button>
+                    <span class="like-count text-muted">{{ post.like_count }}</span>
+                    {% else %}
+                    <p class="text-muted mb-0">Please <a href="{% url 'userauths:login' %}" class="text-primary">log in</a> to like this post.</p>
+                    {% endif %}
+                </div>
+        
+                <!-- Center: Share Button -->
+                <div class="dropdown share-dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="shareDropdown{{ post.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="shareDropdown{{ post.id }}">
+                        <!-- Email Sharing -->
+                        <li>
+                            <a class="dropdown-item" href="mailto:?subject={{ post.title|urlencode }}&body={{ post.content|truncatewords:100|urlencode }}%0D%0A%0D%0ARead more at: {{ request.build_absolute_uri|urlencode }}">
+                                <i class="fas fa-envelope me-2"></i> Email
+                            </a>
+                        </li>
+                        
+                        <!-- WhatsApp Web Sharing -->
+                        <li>
+                            <a class="dropdown-item" href="https://web.whatsapp.com/send?text={{ post.title|urlencode }}%0A%0A{{ post.content|truncatewords:100|urlencode }}%0A%0ARead more at: {{ request.build_absolute_uri|urlencode }}" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               onclick="return checkWhatsAppBrowser();">
+                                <i class="fab fa-whatsapp me-2"></i> WhatsApp
+                            </a>
+                        </li>
+                        
+                        <!-- Instagram Story Sharing -->
+                        <li>
+                            <a class="dropdown-item" href="#" 
+                               onclick="shareToInstagram('{{ post.title|escapejs }}', '{{ post.featured_image.url }}', '{{ request.build_absolute_uri|escapejs }}')">
+                                <i class="fab fa-instagram me-2"></i> Instagram Story
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+        
+                <!-- Right: Comments Button -->
+                <div>
+                    {% if user_logged_in %}
+                    <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#comments{{ post.id }}" aria-expanded="false" aria-controls="comments{{ post.id }}" title="View Comments">
+                        <i class="fas fa-comments"></i>
+                    </button>
+                    {% else %}
+                    <p class="text-muted mb-0">Please <a href="{% url 'userauths:login' %}" class="text-primary">log in</a> to view or post comments.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="collapse mt-3" id="comments{{ post.id }}">         <ul class="list-unstyled">
+                    {% for comment in post.comments.all %}
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="me-3">
+                                <span class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 18px;">
+                                    {{ comment.user.first_name|slice:":1" }}{{ comment.user.last_name|slice:":1" }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>{{ comment.user.first_name }} {{ comment.user.last_name }}</strong>
+                                <small class="text-muted d-block">{{ comment.created_at }}</small>
+                                <p class="text-dark">{{ comment.comment }}</p>
+                                {% if comment.parent_comment %}
+                                <div class="ms-4">
+                                    <strong class="text-primary">Reply:</strong>
+                                    <p class="text-dark">{{ comment.parent_comment.comment }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <p class="text-muted">No comments yet.</p>
+                    {% endfor %}
+                </ul>
+
+                {% if user_logged_in %}
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                    <div class="d-flex align-items-center">
+                        <textarea name="comment" class="form-control" rows="3" placeholder="Write a comment" required></textarea>
+                        <button type="submit" class="btn btn-primary ms-3">
+                            <i class="fas fa-paper-plane"></i> Post
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    document.querySelectorAll('.read-more').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+            const postId = this.dataset.postId;  // Get the post ID
+
+            // Toggle the 'd-none' class on the post content
+            const contentDiv = document.getElementById('content-' + postId);
+            contentDiv.classList.toggle('d-none');
+
+            // Change the text of the button to 'Read Less' when the content is shown
+            if (contentDiv.classList.contains('d-none')) {
+                this.textContent = 'Read More';
+            } else {
+                this.textContent = 'Read Less';
+            }
+        });
+    });
+</script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.querySelectorAll('.btn-like').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+            const likeCountElement = this.nextElementSibling;
+
+            fetch("{% url 'blog:like_blog_post' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({ post_id: postId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.like_count !== undefined) {
+                        likeCountElement.textContent = `${data.like_count} `;
+                        this.classList.toggle('btn-primary');
+                        this.classList.toggle('btn-outline-secondary');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+
+<style>
+    .media-container {
+        max-width: 100%; /* Ensure the media fits within the allotted space */
+    }
+
+    .text-container {
+        max-width: 100%; /* Ensure the text occupies its space properly */
+    }
+
+    .image-5x4 {
+        width: 100%; /* Take up 100% of the parent width */
+        height: auto; /* Maintain the aspect ratio automatically */
+        object-fit: cover; /* Ensure image covers the area with the correct aspect ratio */
+        aspect-ratio: 5 / 4; /* Explicitly set a 5:4 aspect ratio */
+    }
+
+    .author-name {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .text-container p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .read-more {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .read-more:hover {
+        text-decoration: underline;
+    }
+
+    .btn-group .dropdown-menu {
+        min-width: 200px; /* Make sure dropdown menu has enough space */
+    }
+
+    .btn-group .dropdown-item {
+        padding: 8px 16px;
+    }
+
+    @media (max-width: 768px) {
+        .media-container {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .text-container {
+            width: 100%;
+        }
+    }
+    .media-container img,
+    .media-container video {
+        width: 200px; /* Set a fixed width */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 0.5rem; /* Optional: Add rounded corners */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+    }
+    .card-footer .btn-group {
+    margin: 0 auto;
+    display: block;
+}
+
+.card-footer .d-flex {
+    justify-content: space-between;
+}
+
+.card-footer .me-3 {
+    flex: 0 0 auto;
+}
+
+.card-footer .d-inline-block {
+    flex: 0 0 auto;
+}
+
+.card-footer .text-muted {
+    font-size: 14px;
+}
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        .media-container img,
+        .media-container video {
+            width: 150px; /* Slightly smaller for mobile devices */
+        }
+    }
+</style>
+
+<style>
+    /* Adjusting image size */
+    .media-container img,
+    .media-container video {
+        width: 200px; /* Small size */
+        height: auto;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    }
+
+    /* Hover effect to slightly enlarge the image */
+    .media-container img:hover {
+        transform: scale(1.1); /* Slightly enlarge the image */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Modal image and video styling */
+    .modal-content img,
+    .modal-content video {
+        width: 100%; /* Full width in modal */
+        height: auto;
+        border-radius: 0.5rem;
+    }
+    /* Ensure all blog images are of the same size */
+.blog-post-image {
+    width: 100%; /* Make image responsive */
+    height: 200px; /* Set a fixed height */
+    object-fit: cover; /* Ensure aspect ratio is maintained */
+}
+
+</style>
+
+<style>
+.share-dropdown .dropdown-menu {
+    min-width: 200px;
+    padding: 0.5rem 0;
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.share-dropdown .dropdown-item {
+    padding: 0.75rem 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.share-dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #82ae46;
+}
+
+.share-dropdown .dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Custom styling for different share buttons */
+.dropdown-item i.fa-whatsapp {
+    color: #25D366;
+}
+
+.dropdown-item i.fa-instagram {
+    color: #E4405F;
+}
+
+.dropdown-item i.fa-envelope {
+    color: #EA4335;
+}
+</style>
+
+<script>
+// Check if browser supports WhatsApp Web
+function checkWhatsAppBrowser() {
+    const unsupportedBrowsers = ['Safari', 'Opera Mini'];
+    const userAgent = navigator.userAgent;
+    
+    for (let browser of unsupportedBrowsers) {
+        if (userAgent.indexOf(browser) > -1) {
+            alert('Please use Google Chrome, Firefox, or Microsoft Edge to share on WhatsApp Web');
+            return false;
+        }
+    }
+    return true;
+}
+
+// Function to share to Instagram
+function shareToInstagram(title, imageUrl, postUrl) {
+    // Check if on mobile
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // For mobile devices, try to open Instagram app
+        const instagramUrl = `instagram://story-camera`;
+        window.location.href = instagramUrl;
+        
+        // Fallback to Instagram website if app doesn't open
+        setTimeout(() => {
+            window.location.href = 'https://www.instagram.com';
+        }, 2000);
+    } else {
+        // For desktop, show instructions modal
+        showInstagramShareModal(title, imageUrl, postUrl);
+    }
+}
+
+// Function to show Instagram sharing instructions
+function showInstagramShareModal(title, imageUrl, postUrl) {
+    const modalHtml = `
+        <div class="modal fade" id="instagramShareModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Share to Instagram</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>To share this post to Instagram:</p>
+                        <ol>
+                            <li>Save the post image below</li>
+                            <li>Open Instagram on your phone or desktop</li>
+                            <li>Create a new story or post</li>
+                            <li>Upload the saved image</li>
+                            <li>Add the post link to your story</li>
+                        </ol>
+                        <div class="text-center mt-3">
+                            <img src="${imageUrl}" class="img-fluid mb-3" style="max-height: 200px;">
+                            <div class="d-grid gap-2">
+                                <a href="${imageUrl}" class="btn btn-primary" download>
+                                    <i class="fas fa-download me-2"></i>Download Image
+                                </a>
+                                <button onclick="copyToClipboard('${postUrl}')" class="btn btn-outline-primary">
+                                    <i class="fas fa-link me-2"></i>Copy Post Link
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to document if it doesn't exist
+    if (!document.getElementById('instagramShareModal')) {
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('instagramShareModal'));
+    modal.show();
+}
+
+// Function to copy text to clipboard
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Link copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+    });
+}
+</script>
+

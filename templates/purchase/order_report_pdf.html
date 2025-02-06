@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Report</title>
+    <style>
+        /* Add any styling you need for the PDF format */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Order Report</h2>
+    <p>Date Range: {{ start_date }} to {{ end_date }}</p>
+
+    <h3>Order Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+                <tr>
+                    <td>{{ item.product }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>Rs. {{ item.price }}</td>
+                    <td>Rs. {{ item.get_total_price_with_discount() }}</td>  <!-- Corrected -->
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No items found in this order.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+</body>
+</html>

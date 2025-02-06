@@ -1,0 +1,531 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Form */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 15px;
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2f5131;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        border-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* H2 Styling */
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem; /* Decrease font size */
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Alert Box */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-color: #f5c2c7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Placeholder Text */
+    .form-group input::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+        }
+
+        .category-list-heading {
+            font-size: 1.3rem; /* Adjust heading for mobile */
+        }
+    }
+
+    /* Toggle Styles */
+    #cultivationMethodForm {
+        display: none; /* Initially hide the CultivationMethodForm */
+    }
+</style>
+<style>
+    /* Updated Button Styling */
+    .btnb {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: background-color 0.3s, border-color 0.3s, transform 0.3s; /* Added transform transition */
+    }
+
+    .btnb-primary {
+        background-color: #582eff; /* Change this to your desired color */
+        border-color: #007bff; /* Change this to your desired border color */
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btnb-primary:hover {
+        background-color: #4124b1; /* Change this to your desired hover color */
+        border-color: #0056b3; /* Change this to your desired hover border color */
+        box-shadow: 0 5px 15px rgba(0, 91, 186, 0.4); /* Shadow effect on hover */
+        transform: scale(1); /* Slightly scale the button on hover */
+    }
+</style>
+
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body">
+                        <h2 class="category-list-heading">Add New Category</h2>
+
+                        <form method="post" id="categoryForm">
+                            {% csrf_token %}
+                            <h3>Plant Category (Mandatory)</h3>
+                            <div class="form-group">
+        {{ form1.plant_type.label_tag }}
+        {{ form1.plant_type }}
+        <div id="plantTypeError" class="text-danger"></div>
+    </div>
+
+    <!-- Name (Start with capital and more than 2 characters) -->
+    <div class="form-group">
+        {{ form1.name.label_tag }}
+        {{ form1.name }}
+        <div id="nameError" class="text-danger"></div>
+    </div>
+
+    <!-- Description (Start with capital, end with period, and 10-500 characters) -->
+    <div class="form-group">
+        {{ form1.description.label_tag }}
+        {{ form1.description }}
+        <div id="descriptionError" class="text-danger"></div>
+    </div>
+
+    <!-- Pot Soil (Select Validation) -->
+    <div class="form-group">
+        {{ form1.pot_soil.label_tag }}
+        {{ form1.pot_soil }}
+        <div id="potSoilError" class="text-danger"></div>
+    </div>
+
+    <!-- Sunlight Requirement (Select Validation) -->
+    <div class="form-group">
+        {{ form1.sunlight_requirement.label_tag }}
+        {{ form1.sunlight_requirement }}
+        <div id="sunlightRequirementError" class="text-danger"></div>
+    </div>
+
+    <!-- Water Requirement (Select Validation) -->
+    <div class="form-group">
+        {{ form1.water_requirement.label_tag }}
+        {{ form1.water_requirement }}
+        <div id="waterRequirementError" class="text-danger"></div>
+    </div>
+
+    <!-- Soil Type (Select Validation) -->
+    <div class="form-group">
+        {{ form1.soil_type.label_tag }}
+        {{ form1.soil_type }}
+        <div id="soilTypeError" class="text-danger"></div>
+    </div>
+
+    <!-- Growth Rate (Select Validation) -->
+    <div class="form-group">
+        {{ form1.growth_rate.label_tag }}
+        {{ form1.growth_rate }}
+        <div id="growthRateError" class="text-danger"></div>
+    </div>
+
+    <!-- Climate Suitability (Select Validation) -->
+    <div class="form-group">
+        {{ form1.climate_suitability.label_tag }}
+        {{ form1.climate_suitability }}
+        <div id="climateSuitabilityError" class="text-danger"></div>
+    </div>
+
+    <!-- Best Time to Plant (Select Validation) -->
+    <div class="form-group">
+        {{ form1.best_time_to_plant.label_tag }}
+        {{ form1.best_time_to_plant }}
+        <div id="bestTimeToPlantError" class="text-danger"></div>
+    </div>
+                           <center><h3>
+                            <button type="button" class="btnb btnb-primary" id="toggleCultivationMethod" onclick="toggleCultivationMethodForm()">Toggle Cultivation Method Form (Optional)</button>
+                            </h3></center> 
+
+                            <div id="cultivationMethodForm">
+                                <h2 class="category-list-heading">Add Cultivation Method</h2>
+                                <div class="form-group">
+                                    {{ form2.title.label_tag }}
+                                    {{ form2.title }}
+                                    <div id="titleError" class="text-danger"></div> <!-- Error message for title -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.desc.label_tag }}
+                                    {{ form2.desc }}
+                                    <div id="descError" class="text-danger"></div> <!-- Error message for description -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.steps.label_tag }}
+                                    {{ form2.steps }}
+                                    <div id="stepsError" class="text-danger"></div> <!-- Error message for steps -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.recommended_tools.label_tag }}
+                                    {{ form2.recommended_tools }}
+                                    <div id="recommendedToolsError" class="text-danger"></div> <!-- Error message for recommended tools -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.pit_size_height.label_tag }}
+                                    {{ form2.pit_size_height }}
+                                    <div id="pit_size_heightError" class="text-danger"></div> <!-- Error message for pit size height -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.pit_size_width.label_tag }}
+                                    {{ form2.pit_size_width }}
+                                    <div id="pit_size_widthError" class="text-danger"></div> <!-- Error message for pit size width -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.distance_between_plants.label_tag }}
+                                    {{ form2.distance_between_plants }}
+                                    <div id="distanceBetweenPlantsError" class="text-danger"></div> <!-- Error message for distance between plants -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.watering_frequency.label_tag }}
+                                    {{ form2.watering_frequency }}
+                                    <div id="wateringFrequencyError" class="text-danger"></div> <!-- Error message for watering frequency -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.fertilization_guidelines.label_tag }}
+                                    {{ form2.fertilization_guidelines }}
+                                    <div id="fertilizationGuidelinesError" class="text-danger"></div> <!-- Error message for fertilization guidelines -->
+                                </div>
+                                <div class="form-group">
+                                    {{ form2.common_issues.label_tag }}
+                                    {{ form2.common_issues }}
+                                    <div id="commonIssuesError" class="text-danger"></div> <!-- Error message for common issues -->
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bootstrap Modal for Messages -->
+<!-- <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if status == 'success' %}
+                    <p>Category added successfully!</p>
+                {% elif status == 'error' %}
+                    <p>A category with the name '{{ form.name.value }}' already exists.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<script>
+    // Toggle the visibility of the Cultivation Method form
+    function toggleCultivationMethodForm() {
+        const form = document.getElementById('cultivationMethodForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block'; // Show form
+        } else {
+            form.style.display = 'none'; // Hide form
+        }
+    }
+
+    // Show modal on submit (optional, add your own logic here)
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        // Add your validation logic here if needed
+        $('#messageModal').modal('show'); // Show modal
+        document.getElementById('categoryForm').submit(); // Submit form
+    });
+</script>
+<script>
+    // Validate Plant Type (Select Option Required)
+    const plantTypeField = document.querySelector('select[name="plant_type"]');
+    plantTypeField.addEventListener('change', function () {
+        if (!plantTypeField.value) {
+            document.getElementById('plantTypeError').textContent = "Please select a plant type.";
+        } else {
+            document.getElementById('plantTypeError').textContent = "";
+        }
+    });
+
+    // Validate Name (Starts with capital, more than 2 characters)
+    const nameField = document.querySelector('input[name="name"]');
+    const namePattern = /^[A-Z][a-zA-Z\s]{2,}$/;
+    nameField.addEventListener('input', function () {
+        if (!namePattern.test(nameField.value)) {
+            document.getElementById('nameError').textContent = "Name should start with a capital letter and be more than 2 characters.";
+        } else {
+            document.getElementById('nameError').textContent = "";
+        }
+    });
+
+    // Validate Description (Capital letters at start of sentence, ends with period, 10-500 characters)
+    const descriptionField = document.querySelector('textarea[name="description"]');
+    const descriptionPattern = /^[A-Z][^.?!]*(?:[.!?][\s]*[A-Z][^.?!]*)*[.!?]$/;
+    descriptionField.addEventListener('input', function () {
+        if (descriptionField.value.length < 10 || descriptionField.value.length > 500 || !descriptionPattern.test(descriptionField.value)) {
+            document.getElementById('descriptionError').textContent = "Description must start with a capital letter, end with a period, and be between 10-500 characters.";
+        } else {
+            document.getElementById('descriptionError').textContent = "";
+        }
+    });
+
+    // Validate Pot Soil (Select Option Required)
+    const potSoilField = document.querySelector('select[name="pot_soil"]');
+    potSoilField.addEventListener('change', function () {
+        if (!potSoilField.value) {
+            document.getElementById('potSoilError').textContent = "Please select a pot soil option.";
+        } else {
+            document.getElementById('potSoilError').textContent = "";
+        }
+    });
+
+    // Validate Sunlight Requirement (Select Option Required)
+    const sunlightRequirementField = document.querySelector('select[name="sunlight_requirement"]');
+    sunlightRequirementField.addEventListener('change', function () {
+        if (!sunlightRequirementField.value) {
+            document.getElementById('sunlightRequirementError').textContent = "Please select a sunlight requirement option.";
+        } else {
+            document.getElementById('sunlightRequirementError').textContent = "";
+        }
+    });
+
+    // Validate Water Requirement (Select Option Required)
+    const waterRequirementField = document.querySelector('select[name="water_requirement"]');
+    waterRequirementField.addEventListener('change', function () {
+        if (!waterRequirementField.value) {
+            document.getElementById('waterRequirementError').textContent = "Please select a water requirement option.";
+        } else {
+            document.getElementById('waterRequirementError').textContent = "";
+        }
+    });
+
+    // Validate Soil Type (Select Option Required)
+    const soilTypeField = document.querySelector('select[name="soil_type"]');
+    soilTypeField.addEventListener('change', function () {
+        if (!soilTypeField.value) {
+            document.getElementById('soilTypeError').textContent = "Please select a soil type option.";
+        } else {
+            document.getElementById('soilTypeError').textContent = "";
+        }
+    });
+
+    // Validate Growth Rate (Select Option Required)
+    const growthRateField = document.querySelector('select[name="growth_rate"]');
+    growthRateField.addEventListener('change', function () {
+        if (!growthRateField.value) {
+            document.getElementById('growthRateError').textContent = "Please select a growth rate option.";
+        } else {
+            document.getElementById('growthRateError').textContent = "";
+        }
+    });
+
+    // Validate Climate Suitability (Select Option Required)
+    const climateSuitabilityField = document.querySelector('select[name="climate_suitability"]');
+    climateSuitabilityField.addEventListener('change', function () {
+        if (!climateSuitabilityField.value) {
+            document.getElementById('climateSuitabilityError').textContent = "Please select a climate suitability option.";
+        } else {
+            document.getElementById('climateSuitabilityError').textContent = "";
+        }
+    });
+
+    // Validate Best Time to Plant (Select Option Required)
+    const bestTimeToPlantField = document.querySelector('select[name="best_time_to_plant"]');
+    bestTimeToPlantField.addEventListener('change', function () {
+        if (!bestTimeToPlantField.value) {
+            document.getElementById('bestTimeToPlantError').textContent = "Please select the best time to plant option.";
+        } else {
+            document.getElementById('bestTimeToPlantError').textContent = "";
+        }
+    });
+</script>
+
+<script>
+    document.getElementById('cultivationMethodForm').addEventListener('input', function (event) {
+        const target = event.target;
+
+        // Validate Title (Start with capital letter, more than 2 characters)
+        if (target.name === 'title') {
+            const titlePattern = /^[A-Z][a-zA-Z\s]{2,}$/;
+            if (!titlePattern.test(target.value)) {
+                document.getElementById('titleError').textContent = "Title should start with a capital letter and be more than 2 characters.";
+            } else {
+                document.getElementById('titleError').textContent = "";
+            }
+        }
+
+        // Validate Description, Steps, Recommended Tools, Common Issues, Fertilization Guidelines
+        // Starts with capital letter, ends with a full stop, each sentence starts with a capital letter
+        const capitalSentencePattern = /^[A-Z][^.?!]*(?:[.!?][\s]*[A-Z][^.?!]*)*[.!?]$/;
+        const fieldsToValidate = [
+            { field: 'desc', errorId: 'descError', errorMessage: 'Description must start with a capital letter, end with a period, and each sentence must start with a capital letter.' },
+            { field: 'common_issues', errorId: 'commonIssuesError', errorMessage: 'Common issues must start with a capital letter, end with a period, and each sentence must start with a capital letter.' },
+            { field: 'fertilization_guidelines', errorId: 'fertilizationGuidelinesError', errorMessage: 'Fertilization guidelines must start with a capital letter, end with a period, and each sentence must start with a capital letter.' },
+            { field: 'steps', errorId: 'stepsError', errorMessage: 'Steps must start with a capital letter, end with a period, and each sentence must start with a capital letter.' },
+            { field: 'recommended_tools', errorId: 'recommendedToolsError', errorMessage: 'Recommended tools must start with a capital letter, end with a period, and each sentence must start with a capital letter.' }
+        ];
+
+        fieldsToValidate.forEach(function (validation) {
+            if (target.name === validation.field) {
+                if (!capitalSentencePattern.test(target.value)) {
+                    document.getElementById(validation.errorId).textContent = validation.errorMessage;
+                } else {
+                    document.getElementById(validation.errorId).textContent = "";
+                }
+            }
+        });
+
+        // Validate Pit Size Height and Width (Between 5 and 50 inches)
+        if (target.name === 'pit_size_height' || target.name === 'pit_size_width') {
+            const pitSizeValue = parseFloat(target.value);
+            if (isNaN(pitSizeValue) || pitSizeValue < 5 || pitSizeValue > 100) {
+                document.getElementById(`${target.name}Error`).textContent = "Pit size must be between 5 and 100 inches.";
+            } else {
+                document.getElementById(`${target.name}Error`).textContent = "";
+            }
+        }
+
+        // Validate Distance Between Plants (Between 3 and 30 inches)
+        if (target.name === 'distance_between_plants') {
+            const distanceValue = parseFloat(target.value);
+            if (isNaN(distanceValue) || distanceValue < 3 || distanceValue > 1000) {
+                document.getElementById('distanceBetweenPlantsError').textContent = "Distance between plants must be between 3 and 1000 inches.";
+            } else {
+                document.getElementById('distanceBetweenPlantsError').textContent = "";
+            }
+        }
+
+        // Validate Watering Frequency (Between 5 and 250 characters)
+        if (target.name === 'watering_frequency') {
+            if (target.value.length < 5 || target.value.length > 250) {
+                document.getElementById('wateringFrequencyError').textContent = "Watering frequency must be between 5 and 250 characters.";
+            } else {
+                document.getElementById('wateringFrequencyError').textContent = "";
+            }
+        }
+    });
+</script>
+
+{% endblock %}

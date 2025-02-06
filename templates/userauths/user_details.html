@@ -1,0 +1,82 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Style for the overall heading */
+    h2 {
+        text-align: center;
+        color: #82ae46;
+    }
+
+    /* Table styling */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px auto;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Table header styling */
+    thead {
+        background-color: #82ae46;
+        color: white;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center; /* Center-aligning text for th and td */
+    }
+
+    /* Row styling */
+    tbody tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Alternate row color */
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light gray for alternate rows */
+    }
+
+    /* Message styling */
+    p.no-users {
+        text-align: center;
+        color: #555;
+        font-size: 16px;
+    }
+</style>
+
+<br>
+
+<h2>Active Registered Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Registration Date</th>
+                <th>Last Login</th>
+                <th>Login Count</th>
+                <th>User Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.phoneno }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.registration_date }}</td>
+                <td>{{ user.last_login }}</td>
+                <td>{{ user.login_count }}</td>
+                <td>{{ user.user_type }}</td>
+                <td>{{ user.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

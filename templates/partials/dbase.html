@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Delivery Dashboard - Enchanted Eden</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1976D2;    /* Blue shade for delivery theme */
+            --secondary-color: #2196F3;
+            --accent-color: #64B5F6;
+            --dark-color: #0D47A1;
+            --light-color: #E3F2FD;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-light) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            background: linear-gradient(160deg, var(--dark-color), var(--primary-color));
+            width: 280px;
+            height: calc(100vh - 72px);
+            position: fixed;
+            top: 72px;
+            left: 0;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+        }
+
+        .left-panel a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .left-panel a i {
+            width: 24px;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .left-panel a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(8px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: calc(100vh - 72px);
+            margin-top: 72px;
+            background: transparent;
+        }
+
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            min-height: calc(100vh - 180px);
+        }
+
+        /* Profile Section */
+        .profile-dropdown {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-dropdown-menu {
+            margin-top: 0.5rem !important;
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            padding: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            transition: var(--transition);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-color);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: #eee;
+        }
+
+        .text-danger i {
+            color: #dc3545;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: var(--text-light);
+            padding: 1.5rem;
+            text-align: center;
+            margin-left: 280px;
+            position: relative;
+            bottom: 0;
+            width: calc(100% - 280px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .left-panel {
+                width: 240px;
+            }
+            .main-content, footer {
+                margin-left: 240px;
+                width: calc(100% - 240px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .left-panel {
+                transform: translateX(-100%);
+                transition: var(--transition);
+            }
+            .left-panel.show {
+                transform: translateX(0);
+            }
+            .main-content, footer {
+                margin-left: 0;
+                width: 100%;
+            }
+            .profile-dropdown-menu {
+                position: fixed !important;
+                top: 70px !important;
+                right: 1rem !important;
+                left: auto !important;
+                transform: none !important;
+            }
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+        .status-available {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-busy {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-truck-fast"></i>
+            Delivery Dashboard
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars text-light"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <div class="profile-dropdown" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle text-light" style="font-size: 2rem;"></i>
+                        <span class="text-light">{{ request.session.user_first_name }}</span>
+                        <i class="fas fa-chevron-down text-light ms-2"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end profile-dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'userauths:update_delivery_profile' %}">
+                                <i class="fas fa-user-edit me-2"></i>Update Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'userauths:change_delivery_password' %}">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'userauths:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Left Panel -->
+<div class="left-panel">
+    <a href="{% url 'userauths:delivery_dashboard' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="{% url 'userauths:update_delivery_profile' %}"><i class="fas fa-user-edit"></i>Update Profile</a>
+    <a href="{% url 'userauths:change_delivery_password' %}"><i class="fas fa-key"></i>Change Password</a>
+    <a href="{% url 'delivery:view_assigned_orders' %}">
+        <i class="fas fa-truck"></i>Assigned Orders
+    </a>
+    <a href="{%url 'delivery:ddelivery_history' %}"><i class="fas fa-history"></i>Delivery History</a>
+    <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+</div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p>&copy; 2025 Enchanted Eden Delivery | Making deliveries with care</p>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Toggle mobile menu
+    document.querySelector('.navbar-toggler').addEventListener('click', function() {
+        document.querySelector('.left-panel').classList.toggle('show');
+    });
+
+    // Hide mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.left-panel') && !event.target.closest('.navbar-toggler')) {
+            document.querySelector('.left-panel').classList.remove('show');
+        }
+    });
+
+    // Initialize Bootstrap dropdowns
+    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl)
+    });
+
+    // Optional: Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.profile-dropdown') && !event.target.closest('.dropdown-menu')) {
+            dropdownList.forEach(function(dropdown) {
+                dropdown.hide();
+            });
+        }
+    });
+</script>
+
+</body>
+
+</html>

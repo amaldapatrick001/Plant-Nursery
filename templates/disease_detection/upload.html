@@ -1,0 +1,114 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0 text-center">Plant Disease Detection System</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="upload-form">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="image-upload" class="form-label">Upload Plant Image</label>
+                            <div class="custom-file-upload">
+                                {{ form.image }}
+                                <div id="image-preview" class="mt-3 text-center d-none">
+                                    <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 300px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fas fa-microscope me-2"></i>Analyze Plant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Supported Plants Section -->
+            <div class="card mt-4 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Supported Plants & Diseases</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plant-category mb-4">
+                                <h5 class="text-success"><i class="fas fa-seedling me-2"></i>Paddy (Rice)</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">Bacterial Leaf Blight</li>
+                                    <li class="list-group-item">Brown Spot</li>
+                                    <li class="list-group-item">Leaf Blast</li>
+                                    <li class="list-group-item">Neck Blast</li>
+                                    <li class="list-group-item">Sheath Blight</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plant-category">
+                                <h5 class="text-success"><i class="fas fa-leaf me-2"></i>Other Plants</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">Tomato</li>
+                                    <li class="list-group-item">Potato</li>
+                                    <li class="list-group-item">Pepper</li>
+                                    <li class="list-group-item">Rose</li>
+                                    <li class="list-group-item">Apple</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .custom-file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background: #f8f9fa;
+    }
+    
+    .list-group-item {
+        border-left: 4px solid #28a745;
+    }
+    
+    .plant-category {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    const img = preview.querySelector('img');
+    const file = e.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            preview.classList.remove('d-none');
+        }
+        reader.readAsDataURL(file);
+    } else {
+        preview.classList.add('d-none');
+    }
+});
+</script>
+{% endblock %}

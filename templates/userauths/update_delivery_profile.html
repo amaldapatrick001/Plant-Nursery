@@ -1,0 +1,395 @@
+{% extends 'partials/dbase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-update-container">
+    <div class="section-header mb-4">
+        <h2><i class="fas fa-user-edit me-2"></i>Update Profile</h2>
+        <p class="text-muted">Manage your delivery personnel information</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="updateProfileForm" class="profile-form" novalidate>
+        {% csrf_token %}
+        
+        <!-- Profile Picture Section -->
+        <div class="profile-picture-section text-center mb-4">
+            {% if delivery_profile.profile_picture %}
+                <img src="{{ delivery_profile.profile_picture.url }}" 
+                     alt="Profile Picture" 
+                     class="current-profile-pic mb-3">
+            {% else %}
+                <div class="default-profile-pic mb-3">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+            <div class="profile-picture-upload">
+                <label for="profile_picture" class="btn btn-outline-primary">
+                    <i class="fas fa-camera me-2"></i>Change Profile Picture
+                </label>
+                <input type="file" 
+                       id="profile_picture" 
+                       name="profile_picture" 
+                       accept="image/*" 
+                       class="d-none">
+                <div class="form-text">Supported formats: JPG, JPEG, PNG, WEBP (Max: 5MB)</div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="form-section">
+            <h4 class="section-title"><i class="fas fa-user me-2"></i>Personal Information</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="first_name">First Name*</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="first_name" 
+                               name="first_name" 
+                               value="{{ user_reg.first_name }}" 
+                               required>
+                        <div class="invalid-feedback" id="firstNameError"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="last_name">Last Name*</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="last_name" 
+                               name="last_name" 
+                               value="{{ user_reg.last_name }}" 
+                               required>
+                        <div class="invalid-feedback" id="lastNameError"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" 
+                               class="form-control" 
+                               value="{{ login.email }}" 
+                               disabled>
+                        <div class="form-text">Email cannot be changed</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number*</label>
+                        <input type="tel" 
+                               class="form-control" 
+                               id="phone_number" 
+                               name="phone_number" 
+                               value="{{ user_reg.phoneno }}" 
+                               required>
+                        <div class="invalid-feedback" id="phoneError"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Information -->
+        <div class="form-section mt-4">
+            <h4 class="section-title"><i class="fas fa-truck me-2"></i>Delivery Information</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="vehicle_number">Vehicle Number*</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="vehicle_number" 
+                               name="vehicle_number" 
+                               value="{{ delivery_profile.vehicle_number }}" 
+                               required>
+                        <div class="form-text">Format: KL01B1234</div>
+                        <div class="invalid-feedback" id="vehicleError"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="status">Availability Status*</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="available" {% if delivery_profile.status == 'available' %}selected{% endif %}>Available</option>
+                            <option value="busy" {% if delivery_profile.status == 'busy' %}selected{% endif %}>Busy</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions mt-4 text-center">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save me-2"></i>Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .profile-update-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-header {
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 1rem;
+    }
+
+    .form-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .current-profile-pic {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary-color);
+    }
+
+    .default-profile-pic {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: var(--light-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .default-profile-pic i {
+        font-size: 4rem;
+        color: var(--primary-color);
+    }
+
+    .map-container {
+        height: 400px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        transition: var(--transition);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+        background: var(--dark-color);
+        transform: translateY(-2px);
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 1.5rem;
+        }
+        
+        .row {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+        
+        [class*="col-"] {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+        display: none;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+        padding-right: calc(1.5em + 0.75rem) !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right calc(0.375em + 0.1875rem) center !important;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+    }
+
+    .is-valid {
+        border-color: #198754 !important;
+        padding-right: calc(1.5em + 0.75rem) !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right calc(0.375em + 0.1875rem) center !important;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('updateProfileForm');
+        
+        // Validation functions
+        function validateName(input, fieldName) {
+            const value = input.value.trim();
+            const nameRegex = /^[A-Z][a-zA-Z]+$/;
+            const errorDiv = input.nextElementSibling;
+            
+            if (!value) {
+                setInvalid(input, `${fieldName} is required`);
+                return false;
+            }
+            if (!nameRegex.test(value)) {
+                setInvalid(input, `${fieldName} must start with a capital letter and contain only letters`);
+                return false;
+            }
+            setValid(input);
+            return true;
+        }
+
+        function validatePhone() {
+            const phone = document.getElementById('phone_number');
+            const value = phone.value.trim();
+            const phoneRegex = /^[5-9]\d{9}$/;
+            
+            if (!value) {
+                setInvalid(phone, 'Phone number is required');
+                return false;
+            }
+            if (!phoneRegex.test(value)) {
+                setInvalid(phone, 'Phone number must be 10 digits and start with 5-9');
+                return false;
+            }
+            setValid(phone);
+            return true;
+        }
+
+        function validateVehicle() {
+            const vehicle = document.getElementById('vehicle_number');
+            const value = vehicle.value.trim();
+            const vehicleRegex = /^KL[0-9]{2}[A-Z]{1}[0-9]{4}$/;
+            
+            if (!value) {
+                setInvalid(vehicle, 'Vehicle number is required');
+                return false;
+            }
+            if (!vehicleRegex.test(value)) {
+                setInvalid(vehicle, 'Invalid format. Must be like KL01AB1234');
+                return false;
+            }
+            setValid(vehicle);
+            return true;
+        }
+
+        function validateProfilePicture() {
+            const input = document.getElementById('profile_picture');
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                
+                if (!validTypes.includes(file.type)) {
+                    setInvalid(input, 'Invalid file type. Please use JPG, JPEG, PNG or WEBP');
+                    return false;
+                }
+                if (file.size > maxSize) {
+                    setInvalid(input, 'File size too large (max 5MB)');
+                    return false;
+                }
+                setValid(input);
+            }
+            return true;
+        }
+
+        // Helper functions
+        function setInvalid(input, message) {
+            input.classList.add('is-invalid');
+            input.classList.remove('is-valid');
+            const feedback = input.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.textContent = message;
+                feedback.style.display = 'block';
+            }
+        }
+
+        function setValid(input) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+            const feedback = input.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.style.display = 'none';
+            }
+        }
+
+        // Real-time validation
+        document.getElementById('first_name').addEventListener('input', function() {
+            validateName(this, 'First name');
+        });
+
+        document.getElementById('last_name').addEventListener('input', function() {
+            validateName(this, 'Last name');
+        });
+
+        document.getElementById('phone_number').addEventListener('input', validatePhone);
+        
+        document.getElementById('vehicle_number').addEventListener('input', validateVehicle);
+        
+        document.getElementById('profile_picture').addEventListener('change', validateProfilePicture);
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            isValid = validateName(document.getElementById('first_name'), 'First name') && isValid;
+            isValid = validateName(document.getElementById('last_name'), 'Last name') && isValid;
+            isValid = validatePhone() && isValid;
+            isValid = validateVehicle() && isValid;
+            isValid = validateProfilePicture() && isValid;
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %} 

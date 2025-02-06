@@ -1,0 +1,157 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles for the Forms */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .form-group input {
+        border-radius: 5px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+    .text-danger {
+        font-size: 0.875rem;
+    }
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <h3>Update Profile</h3>
+        <!-- Update Profile Form -->
+<form id="updateProfileForm" method="POST" action="{% url 'userauths:update_profile' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="update_profile"> <!-- Hidden input -->
+    <div class="form-group">
+        {{ profile_form.first_name.label_tag }} {{ profile_form.first_name }}
+        <div id="firstNameError" class="text-danger"></div>
+    </div>
+    <div class="form-group">
+        {{ profile_form.last_name.label_tag }} {{ profile_form.last_name }}
+        <div id="lastNameError" class="text-danger"></div>
+    </div>
+    <div class="form-group">
+        {{ profile_form.phoneno.label_tag }} {{ profile_form.phoneno }}
+        <div id="phonenoError" class="text-danger"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+</form>
+
+<!-- Change Password Form -->
+<h3>Change Password</h3>
+<form id="updatePasswordForm" method="POST" action="{% url 'userauths:update_profile' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="update_password"> <!-- Hidden input -->
+    <div class="form-group">
+        {{ password_form.new_password.label_tag }} {{ password_form.new_password }}
+        <div id="newPasswordError" class="text-danger"></div>
+    </div>
+    <div class="form-group">
+        {{ password_form.confirm_password.label_tag }} {{ password_form.confirm_password }}
+        <div id="confirmPasswordError" class="text-danger"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Password</button>
+</form>
+
+        
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Elements for profile form fields
+    const firstName = document.getElementById('id_first_name');
+    const lastName = document.getElementById('id_last_name');
+    const phoneno = document.getElementById('id_phoneno');
+    
+    // Elements for password form fields
+    const newPassword = document.getElementById('id_new_password');
+    const confirmPassword = document.getElementById('id_confirm_password');
+    
+    // Validation functions
+    function validateFirstName() {
+        if (!/^[a-zA-Z]{2,50}$/.test(firstName.value)) {
+            document.getElementById('firstNameError').textContent = 'First name must contain only letters and be between 2 to 50 characters.';
+            return false;
+        } else {
+            document.getElementById('firstNameError').textContent = '';
+            return true;
+        }
+    }
+    
+    function validateLastName() {
+        if (!/^[a-zA-Z]{2,50}$/.test(lastName.value)) {
+            document.getElementById('lastNameError').textContent = 'Last name must contain only letters and be between 2 to 50 characters.';
+            return false;
+        } else {
+            document.getElementById('lastNameError').textContent = '';
+            return true;
+        }
+    }
+    
+    function validatePhoneNumber() {
+        if (!/^\d{10,15}$/.test(phoneno.value)) {
+            document.getElementById('phonenoError').textContent = 'Enter a valid phone number with 10 to 15 digits.';
+            return false;
+        } else {
+            document.getElementById('phonenoError').textContent = '';
+            return true;
+        }
+    }
+    
+    function validateNewPassword() {
+        if (newPassword.value.length < 8 || !/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])/.test(newPassword.value)) {
+            document.getElementById('newPasswordError').textContent = 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.';
+            return false;
+        } else {
+            document.getElementById('newPasswordError').textContent = '';
+            return true;
+        }
+    }
+    
+    function validateConfirmPassword() {
+        if (confirmPassword.value !== newPassword.value) {
+            document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+            return false;
+        } else {
+            document.getElementById('confirmPasswordError').textContent = '';
+            return true;
+        }
+    }
+    
+    // Add 'input' event listeners for real-time validation
+    firstName.addEventListener('input', validateFirstName);
+    lastName.addEventListener('input', validateLastName);
+    phoneno.addEventListener('input', validatePhoneNumber);
+    newPassword.addEventListener('input', validateNewPassword);
+    confirmPassword.addEventListener('input', validateConfirmPassword);
+    
+    // Profile Update Form Submission Validation
+    document.getElementById('updateProfileForm').addEventListener('submit', (event) => {
+        if (!validateFirstName() || !validateLastName() || !validatePhoneNumber()) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+
+    // Password Update Form Submission Validation
+    document.getElementById('updatePasswordForm').addEventListener('submit', (event) => {
+        if (!validateNewPassword() || !validateConfirmPassword()) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+});
+</script>
+
+{% endblock %}

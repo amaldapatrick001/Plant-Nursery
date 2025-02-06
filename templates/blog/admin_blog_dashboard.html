@@ -1,0 +1,597 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Statistics Cards -->
+    <!-- <div class="row mb-4 g-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-card-inner">
+                    <div class="stat-icon-wrapper bg-gradient-primary">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Posts</p>
+                        <h2 class="stat-value">{{ stats.total_posts }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-card-inner">
+                    <div class="stat-icon-wrapper bg-gradient-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Published</p>
+                        <h2 class="stat-value">{{ stats.published_posts }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-card-inner">
+                    <div class="stat-icon-wrapper bg-gradient-info">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Comments</p>
+                        <h2 class="stat-value">{{ stats.total_comments }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-card-inner">
+                    <div class="stat-icon-wrapper bg-gradient-danger">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Likes</p>
+                        <h2 class="stat-value">{{ stats.total_likes }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Blog Management Section -->
+    <div class="content-card">
+        <div class="content-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-blog text-success mr-2"></i>
+                    Blog Posts Management
+                </h4>
+                <div class="header-actions">
+                    <button class="btn btn-outline-light custom-btn mr-2" id="toggleFilters">
+                        <i class="fas fa-filter"></i> Filters
+                    </button>
+                    <a href="{% url 'blog:eadd_blog' %}" class="btn btn-light custom-btn">
+                        <i class="fas fa-plus"></i> New Post
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="filters-panel" id="filtersPanel" style="display: none;">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control custom-input" id="searchPosts" placeholder="Search posts...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control custom-select" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control custom-select" id="deleteFilter">
+                        <option value="active">Active Posts</option>
+                        <option value="deleted">Deleted Posts</option>
+                        <option value="all">All Posts</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success custom-btn w-100" id="applyFilters">Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Section -->
+        <div class="tables-wrapper">
+            <!-- Active Posts Table -->
+            <div class="table-section">
+                <div class="section-header">
+                    <i class="fas fa-list text-success"></i>
+                    <span>Active Posts</span>
+                </div>
+                <div class="table-responsive custom-table-wrapper">
+                    <table class="table custom-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Likes</th>
+                                <th>Comments</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            {% if not post.is_deleted %}
+                            <tr>
+                                <td>
+                                    <div class="font-weight-bold text-success">{{ post.title }}</div>
+                                    <small class="text-muted">{{ post.content|truncatechars:50 }}</small>
+                                </td>
+                                <td>{{ post.author.username }}</td>
+                                <td>
+                                    <span class="badge {% if post.status == 'published' %}badge-success{% else %}badge-warning{% endif %}">
+                                        {{ post.status|title }}
+                                    </span>
+                                </td>
+                                <td>{{ post.created_at|date:"M d, Y" }}</td>
+                                <td>{{ post.like_count }}</td>
+                                <td>{{ post.comments.count }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'blog:edit_blog_post' post.id %}" 
+                                           class="action-btn edit-btn" 
+                                           title="Edit Post">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'blog:delete_blog_post' post.id %}" 
+                                           class="action-btn delete-btn"
+                                           onclick="return confirm('Are you sure you want to move this post to trash?')"
+                                           title="Move to Trash">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Deleted Posts Table -->
+            <div class="table-section mt-4">
+                <div class="section-header text-danger">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Trash</span>
+                </div>
+                <div class="table-responsive custom-table-wrapper">
+                    <table class="table custom-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Deleted Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            {% if post.is_deleted %}
+                            <tr>
+                                <td>
+                                    <div class="font-weight-bold text-danger">{{ post.title }}</div>
+                                    <small class="text-muted">{{ post.content|truncatechars:50 }}</small>
+                                </td>
+                                <td>{{ post.author.username }}</td>
+                                <td>{{ post.updated_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'blog:restore_blog_post' post.id %}" 
+                                           class="action-btn restore-btn"
+                                           onclick="return confirm('Are you sure you want to restore this post?')"
+                                           title="Restore Post">
+                                            <i class="fas fa-trash-restore-alt"></i>
+                                        </a>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modern Statistics Cards */
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card-inner {
+        display: flex;
+        padding: 1.5rem;
+        align-items: center;
+    }
+
+    .stat-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .stat-icon-wrapper i {
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .stat-content {
+        flex-grow: 1;
+    }
+
+    .stat-label {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    /* Content Card Styles */
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .content-header {
+        background: linear-gradient(135deg, #6b8e23, #82ae46);
+        color: white;
+        padding: 1.5rem;
+    }
+
+    /* Custom Button Styles */
+    .custom-btn {
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .custom-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Search Input Styling */
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+
+    .custom-input {
+        padding-left: 2.5rem;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+
+    /* Custom Select Styling */
+    .custom-select {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Table Styling */
+    .table-section {
+        margin-top: 1.5rem;
+    }
+
+    .section-header {
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+    }
+
+    .custom-table-wrapper {
+        padding: 1rem;
+    }
+
+    .custom-table {
+        margin: 0;
+    }
+
+    .custom-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        border: none;
+    }
+
+    .custom-table td {
+        vertical-align: middle;
+        border: none;
+        padding: 1rem;
+    }
+
+    /* Gradient Backgrounds */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e73df, #224abe);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #6b8e23, #82ae46);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #36b9cc, #258391);
+    }
+
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #e74a3b, #be2617);
+    }
+
+    /* Filters Panel */
+    .filters-panel {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .action-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, #28a745, #1e7e34);
+    }
+
+    .edit-btn:hover {
+        background: linear-gradient(135deg, #1e7e34, #145523);
+        color: white;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #e74a3b, #be2617);
+    }
+
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #be2617, #962012);
+        color: white;
+    }
+
+    .restore-btn {
+        background: linear-gradient(135deg, #28a745, #1e7e34);
+    }
+
+    .restore-btn:hover {
+        background: linear-gradient(135deg, #1e7e34, #145523);
+        color: white;
+    }
+
+    .permanent-delete-btn {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+    }
+
+    .permanent-delete-btn:hover {
+        background: linear-gradient(135deg, #c82333, #bd2130);
+        color: white;
+    }
+
+    /* Icon size and styling */
+    .action-btn i {
+        font-size: 1.1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .action-btn:hover i {
+        transform: scale(1.1);
+    }
+
+    /* Tooltip styling */
+    .action-btn::after {
+        content: attr(title);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) scale(0.8);
+        padding: 6px 12px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .action-btn:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) scale(1);
+        bottom: calc(100% + 10px);
+    }
+
+    /* Animation for buttons */
+    @keyframes buttonPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .action-btn:active {
+        animation: buttonPop 0.3s ease;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle Filters Panel
+    const toggleFilters = document.getElementById('toggleFilters');
+    const filtersPanel = document.getElementById('filtersPanel');
+    
+    toggleFilters.addEventListener('click', () => {
+        filtersPanel.style.display = filtersPanel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Search and Filter Functionality
+    const searchInput = document.getElementById('searchPosts');
+    const statusFilter = document.getElementById('statusFilter');
+    const deleteFilter = document.getElementById('deleteFilter');
+    const applyFilters = document.getElementById('applyFilters');
+
+    function filterPosts() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+        const deleteType = deleteFilter.value;
+        
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const title = row.querySelector('.font-weight-bold').textContent.toLowerCase();
+            const content = row.querySelector('small').textContent.toLowerCase();
+            const postStatus = row.querySelector('.badge').textContent.toLowerCase();
+            
+            const matchesSearch = title.includes(searchTerm) || content.includes(searchTerm);
+            const matchesStatus = status === 'all' || postStatus === status.toLowerCase();
+            const matchesDelete = deleteType === 'all' || (deleteType === 'active' && !row.classList.contains('table-danger')) || (deleteType === 'deleted' && row.classList.contains('table-danger'));
+            
+            row.style.display = matchesSearch && matchesStatus && matchesDelete ? '' : 'none';
+        });
+    }
+
+    applyFilters.addEventListener('click', filterPosts);
+
+    // Toggle Post Status
+    document.querySelectorAll('.toggle-status').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const postId = e.target.closest('button').dataset.postId;
+            try {
+                const response = await fetch(`/blog/toggle-status/${postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Delete Post
+    document.querySelectorAll('.delete-post').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            if (confirm('Are you sure you want to delete this post?')) {
+                const postId = e.target.closest('button').dataset.postId;
+                try {
+                    const response = await fetch(`/blog/delete/${postId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    });
+                    if (response.ok) {
+                        e.target.closest('tr').remove();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+    });
+
+    // Add handling for permanent delete if needed
+    document.querySelectorAll('.permanent-delete').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const postId = e.target.dataset.postId;
+            if(confirm('This action cannot be undone. Are you sure?')) {
+                // Add your permanent delete logic here
+            }
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,246 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Custom Styles for the Registration Form */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group input {
+        border-radius: 5px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+    .card {
+        border: 1px solid #e0e0e0;
+    }
+
+    .card-body {
+        border-radius: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .col-md-6 {
+        padding-right: 1px;
+        padding-left: 1px;
+    }
+
+    .form-group.row {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+    }
+    .logo {
+        display: block;
+        margin: 0 auto 20px;
+        width: 200px; /* Adjust the width as needed */
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <img src="{% static 'images/logo.png' %}"  alt="Logo" class="logo">
+                        <div id="formErrors" class="alert alert-danger d-none">
+                            <strong id="formErrorsMessage"></strong>
+                        </div>
+                        <h4 class="card-title text-center mb-4">Create Your Account</h4>
+                        <form id="registerForm" action="" method="post">
+                            {% csrf_token %}
+                            {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    {{ form.first_name }}
+                                    <div id="firstNameError" class="text-danger"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.last_name }}
+                                    <div id="lastNameError" class="text-danger"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.email }}
+                                <div id="emailError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.phoneno }}
+                                <div id="phonenoError" class="text-danger"></div>
+                            </div>                            
+                            <div class="form-group">
+                                {{ form.password1 }}
+                                <div id="password1Error" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.password2 }}
+                                <div id="password2Error" class="text-danger"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Register</button>
+                        </form>
+                        
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted">Already have an account? <a href="{% url 'userauths:login' %}" class="text-primary font-weight-bold">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registerForm');
+    const fields = {
+        first_name: {
+            element: document.getElementById('id_first_name'),
+            errorElement: document.getElementById('firstNameError'),
+            pattern: /^[a-zA-Z]+$/,
+            message: 'First name must contain only letters.',
+            placeholder: 'First Name'
+        },
+        last_name: {
+            element: document.getElementById('id_last_name'),
+            errorElement: document.getElementById('lastNameError'),
+            pattern: /^[a-zA-Z]+$/,
+            message: 'Last name must contain only letters.',
+            placeholder: 'Last Name'
+        },
+        email: {
+            element: document.getElementById('id_email'),
+            errorElement: document.getElementById('emailError'),
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Enter a valid email address.',
+            placeholder: 'Email Address'
+        },
+        phoneno: {
+        element: document.getElementById('id_phoneno'),
+        errorElement: document.getElementById('phonenoError'),
+        pattern: /^\d{10,15}$/,
+        message: 'Enter a valid phone number with 10 digits.',
+        placeholder: 'Phone Number'
+    },
+
+
+        password1: {
+        element: document.getElementById('id_password1'),
+        errorElement: document.getElementById('password1Error'),
+        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+        message: 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and symbols.',
+        placeholder: 'Password'
+    },
+
+        password2: {
+            element: document.getElementById('id_password2'),
+            errorElement: document.getElementById('password2Error'),
+            pattern: () => document.getElementById('id_password1').value === document.getElementById('id_password2').value,
+            message: 'Passwords do not match.',
+            placeholder: 'Confirm Password'
+        },
+        emailPasswordSimilarity: {
+            errorElement: document.getElementById('emailPasswordSimilarityError'),
+            check: () => {
+                const email = document.getElementById('id_email').value;
+                const password = document.getElementById('id_password1').value;
+                return email && password && email.includes(password) || password.includes(email);
+            },
+            message: 'Email and password should not be similar.'
+        }
+    };
+
+    function setPlaceholders() {
+        Object.values(fields).forEach(({ element, placeholder }) => {
+            if (element) {
+                element.setAttribute('placeholder', placeholder);
+            }
+        });
+    }
+    
+    function validateField(name) {
+        const { element, errorElement, pattern, message } = fields[name];
+        const value = element ? element.value : '';
+        if (typeof pattern === 'function') {
+            const isValid = pattern();
+            errorElement.textContent = isValid ? '' : message;
+            return isValid;
+        } else if (pattern) {
+            const isValid = pattern.test(value);
+            errorElement.textContent = isValid ? '' : message;
+            return isValid;
+        }
+        return true;
+    }
+    
+    function validateForm() {
+        const isValidFields = Object.keys(fields).every(name => validateField(name));
+        const isEmailPasswordValid = !fields.emailPasswordSimilarity.check() || (fields.emailPasswordSimilarity.errorElement.textContent = fields.emailPasswordSimilarity.message, false);
+        return isValidFields && isEmailPasswordValid;
+    }
+    
+    Object.values(fields).forEach(({ element }) => {
+        if (element) {
+            element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
+        }
+    });
+
+    form.addEventListener('submit', (event) => {
+        const isValid = validateForm();
+        const formErrors = document.getElementById('formErrors');
+        const formErrorsMessage = document.getElementById('formErrorsMessage');
+
+        if (!isValid) {
+            event.preventDefault();
+            formErrors.classList.remove('d-none');
+            formErrorsMessage.textContent = 'Please fix the errors in the form before submitting.';
+        } else {
+            formErrors.classList.add('d-none');
+        }
+    });
+
+    setPlaceholders();
+});
+
+</script>
+
+{% endblock %}

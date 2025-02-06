@@ -1,0 +1,50 @@
+<!-- Order Details Modal -->{% extends 'partials/dbase.html' %}
+{% block content %}
+<div class="modal fade" id="orderDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="order-info">
+                    <h6>Order #<span id="modalOrderId"></span></h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                            <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+                            <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Delivery Address:</strong></p>
+                            <p id="modalAddress"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items mt-4">
+                        <h6>Order Items</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalOrderItems">
+                                    <!-- Items will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock %}

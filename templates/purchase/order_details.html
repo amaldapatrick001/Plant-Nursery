@@ -1,0 +1,127 @@
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="category-list-heading">Order Details</h2>
+
+    <!-- Order Information -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Order Information</h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Payment Status:</strong> {{ order.payment_status }}</p>
+        <p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+        <p><strong>Order Date:</strong> {{ order.order_date|date:"Y-m-d H:i" }}</p>
+        
+        <p><a href="#" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateOrderModal-{{ order.id }}">Update Status</a></p>
+    </div>
+    </div>
+
+    <!-- Customer Information -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Customer Information</h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</p>
+        <p><strong>Email:</strong> {{ customer_email }}</p>
+      </div>
+    </div>
+
+    <!-- Delivery Address -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Delivery Address</h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ delivery_address.first_name }} {{ delivery_address.last_name }}</p>
+        <p><strong>Address:</strong> {{ delivery_address.street_address }}, {{ delivery_address.town_city }}, {{ delivery_address.district }} - {{ delivery_address.postcode_zip }}</p>
+        <p><strong>Phone:</strong> {{ delivery_address.phone }}</p>
+        <p><strong>Email:</strong> {{ delivery_address.email }}</p>
+      </div>
+    </div>
+
+    <!-- Order Items Table -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Order Items</h3>
+      </div>
+      <div class="card-body">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Total Price (with Discount)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.total_price }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <style>
+     .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <div class="modal fade" id="updateOrderModal-{{ order.id }}" tabindex="-1" role="dialog" aria-labelledby="updateOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateOrderModalLabel">Update Order Status for Order ID: {{ order.id }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Order Status Update Form -->
+          <form method="post" action="{% url 'purchase:update_order_status' order.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="status">Order Status</label>
+              <select name="status" id="status" class="form-control">
+                  <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="assigned" {% if order.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                  <option value="picked_up" {% if order.status == 'picked_up' %}selected{% endif %}>Picked Up</option>
+                  <option value="in_transit" {% if order.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                  <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                  <option value="cancel" {% if order.status == 'cancel' %}selected{% endif %}>Cancel</option>
+                  <option value="return" {% if order.status == 'return' %}selected{% endif %}>Return</option>
+              </select>
+          </div>
+          
+            <button type="submit" class="btn btn-success">Update Status</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery and Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

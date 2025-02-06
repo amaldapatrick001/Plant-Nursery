@@ -1,0 +1,165 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .expert-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2E7D32;
+    }
+
+    .expert-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .expert-table th {
+        background: #2E7D32;
+        color: white;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .expert-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .expert-table tr:hover {
+        background: #f5f5f5;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .status-active {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+
+    .status-inactive {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-activate {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-deactivate {
+        background: #F44336;
+        color: white;
+    }
+
+    .action-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="expert-management">
+    <h1>Expert Management</h1>
+
+    <div class="expert-stats">
+        <div class="stat-card">
+            <h3>Total Experts</h3>
+            <div class="stat-number">{{ total_experts }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Active Experts</h3>
+            <div class="stat-number">{{ active_experts }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Inactive Experts</h3>
+            <div class="stat-number">{{ inactive_experts }}</div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <table class="expert-table">
+        <thead>
+            <tr>
+                <th>Expert Name</th>
+                <th>Expertise Area</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expert in experts %}
+            <tr>
+                <td>{{ expert.user.first_name }} {{ expert.user.last_name }}</td>
+                <td>{{ expert.expertise_area }}</td>
+                <td>{{ expert.login.email }}</td>
+                <td>{{ expert.user.phoneno }}</td>
+                <td>
+                    <span class="status-badge {% if expert.user.status %}status-active{% else %}status-inactive{% endif %}">
+                        {% if expert.user.status %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <form method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="expert_id" value="{{ expert.expert_id }}">
+                        {% if expert.user.status %}
+                            <button type="submit" name="action" value="deactivate" class="action-btn btn-deactivate">
+                                Deactivate
+                            </button>
+                        {% else %}
+                            <button type="submit" name="action" value="activate" class="action-btn btn-activate">
+                                Activate
+                            </button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

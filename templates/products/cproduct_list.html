@@ -1,0 +1,798 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <style>
+         .category-nav {
+            display: flex;
+            justify-content: space-around; /* Space out the categories evenly */
+            background-color: #f8f9fa; /* Background color for nav */
+            padding: 10px 0;
+            border-radius: 8px;
+            margin-bottom: 20px; 
+        }
+        .ftco-section {
+    padding: 0;
+    position: relative;
+}
+        .category-nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 10px 15px; /* Padding for each link */
+            border-radius: 5px; /* Rounded edges */
+            transition: background-color 0.3s; /* Smooth hover effect */
+        }
+        .category-nav a:hover {
+            background-color: #82ae46; /* Hover background color */
+            color: white; /* Text color on hover */
+        }
+        .filter-sidebar {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .filter-sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .filter-sidebar .form-group {
+            margin-bottom: 15px;
+        }
+        .filter-sidebar label {
+            font-weight: bold;
+        }
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            height: auto; 
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto; 
+            object-fit: cover;
+        }
+        .product-card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .product-card-body h5 {
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+        }
+        .product-card-body p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .product-card-body a {
+            margin-top: 10px;
+        }
+        @media (max-width: 767px) {
+            .product-card {
+                height: auto;
+            }
+        }
+        .product-card img {
+            width: 100%; /* Ensures the image takes up the full width of the container */
+            height: 200px; /* Sets a fixed height */
+            object-fit: cover; /* Ensures the image scales without stretching, maintaining aspect ratio */
+        }
+        .search-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            width: 250px;
+            padding: 10px;  /* Increased padding for a better look */
+            border-radius: 20px;  /* Makes edges rounded */
+            border: 1px solid #ced4da;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            padding: 10px 15px;  /* Increased padding for a better look */
+            border: none;
+            background: #82ae46;
+            border: 1px solid #82ae46;
+            color: #fff;
+            border-radius: 20px;  /* Makes edges rounded */
+            cursor: pointer;
+        }
+        .product-heading {
+    text-align: center; /* Center-align the heading */
+    font-size: 2rem; /* Increase font size */
+    font-weight: bold; /* Make it bold */
+    margin-bottom: 20px; /* Space below the heading */
+    color: #333; /* Change text color */
+    margin-top: -80px; /* Space below nav */
+}
+
+    </style>
+    
+    <style>
+        /* Custom styles for the filter sidebar */
+        .filter-sidebar {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        .filter-sidebar h3 {
+            font-size: 1.5rem;
+            color: #82ae46;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    
+        .filter-form .form-group {
+            margin-bottom: 20px;
+        }
+    
+        .form-check-label {
+            font-size: 0.95rem;
+            color: #555;
+            cursor: pointer;
+        }
+    
+        .form-check-input {
+            margin-right: 10px;
+        }
+    
+        /* Styling radio buttons */
+        .form-check-input:checked ~ .form-check-label {
+            font-weight: bold;
+            color: #82ae46;
+        }
+    
+        /* Hover effect on labels */
+        .form-check-label:hover {
+            color: #6a8544;
+        }
+    
+        /* Custom submit button styling */
+        .submit-btn {
+            background-color: #82ae46;
+            color: #fff;
+            font-weight: 500;
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: block;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+    
+        .submit-btn:hover {
+            background-color: #6a8544;
+            color: #fff;
+        }
+        .btn-circle {
+    border-radius: 50%;
+    padding: 10px;
+    display: inline-block;
+}
+
+    </style>
+    
+</head>
+
+
+<section class="ftco-section">
+        
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static 'images\nur3.jpeg' %}');">
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Products</span></p>
+              <h1 class="mb-0 bread">Products</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+        </div><!-- 
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 mb-5 text-center">
+                    <ul class="product-category list-inline" style="margin-top: 20px; padding: 0; list-style: none;">
+                        <li class="list-inline-item">
+                            <a href="?category=" class="category-link {% if not request.GET.category %}active{% endif %}">
+                                All
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li class="list-inline-item">
+                            <a href="?category={{ category.id }}" class="category-link {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
+                                {{ category.category_name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>-->
+<br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-5">
+                <div class="filter-sidebar" id="filter-sidebar">
+    <h3 id="filter-title">Filter Products</h3>
+    <form method="get" action="" class="filter-form" id="filter-form">
+        <!-- Example for price range filter -->
+        <div class="form-group" id="filter-price-range">
+            <label>Price Range</label>
+            <div class="form-check">
+                <input type="radio" id="price_0_500" name="price" value="0-500" class="form-check-input"
+                       {% if request.GET.price == "0-500" %}checked{% endif %}>
+                <label class="form-check-label" for="price_0_500">Rs. 0 - 500</label>
+            </div>
+                            <div class="form-check">
+                                <input type="radio" id="price_500_1000" name="price" value="500-1000" class="form-check-input"
+                                       {% if request.GET.price == "500-1000" %}checked{% endif %}>
+                                <label class="form-check-label" for="price_500_1000">Rs. 500 - 1000</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="price_1000_1500" name="price" value="1000-1500" class="form-check-input"
+                                       {% if request.GET.price == "1000-1500" %}checked{% endif %}>
+                                <label class="form-check-label" for="price_1000_1500">Rs. 1000 - 1500</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="price_above_1500" name="price" value="above_1500" class="form-check-input"
+                                       {% if request.GET.price == "above_1500" %}checked{% endif %}>
+                                <label class="form-check-label" for="price_above_1500">Above Rs. 1500</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Sunlight Requirement -->
+                        <div class="form-group">
+                            <label>Sunlight Requirement</label>
+                            <div class="form-check">
+                                <input type="radio" id="sunlight_full_sun" name="sunlight" value="full_sun" class="form-check-input"
+                                       {% if request.GET.sunlight == "full_sun" %}checked{% endif %}>
+                                <label class="form-check-label" for="sunlight_full_sun">Full Sun</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="sunlight_partial_sun" name="sunlight" value="partial_sun" class="form-check-input"
+                                       {% if request.GET.sunlight == "partial_sun" %}checked{% endif %}>
+                                <label class="form-check-label" for="sunlight_partial_sun">Partial Sun</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="sunlight_partial_shade" name="sunlight" value="partial_shade" class="form-check-input"
+                                       {% if request.GET.sunlight == "partial_shade" %}checked{% endif %}>
+                                <label class="form-check-label" for="sunlight_partial_shade">Partial Shade</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="sunlight_full_shade" name="sunlight" value="full_shade" class="form-check-input"
+                                       {% if request.GET.sunlight == "full_shade" %}checked{% endif %}>
+                                <label class="form-check-label" for="sunlight_full_shade">Full Shade</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Water Need -->
+                        <div class="form-group">
+                            <label>Water Need</label>
+                            <div class="form-check">
+                                <input type="radio" id="water_low" name="water" value="low" class="form-check-input"
+                                       {% if request.GET.water == "low" %}checked{% endif %}>
+                                <label class="form-check-label" for="water_low">Low</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="water_medium" name="water" value="medium" class="form-check-input"
+                                       {% if request.GET.water == "medium" %}checked{% endif %}>
+                                <label class="form-check-label" for="water_medium">Medium</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="water_high" name="water" value="high" class="form-check-input"
+                                       {% if request.GET.water == "high" %}checked{% endif %}>
+                                <label class="form-check-label" for="water_high">High</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Soil Type -->
+                        <div class="form-group">
+                            <label>Soil Type</label>
+                            <div class="form-check">
+                                <input type="radio" id="soil_loamy" name="soil" value="loamy" class="form-check-input"
+                                       {% if request.GET.soil == "loamy" %}checked{% endif %}>
+                                <label class="form-check-label" for="soil_loamy">Loamy</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="soil_sandy" name="soil" value="sandy" class="form-check-input"
+                                       {% if request.GET.soil == "sandy" %}checked{% endif %}>
+                                <label class="form-check-label" for="soil_sandy">Sandy</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="soil_clay" name="soil" value="clay" class="form-check-input"
+                                       {% if request.GET.soil == "clay" %}checked{% endif %}>
+                                <label class="form-check-label" for="soil_clay">Clay</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="soil_peat" name="soil" value="peat" class="form-check-input"
+                                       {% if request.GET.soil == "peat" %}checked{% endif %}>
+                                <label class="form-check-label" for="soil_peat">Peat</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="soil_silt" name="soil" value="silt" class="form-check-input"
+                                       {% if request.GET.soil == "silt" %}checked{% endif %}>
+                                <label class="form-check-label" for="soil_silt">Silt</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Growth Rate -->
+                        <div class="form-group">
+                            <label>Growth Rate</label>
+                            <div class="form-check">
+                                <input type="radio" id="growth_slow" name="growth_rate" value="slow" class="form-check-input"
+                                       {% if request.GET.growth_rate == "slow" %}checked{% endif %}>
+                                <label class="form-check-label" for="growth_slow">Slow</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="growth_medium" name="growth_rate" value="medium" class="form-check-input"
+                                       {% if request.GET.growth_rate == "medium" %}checked{% endif %}>
+                                <label class="form-check-label" for="growth_medium">Medium</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="growth_fast" name="growth_rate" value="fast" class="form-check-input"
+                                       {% if request.GET.growth_rate == "fast" %}checked{% endif %}>
+                                <label class="form-check-label" for="growth_fast">Fast</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Climate Compatibility -->
+                        <div class="form-group">
+                            <label>Climate Compatibility</label>
+                            <div class="form-check">
+                                <input type="radio" id="climate_tropical" name="climate" value="tropical" class="form-check-input"
+                                       {% if request.GET.climate == "tropical" %}checked{% endif %}>
+                                <label class="form-check-label" for="climate_tropical">Tropical</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="climate_subtropical" name="climate" value="subtropical" class="form-check-input"
+                                       {% if request.GET.climate == "subtropical" %}checked{% endif %}>
+                                <label class="form-check-label" for="climate_subtropical">Subtropical</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="climate_temperate" name="climate" value="temperate" class="form-check-input"
+                                       {% if request.GET.climate == "temperate" %}checked{% endif %}>
+                                <label class="form-check-label" for="climate_temperate">Temperate</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="climate_arid" name="climate" value="arid" class="form-check-input"
+                                       {% if request.GET.climate == "arid" %}checked{% endif %}>
+                                <label class="form-check-label" for="climate_arid">Arid</label>
+                            </div>
+                        </div>
+    
+                        <!-- Filter by Best Time to Plant (Season) -->
+                        <div class="form-group">
+                            <label>Best Time to Plant</label>
+                            <div class="form-check">
+                                <input type="radio" id="season_spring" name="best_time_to_plant" value="spring" class="form-check-input"
+                                       {% if request.GET.best_time_to_plant == "spring" %}checked{% endif %}>
+                                <label class="form-check-label" for="season_spring">Spring</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="season_summer" name="best_time_to_plant" value="summer" class="form-check-input"
+                                       {% if request.GET.best_time_to_plant == "summer" %}checked{% endif %}>
+                                <label class="form-check-label" for="season_summer">Summer</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="season_autumn" name="best_time_to_plant" value="autumn" class="form-check-input"
+                                       {% if request.GET.best_time_to_plant == "autumn" %}checked{% endif %}>
+                                <label class="form-check-label" for="season_autumn">Autumn</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="season_winter" name="best_time_to_plant" value="winter" class="form-check-input"
+                                       {% if request.GET.best_time_to_plant == "winter" %}checked{% endif %}>
+                                <label class="form-check-label" for="season_winter">Winter</label>
+                            </div>
+                        </div>
+                       <center>
+                        <a href="{% url 'products:cproduct_list' %}" class="btn btn-primary">Clear Filters</a>
+                        </center>
+                     <!-- JavaScript to automatically submit the form on change -->
+                     <script>
+                        document.querySelectorAll('.filter-form input').forEach(element => {
+                            element.addEventListener('change', function() {
+                                this.form.submit();
+                            });
+                        });
+                    </script>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <!-- Add heading for products -->
+            <!-- Place the search bar below the category filter -->
+            <div class="search-section">
+                <div class="search-container">
+                    <!-- Text Search -->
+                    <form method="get" action="" id="text-search-form" class="text-search-wrapper">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" 
+                                   name="q" 
+                                   value="{{ query }}"
+                                   placeholder="Search for plants..." 
+                                   id="search-input">
+                        </div>
+                        <button type="submit" id="text-search-button">
+                            Search
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="search-divider"></div>
+
+                    <!-- Image Search -->
+                    <form method="post" action="" id="image-search-form" enctype="multipart/form-data" class="image-search-wrapper">
+                        {% csrf_token %}
+                        <label for="image-upload" class="image-upload-btn">
+                            <i class="fas fa-camera"></i>
+                            <span>Search by Image</span>
+                        </label>
+                        <input type="file" 
+                               name="search_image" 
+                               id="image-upload" 
+                               accept="image/*" 
+                               style="display: none;">
+                    </form>
+                </div>
+            </div>
+
+            <style>
+                .search-section {
+                    margin: 2rem auto;
+                    max-width: 1200px;
+                    padding: 0 20px;
+                }
+
+                .search-container {
+                    display: flex;
+                    align-items: center;
+                    background: white;
+                    padding: 8px 15px;
+                    border-radius: 50px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+
+                .text-search-wrapper {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                }
+
+                .search-box {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                    padding-right: 15px;
+                }
+
+                .search-icon {
+                    color: #82ae46;
+                    font-size: 1.2rem;
+                    margin-right: 12px;
+                }
+
+                #search-input {
+                    width: 100%;
+                    padding: 12px;
+                    border: none;
+                    outline: none;
+                    font-size: 1rem;
+                    color: #333;
+                    background: transparent;
+                }
+
+                #text-search-button {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 25px;
+                    background: linear-gradient(135deg, #82ae46, #6b8e23);
+                    color: white;
+                    border: none;
+                    border-radius: 25px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                #text-search-button:hover {
+                    background: linear-gradient(135deg, #6b8e23, #82ae46);
+                    transform: translateY(-1px);
+                    box-shadow: 0 5px 15px rgba(130, 174, 70, 0.3);
+                }
+
+                .search-divider {
+                    width: 1px;
+                    height: 36px;
+                    background: #e0e0e0;
+                    margin: 0 20px;
+                }
+
+                .image-search-wrapper {
+                    padding: 0 10px;
+                }
+
+                .image-upload-btn {
+                    display: flex;
+                    align-items: center;
+                    padding: 12px 25px;
+                    background: #f8f9fa;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .image-upload-btn:hover {
+                    background: #eef1f4;
+                    transform: translateY(-1px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                }
+
+                .image-upload-btn i {
+                    color: #82ae46;
+                    margin-right: 8px;
+                    font-size: 1.1rem;
+                }
+
+                .image-upload-btn span {
+                    color: #555;
+                    font-weight: 500;
+                }
+
+                /* Responsive Design */
+                @media (max-width: 768px) {
+                    .search-container {
+                        flex-direction: column;
+                        gap: 15px;
+                        padding: 15px;
+                        border-radius: 20px;
+                    }
+
+                    .text-search-wrapper {
+                        width: 100%;
+                    }
+
+                    .search-divider {
+                        width: 100%;
+                        height: 1px;
+                        margin: 10px 0;
+                    }
+
+                    .image-search-wrapper {
+                        width: 100%;
+                        padding: 0;
+                    }
+
+                    .image-upload-btn {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
+
+                /* Active Search States */
+                .text-search-active .image-search-wrapper {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+
+                .image-search-active .text-search-wrapper {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+            </style>
+
+            <script>
+            // Handle text search
+            document.getElementById('text-search-form').addEventListener('submit', function(e) {
+                document.querySelector('.search-container').classList.add('text-search-active');
+            });
+
+            // Handle image search
+            document.getElementById('image-upload').addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    document.querySelector('.search-container').classList.add('image-search-active');
+                    document.getElementById('image-search-form').submit();
+                }
+            });
+
+            // Reset states when search is complete
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const searchInput = document.getElementById('search-input');
+                
+                if (urlParams.has('q')) {
+                    searchInput.value = urlParams.get('q');
+                }
+            });
+            </script>
+
+            <div class="row" id="product-list">
+                {% for batch in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="product-card shadow-sm rounded-lg overflow-hidden bg-white border">
+                        
+                        
+                        {% if batch.product %}
+                        <a href="{% url 'products:cproduct_details' batch.product.id %}" id="product-link-{{ batch.product.id }}">
+                            <div class="product-image position-relative">
+                                <img src="{% if batch.product.image_1 %}{{ batch.product.image_1.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" 
+                                     alt="{{ batch.product.name }}" 
+                                     class="img-fluid rounded-top" 
+                                     id="product-image-{{ batch.product.id }}">
+                                
+                                {% if batch.discount %}
+                                <div class="discount-badge">
+                                    <span class="discount-text">{{ batch.discount }}% OFF</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% else %}
+                        <div class="product-image position-relative">
+                            <img src="{% static 'placeholder.png' %}" alt="No product" class="img-fluid rounded-top">
+                        </div>
+                        {% endif %}
+
+                        <div class="p-4 text-center">
+                            <h5 class="mb-2 font-weight-bold text-dark">{{ batch.product.name }}</h5>
+                            <div class="text-center text-muted">
+                                {% if batch.avg_rating %}
+                                    <span class="text-warning" style="font-size: 1.2rem;">
+                                        {{ batch.avg_rating|floatformat:1 }} ★
+                                    </span>
+                                {% else %}
+                                    <span>No ratings yet</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-primary font-weight-bold mt-2">₹{{ batch.price }}</p>
+                            <div class="bottom-area d-flex justify-content-center py-3">
+                                <a href="{% url 'products:cproduct_details' batch.product.id %}" 
+                                   class="btn btn-outline-primary btn-icon mx-1">
+                                    <i class="ion-ios-menu"></i>
+                                </a>
+                                
+                                <a href="{% url 'purchase:add_to_cart' batch.id %}" 
+                                   class="btn btn-outline-success btn-icon mx-1">
+                                    <i class="ion-ios-cart"></i>
+                                </a>
+                                
+                                <a href="{% url 'products:add_to_wishlist' batch.id %}" 
+                                   class="btn btn-outline-danger btn-icon mx-1">
+                                    <i class="ion-ios-heart"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    {% if image_search_performed %}
+                        <div class="no-results">
+                            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                            <h3>No Matching Products</h3>
+                            <p class="text-muted">We couldn't find any products that match your image. Try searching with a different image or browse our categories.</p>
+                            <a href="{% url 'products:cproduct_list' %}" class="btn btn-primary mt-3">
+                                <i class="fas fa-sync-alt mr-2"></i>Clear Search
+                            </a>
+                        </div>
+                    {% else %}
+                        <p>No products available.</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if image_search_performed %}
+    <div class="search-results-info mb-4">
+        {% if products %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Found similar products based on your image
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                No matching products found for your image
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
+
+<style>
+.search-results-info {
+    margin-top: 20px;
+}
+
+.similarity-badge {
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 10;
+    background: rgba(0, 123, 255, 0.9);
+}
+
+.no-results {
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;  /* Changed from right to left */
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    padding: 6px 12px;
+    border-radius: 20px;
+    z-index: 2;
+    transform: translateZ(0);
+    box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.discount-text {
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* Hover effect */
+.product-image:hover .discount-badge {
+    transform: translateY(-2px);
+}
+
+/* Optional: Add a subtle animation on page load */
+@keyframes badgeAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.discount-badge {
+    animation: badgeAppear 0.3s ease-out forwards;
+}
+</style>
+
+{% endblock %}
+
+

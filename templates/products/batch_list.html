@@ -1,0 +1,249 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f5;
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #82ae46;
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+    }
+
+    td {
+        font-family: 'Lato', sans-serif;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    .no-batches {
+        text-align: center;
+        font-size: 1.25rem;
+        color: #999;
+        font-style: italic;
+        margin-top: 1rem;
+    }
+
+    /* Modal Styles */
+    .modal-header {
+        background-color: #82ae46;
+        color: white;
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.75rem;
+        letter-spacing: 1px;
+    }
+
+    .modal-body {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: center;
+        padding: 15px;
+    }
+
+    .modal-footer .btn {
+        background-color: #007bff;
+        color: white;
+        border-radius: 50px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .modal-footer .btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Modal Animation */
+    .fade.modal .modal-dialog {
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .fade.show .modal-dialog {
+        transform: translateY(0);
+    }
+
+    /* Table Styles */
+    .table th,
+    .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    /* Cultivation Method Section */
+    .modal-body h6 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-top: 1rem;
+    }
+
+    .modal-body p {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* Close Button Styles */
+    .close {
+        color: white;
+        opacity: 0.8;
+    }
+
+    .close:hover {
+        opacity: 1;
+    }
+    .btne {
+        background-color: #007bff;
+        color: white;
+    }
+    .btne:hover  {
+        background-color: #005ec2;
+        color: white;
+    }
+    
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <h2 class="category-list-heading">Explore Our Batches</h2>
+
+        {% if batches %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Current Height</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Stock Quantity</th>
+                    <th>A pack Contain</th>
+                    <th>Discount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for batch in batches %}
+                <tr>
+                    <td>{{ batch.product.name }}</td>
+                    <td>{{ batch.current_height }}</td>
+                    <td>{{ batch.short_description|default:'No description available' }}</td>
+                    <td>${{ batch.price }}</td>
+                    <td>{{ batch.stock_quantity }}</td>
+                    <td>{{ batch.no_of_plants }}</td>
+                    <td>
+                        {% if batch.discount %}
+                            {{ batch.discount }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="visited btne  btn btn-info " data-toggle="modal" data-target="#batchDetailsModal{{ batch.id }}">
+                            View Plant Details
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Modal for Batch Details -->
+                <div class="modal fade" id="batchDetailsModal{{ batch.id }}" tabindex="-1" role="dialog" aria-labelledby="batchDetailsModalLabel{{ batch.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="batchDetailsModalLabel{{ batch.id }}">Details for {{ batch.product.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Product and Plant Category Details -->
+                                <h6>Plant Category:</h6>
+                                {% if batch.product.plant_category %}
+                                    <p>{{ batch.product.plant_category.name }}</p>
+                                    <p>{{ batch.product.plant_category.description }}</p>
+                                {% else %}
+                                    <p>N/A</p>
+                                {% endif %}
+
+                                <h6>Plant Type:</h6>
+                                {% if batch.product.plant_type %}
+                                    <p>{{ batch.product.plant_type.name }}</p>
+                                    <p>{{ batch.product.plant_type.description }}</p>
+                                {% else %}
+                                    <p>N/A</p>
+                                {% endif %}
+
+                                <!-- Cultivation Method -->
+                                <h6>Cultivation Method:</h6>
+                                {% if batch.product.plant_category.cultivation_methods.all %}
+                                    {% for method in batch.product.plant_category.cultivation_methods.all %}
+                                        <p><strong>{{ method.title }}</strong></p>
+                                        <p>{{ method.desc }}</p>
+                                        <p>Steps: {{ method.steps }}</p>
+                                        <p>Recommended Tools: {{ method.recommended_tools }}</p>
+                                        <p>Pit Size: {{ method.pit_size_height }}m x {{ method.pit_size_width }}m</p>
+                                        <p>Distance Between Plants: {{ method.distance_between_plants }}m</p>
+                                        <p>Watering Frequency: {{ method.watering_frequency }}</p>
+                                        <p>Common Issues: {{ method.common_issues }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No cultivation methods available.</p>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="col-12">
+            <p class="no-batches">No batches available.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

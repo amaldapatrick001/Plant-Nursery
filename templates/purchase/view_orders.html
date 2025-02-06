@@ -1,0 +1,121 @@
+{% extends 'partials/abase.html' %}
+
+{% block content %}
+<h2 class="text-center my-4">Order Management</h2>
+
+<div class="container mt-4">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Order Status</th>
+                    <th>Total Order Value</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                    <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>Rs. {{ order.total_amount }}</td>
+                    <td>
+                        <a href="{% url 'purchase:view_order_details' order_id=order.id %}" class="btn btn-warning btn-sm">View details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No orders available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+
+
+    function filterOrders() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const table = document.getElementById('ordersTable');
+        const tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) { // Skip header row
+            let tdOrderId = tr[i].getElementsByTagName('td')[0];
+            let tdCustomerName = tr[i].getElementsByTagName('td')[1];
+            let tdStatus = tr[i].getElementsByTagName('td')[3];
+
+            const orderIdText = tdOrderId ? tdOrderId.textContent.toLowerCase() : '';
+            const customerNameText = tdCustomerName ? tdCustomerName.textContent.toLowerCase() : '';
+            const statusText = tdStatus ? tdStatus.textContent : '';
+
+            const isOrderIdMatch = orderIdText.includes(searchInput);
+            const isCustomerNameMatch = customerNameText.includes(searchInput);
+            const isStatusMatch = statusFilter === '' || statusText === statusFilter;
+
+            if (isOrderIdMatch || isCustomerNameMatch) {
+                if (isStatusMatch) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            } else {
+                tr[i].style.display = 'none';
+            }
+        }
+    }
+
+    function sortTable(columnIndex) {
+        const table = document.getElementById('ordersTable');
+        let switching = true;
+        let shouldSwitch;
+        let dir = "asc"; 
+        let switchcount = 0;
+
+        while (switching) {
+            switching = false;
+            const rows = table.rows;
+
+            for (let i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+
+                const x = rows[i].getElementsByTagName("TD")[columnIndex];
+                const y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+
+                if (dir === "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;      
+            } else {
+                if (switchcount === 0 && dir === "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+
+{% endblock %}

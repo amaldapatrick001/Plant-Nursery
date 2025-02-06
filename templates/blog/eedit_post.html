@@ -1,0 +1,364 @@
+{% extends 'partials/ebase.html' %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px; /* Adds spacing from the top */
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        display: block; /* Changed to block for better spacing */
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        width: 100%;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 10px rgba(130, 174, 70, 0.2);
+        background-color: #fff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    /* Card Styling */
+    .card {
+    width: 75%;
+    margin: 0 auto; /* Centers the card */
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    display: block; /* Makes sure it's treated as a block element for centering */
+}
+
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem; /* Added padding for inner spacing */
+    }
+
+    .category-list-heading {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem;
+        background-color: #82ae46;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #82ae46;
+        border-color: #82ae46;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    /* Alert Box */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-color: #f5c2c7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem; /* Reduced padding for smaller screens */
+        }
+
+        .category-list-heading {
+            font-size: 1.3rem; /* Adjusted heading for mobile */
+        }
+
+        .btn {
+            font-size: 1rem; /* Adjusted button size for mobile */
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-body">
+            <h3 class="category-list-heading">Edit Blog Post</h3>
+            <form id="editBlogForm" method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group mb-4">
+                    <label for="title" class="form-label">Blog Title <span class="text-danger">*</span></label>
+                    {{ form.title }}
+                    <div class="invalid-feedback">Please provide a blog title.</div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="content" class="form-label">Blog Content <span class="text-danger">*</span></label>
+                    {{ form.content }}
+                    <div class="invalid-feedback">Blog content cannot be empty.</div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="images" class="form-label">Upload Images</label>
+                    {{ form.images }}
+                    <small class="form-text text-muted">Supported formats: JPEG, PNG, GIF.</small>
+                    <div class="invalid-feedback">Please upload a valid image file.</div>
+                </div>
+
+                <!-- <div class="form-group mb-4">
+                    <label for="videos" class="form-label">Upload Video URL</label>
+                    {{ form.videos }}
+                    <small class="form-text text-muted">Example: https://www.youtube.com/watch?v=example</small>
+                    <div class="invalid-feedback">Please provide a valid video URL.</div>
+                </div> -->
+
+                <div class="form-group mb-4">
+                    <label for="status" class="form-label">Status</label>
+                    {{ form.status }}
+                    <div class="invalid-feedback">Please select a status.</div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg btn-block mt-3">Update Post</button>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    /* Same styles as provided earlier */
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        const titleInput = document.querySelector('#id_title');
+        const contentInput = document.querySelector('#id_content');
+        const imageInput = document.querySelector('#id_images');
+    
+        // Error display functions
+        function setError(input, message) {
+            const formGroup = input.closest('.form-group');
+            let error = formGroup.querySelector('.error-message');
+            if (!error) {
+                error = document.createElement('div');
+                error.className = 'error-message text-danger mt-1';
+                formGroup.appendChild(error);
+            }
+            input.classList.add('is-invalid');
+            input.classList.remove('is-valid');
+            error.textContent = message;
+        }
+    
+        function setSuccess(input) {
+            const formGroup = input.closest('.form-group');
+            const error = formGroup.querySelector('.error-message');
+            if (error) {
+                error.remove();
+            }
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+    
+        // Title validation
+        function validateTitle() {
+            const value = titleInput.value.trim();
+            
+            if (!value) {
+                setError(titleInput, 'Blog title is required');
+                return false;
+            }
+            
+            if (value.length < 3) {
+                setError(titleInput, 'Title must be at least 3 characters long');
+                return false;
+            }
+            
+            if (value.length > 30) {
+                setError(titleInput, 'Title cannot exceed 30 characters');
+                return false;
+            }
+            
+            if (value[0] !== value[0].toUpperCase()) {
+                setError(titleInput, 'Title must start with a capital letter');
+                return false;
+            }
+            
+            setSuccess(titleInput);
+            return true;
+        }
+    
+        // Content validation
+        function validateContent() {
+            const value = contentInput.value.trim();
+            const words = value.split(/\s+/).filter(word => word.length > 0);
+            
+            if (!value) {
+                setError(contentInput, 'Blog content is required');
+                return false;
+            }
+            
+            if (words.length < 50) {
+                setError(contentInput, `Content must have at least 50 words. Current: ${words.length} words`);
+                return false;
+            }
+            
+            if (words.length > 1000) {
+                setError(contentInput, `Content cannot exceed 1000 words. Current: ${words.length} words`);
+                return false;
+            }
+            
+            if (value[0] !== value[0].toUpperCase()) {
+                setError(contentInput, 'Content must start with a capital letter');
+                return false;
+            }
+    
+            // Check each sentence
+            const sentences = value.split(/[.!?]+\s+/).filter(s => s.trim());
+            for (const sentence of sentences) {
+                if (sentence[0] !== sentence[0].toUpperCase()) {
+                    setError(contentInput, 'Each sentence must start with a capital letter');
+                    return false;
+                }
+            }
+    
+            // Check spacing after periods
+            const improperSpacing = /\.[A-Za-z]/g;
+            if (value.match(improperSpacing)) {
+                setError(contentInput, 'Please leave one space after each period');
+                return false;
+            }
+            
+            setSuccess(contentInput);
+            return true;
+        }
+    
+        // Image validation
+        function validateImage() {
+            const file = imageInput.files[0];
+            if (file) {
+                const validFormats = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/svg+xml',
+                    'image/tiff',
+                    'image/bmp',
+                    'image/webp'
+                ];
+    
+                if (!validFormats.includes(file.type)) {
+                    setError(imageInput, 'Please upload an image in JPEG, PNG, GIF, SVG, TIFF, BMP, or WEBP format');
+                    return false;
+                }
+    
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    setError(imageInput, 'Image size should not exceed 5MB');
+                    return false;
+                }
+            }
+            setSuccess(imageInput);
+            return true;
+        }
+    
+        // Word counter for content
+        function updateWordCount() {
+            const words = contentInput.value.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            const formGroup = contentInput.closest('.form-group');
+            let counter = formGroup.querySelector('.word-counter');
+            
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.className = 'word-counter text-muted mt-1';
+                formGroup.appendChild(counter);
+            }
+            
+            counter.textContent = `${wordCount} words (min: 50, max: 1000)`;
+            counter.style.color = wordCount < 50 || wordCount > 1000 ? '#dc3545' : '#6c757d';
+        }
+    
+        // Event listeners
+        titleInput.addEventListener('input', validateTitle);
+        contentInput.addEventListener('input', () => {
+            validateContent();
+            updateWordCount();
+        });
+        imageInput.addEventListener('change', validateImage);
+    
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            const isTitleValid = validateTitle();
+            const isContentValid = validateContent();
+            const isImageValid = validateImage();
+    
+            if (!isTitleValid || !isContentValid || !isImageValid) {
+                e.preventDefault();
+            }
+        });
+    });
+    </script>
+    
+    <style>
+    .error-message {
+        font-size: 0.875rem;
+        color: #dc3545;
+        margin-top: 0.25rem;
+    }
+    
+    .word-counter {
+        font-size: 0.875rem;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .form-control.is-valid {
+        border-color: #198754;
+    }
+    </style>
+{% endblock %}

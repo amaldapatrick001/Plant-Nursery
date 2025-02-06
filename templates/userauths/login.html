@@ -1,0 +1,247 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Custom Styles for the Login Form */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group input {
+        border-radius: 30px;
+        padding: 12px 20px 12px 45px; /* Adjust padding for icon space */
+        border: 1px solid #ced4da;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+    .form-group input.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .form-group input.is-valid {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .form-group i {
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        color: #007bff;
+    }
+
+    .btn {
+        border-radius: 30px;
+        padding: 12px 25px;
+        transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+        transform: translateY(-2px);
+    }
+
+    .btn-google {
+        background-color: #ffffff;
+        border: 1px solid #dadce0;
+        color: #3c4043;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        border-radius: 30px;
+        transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .btn-google:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15);
+        transform: translateY(-2px);
+    }
+
+    .btn-google i {
+        margin-right: 10px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .logo {
+        display: block;
+        margin: 0 auto 20px;
+        width: 100px;
+        height: auto;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+    }
+
+    .separator {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .separator::before,
+    .separator::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: #e0e0e0;
+    }
+
+    .separator span {
+        padding: 0 10px;
+        color: #6c757d;
+    }
+
+    .text-danger {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        color: #dc3545;
+    }
+</style>
+
+<section class="ftco-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-light rounded">
+                    <div class="card-body p-4">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo mb-4">
+                        
+                        <h4 class="card-title text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #2c3e50; letter-spacing: 1px; text-transform: uppercase;">Login to Your Account</h4>
+                        <form id="loginForm" action="{% url 'userauths:login' %}" method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Email Field -->
+                            <div class="form-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="id_email" name="email" placeholder="Email id" class="form-control pl-5">
+                                <div id="emailError" class="text-danger"></div>
+                            </div>
+                        
+                            <!-- Password Field -->
+                            <div class="form-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="id_password" name="password" placeholder="Password" class="form-control pl-5">
+                                <div id="passwordError" class="text-danger"></div>
+                            </div>
+                        
+                            <!-- Submit Button -->
+                            <button type="submit" id="login" class="btn btn-primary btn-lg btn-block mt-3">Login</button>
+                        </form>
+                        
+                        <div class="separator">
+                            <span>or</span>
+                        </div>
+
+                        <div class="google-login">
+                            <a href="{% url 'userauths:google_login' %}" class="btn btn-google">
+                                <i class="fab fa-google"></i> Sign in with Google
+                            </a>
+                        </div>
+
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted">
+                                <a href="{% url 'userauths:password_reset' %}" class="text-primary font-weight-bold">Forgot Your Password?</a>
+                            </p>
+                        </div>                        
+                        
+                        <div class="form-group text-center mt-4">
+                            <p class="text-muted">Don't have an account? <a href="{% url 'userauths:register' %}" class="text-primary font-weight-bold">Register here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('loginForm');
+        const fields = {
+            email: {
+                element: document.getElementById('id_email'),
+                errorElement: document.getElementById('emailError'),
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address.'
+            },
+            password: {
+                
+            }
+        };
+
+        function validateField(name) {
+            const { element, errorElement, pattern, message } = fields[name];
+            const value = element.value;
+            const isValid = pattern.test(value);
+
+            if (isValid) {
+                element.classList.remove('is-invalid');
+                element.classList.add('is-valid');
+                errorElement.textContent = '';
+            } else {
+                element.classList.remove('is-valid');
+                element.classList.add('is-invalid');
+                errorElement.textContent = message;
+            }
+            return isValid;
+        }
+
+        Object.values(fields).forEach(({ element }) => {
+            element.addEventListener('input', () => validateField(element.id.replace('id_', '')));
+        });
+
+        form.addEventListener('submit', (event) => {
+            const isValid = Object.keys(fields).every(name => validateField(name));
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+{% endblock %}

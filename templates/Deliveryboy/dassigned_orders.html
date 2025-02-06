@@ -1,0 +1,353 @@
+{% extends 'partials/dbase.html' %}
+{% block content %}
+
+<div class="orders-container">
+    <!-- Assigned Orders Section -->
+    <div class="order-section">
+        <div class="section-header">
+            <div class="header-content">
+                <i class="fas fa-box"></i>
+                <h3>Assigned Orders</h3>
+            </div>
+            <div class="order-count">
+                {{ assigned_orders|length }} Orders
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> Order ID</th>
+                        <th><i class="fas fa-user"></i> Customer</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th><i class="fas fa-tasks"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in assigned_orders %}
+                    <tr>
+                        <td class="order-id">#{{ order.id }}</td>
+                        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                        <td class="location-cell">
+                            <span class="location-text">{{ order.billing.street_address }}, {{ order.billing.town_city }}, {{ order.billing.district }}</span>
+                        </td>
+                        <td><span class="status-pill status-assigned">{{ order.status|title }}</span></td>
+                        <td>
+                            <a href="{% url 'delivery:update_order_status' order.id %}" class="action-button pickup-btn">
+                                <i class="fas fa-box"></i> Pick Up
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Picked Up Orders Section -->
+    <div class="order-section">
+        <div class="section-header">
+            <div class="header-content">
+                <i class="fas fa-truck-loading"></i>
+                <h3>Picked Up Orders</h3>
+            </div>
+            <div class="order-count">
+                {{ picked_up_orders|length }} Orders
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> Order ID</th>
+                        <th><i class="fas fa-user"></i> Customer</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th><i class="fas fa-tasks"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in picked_up_orders %}
+                    <tr>
+                        <td class="order-id">#{{ order.id }}</td>
+                        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                        <td class="location-cell">
+                            <span class="location-text">{{ order.billing.street_address }}, {{ order.billing.town_city }}, {{ order.billing.district }}</span>
+                        </td>
+                        <td><span class="status-pill status-picked-up">{{ order.status|title }}</span></td>
+                        <td>
+                            <a href="{% url 'delivery:update_order_status' order.id %}" class="action-button transit-btn">
+                                <i class="fas fa-truck"></i> Start Delivery
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- In Transit Orders Section -->
+    <div class="order-section">
+        <div class="section-header">
+            <div class="header-content">
+                <i class="fas fa-truck-fast"></i>
+                <h3>In Transit Orders</h3>
+            </div>
+            <div class="order-count">
+                {{ in_transit_orders|length }} Orders
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> Order ID</th>
+                        <th><i class="fas fa-user"></i> Customer</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in in_transit_orders %}
+                    <tr>
+                        <td class="order-id">#{{ order.id }}</td>
+                        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                        <td class="location-cell">
+                            <span class="location-text">{{ order.billing.street_address }}, {{ order.billing.town_city }}, {{ order.billing.district }}</span>
+                        </td>
+                        <td><span class="status-pill status-in-transit">{{ order.status|title }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .orders-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .order-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .order-section:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .section-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-content i {
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.8rem;
+        border-radius: 10px;
+    }
+
+    .header-content h3 {
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .order-count {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .table-responsive {
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.8rem;
+    }
+
+    .order-table th {
+        color: var(--text-dark);
+        font-weight: 500;
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 2px solid var(--light-color);
+    }
+
+    .order-table th i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .order-table td {
+        padding: 1rem;
+        background: var(--light-color);
+        border: none;
+        transition: var(--transition);
+    }
+
+    .order-table tr td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .order-table tr td:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .order-table tr:hover td {
+        background: #d4e6f7;
+    }
+
+    .order-id {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .location-cell {
+        max-width: 300px;
+    }
+
+    .location-text {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .status-pill {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-assigned {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    .status-picked-up {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .status-in-transit {
+        background: #e8f5e9;
+        color: #4caf50;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .pickup-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .pickup-btn:hover {
+        background: var(--dark-color);
+        transform: translateX(3px);
+        color: white;
+    }
+
+    .transit-btn {
+        background: #f57c00;
+        color: white;
+    }
+
+    .transit-btn:hover {
+        background: #e65100;
+        transform: translateX(3px);
+        color: white;
+    }
+
+    .action-button i {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .action-button {
+            width: 100%;
+            justify-content: center;
+            margin-top: 5px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateLocation() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            
+            // Send location to server
+            fetch('{% url "delivery:update_location" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude
+                })
+            });
+        });
+    }
+}
+
+// Update location every 5 minutes
+setInterval(updateLocation, 300000);
+</script>
+{% endblock %}

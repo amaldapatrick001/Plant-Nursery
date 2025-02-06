@@ -1,0 +1,290 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #82ae46, #6d8a2e);
+        color: #fff;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        color: #333;
+        border-radius: 0 0 15px 15px;
+        padding: 2rem;
+    }
+
+    /* Info Groups */
+    .info-group {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .info-group h5 {
+        color: #82ae46;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light {
+        background-color: #fff;
+        border-color: #ddd;
+    }
+
+    .btn-light:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+        background-color: #82ae46;
+        border-color: #82ae46;
+    }
+
+    .btn-success:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    /* Progress Bar */
+    .progress {
+        height: 0.8rem;
+        border-radius: 0.4rem;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        background-color: #82ae46;
+    }
+
+    /* Table Styling */
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        color: #444;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    /* Badge Styling */
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.5em 1em;
+        border-radius: 15px;
+    }
+
+    /* Alert Styling */
+    .alert {
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            margin-top: 20px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        .info-group {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %} -->
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Meeting Details</h3>
+                    <div>
+                        <a href="{% url 'qa_sessions:ameeting_list' %}" class="btn btn-light">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Meetings
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h4 class="text-primary">{{ meeting.title }}</h4>
+                            <span class="badge {% if meeting.status == 'scheduled' %}bg-primary{% elif meeting.status == 'ongoing' %}bg-success{% elif meeting.status == 'completed' %}bg-info{% else %}bg-danger{% endif %} mb-3">
+                                {{ meeting.status|title }}
+                            </span>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if meeting.status == 'scheduled' %}
+                                <form method="post" action="{% url 'qa_sessions:cancel_meeting' meeting.session_id %}" 
+                                      class="d-inline" 
+                                      onsubmit="return confirm('Are you sure you want to cancel this meeting?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Cancel Meeting
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-group mb-4">
+                                <h5 class="text-muted mb-2">Expert Information</h5>
+                                <p class="mb-1"><strong>Name:</strong> {{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}</p>
+                                <p class="mb-1"><strong>Specialization:</strong> {{ meeting.expert.specialization }}</p>
+                                <p class="mb-1"><strong>Experience:</strong> {{ meeting.expert.experience_years }} years</p>
+                            </div>
+
+                            <div class="info-group mb-4">
+                                <h5 class="text-muted mb-2">Meeting Schedule</h5>
+                                <p class="mb-1"><strong>Date:</strong> {{ meeting.start_time|date:"F d, Y" }}</p>
+                                <p class="mb-1"><strong>Time:</strong> {{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</p>
+                                <p class="mb-1"><strong>Duration:</strong> 
+                                    {% with duration=meeting.end_time|timeuntil:meeting.start_time %}
+                                        {{ duration }}
+                                    {% endwith %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-group mb-4">
+                                <h5 class="text-muted mb-2">Participants</h5>
+                                <p class="mb-1"><strong>Current:</strong> {{ meeting.current_participants }}</p>
+                                <p class="mb-1"><strong>Maximum:</strong> {{ meeting.max_participants }}</p>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" 
+                                         style="width: {% widthratio meeting.current_participants meeting.max_participants 100 %}%" 
+                                         aria-valuenow="{{ meeting.current_participants }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="{{ meeting.max_participants }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if meeting.google_meet_link %}
+                            <div class="info-group mb-4">
+                                <h5 class="text-muted mb-2">Meeting Link</h5>
+                                {% if meeting.status == 'scheduled' or meeting.status == 'ongoing' %}
+                                    <a href="{{ meeting.google_meet_link }}" target="_blank" class="btn btn-success">
+                                        <i class="fas fa-video me-2"></i>Join Meeting
+                                    </a>
+                                {% else %}
+                                    <p class="text-muted">Meeting link not available</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h5 class="text-muted mb-2">Description</h5>
+                                <p class="mb-0">{{ meeting.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if meeting.customers.all %}
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="text-muted mb-3">Registered Participants</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Joined At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for customer in meeting.customers.all %}
+                                        <tr>
+                                            <td>{{ customer.first_name }} {{ customer.last_name }}</td>
+                                            <td>{{ customer.email }}</td>
+                                            <td>{{ customer.date_joined|date:"M d, Y H:i" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

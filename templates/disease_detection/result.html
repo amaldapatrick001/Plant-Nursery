@@ -1,0 +1,126 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0 text-center">Analysis Results</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Image Column -->
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <img src="{{ plant_image.image.url }}" alt="Plant Image" 
+                                     class="img-fluid rounded shadow" style="max-height: 400px;">
+                            </div>
+                        </div>
+
+                        <!-- Results Column -->
+                        <div class="col-md-6">
+                            <div class="results-container">
+                                <!-- Plant Identification -->
+                                <div class="result-section mb-4">
+                                    <h4 class="text-success">
+                                        <i class="fas fa-seedling me-2"></i>Plant Identified
+                                    </h4>
+                                    <div class="result-card">
+                                        <h5>{{ plant_image.plant_name|title }}</h5>
+                                        <div class="progress mb-2">
+                                            <div class="progress-bar bg-success" 
+                                                 style="width: {{ plant_image.plant_confidence }}%">
+                                                {{ plant_image.plant_confidence|floatformat:1 }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Disease Detection -->
+                                <div class="result-section mb-4">
+                                    <h4 class="text-danger">
+                                        <i class="fas fa-virus me-2"></i>Disease Status
+                                    </h4>
+                                    <div class="result-card">
+                                        <h5>{{ plant_image.disease_detected }}</h5>
+                                        <div class="progress mb-2">
+                                            <div class="progress-bar bg-danger" 
+                                                 style="width: {{ plant_image.confidence }}%">
+                                                {{ plant_image.confidence|floatformat:1 }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Treatment Suggestions -->
+                                <div class="result-section">
+                                    <h4 class="text-primary">
+                                        <i class="fas fa-notes-medical me-2"></i>Treatment Suggestions
+                                    </h4>
+                                    <div class="treatment-list">
+                                        {% for treatment in treatments %}
+                                        <div class="treatment-item">
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            {{ treatment }}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'disease_detection:upload_image' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-upload me-2"></i>Analyze Another Plant
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-section {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .result-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .treatment-list {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .treatment-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .treatment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .progress {
+        height: 25px;
+        border-radius: 15px;
+    }
+    
+    .progress-bar {
+        line-height: 25px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

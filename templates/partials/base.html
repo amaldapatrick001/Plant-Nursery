@@ -1,0 +1,696 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Enchanted Eden</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/ionicons.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.timepicker.css' %}">
+
+    
+    <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+      .icon-shopping_cart {
+    font-size: 240px; /* Adjust this value to increase/decrease size */
+}
+
+      .logo {
+        max-width: 100px;
+        height: auto;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      .navbar .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+    </style>
+  </head>
+  <head>
+    <!-- Other head elements -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- CSRF Token -->
+    <script>
+        const CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
+</head> 
+  <body class="goto-here">
+		<div class="py-1 bg-primary">
+    	<div class="container">
+    		<div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
+	    		<div class="col-lg-12 d-block">
+		    		<div class="row d-flex">
+		    			<div class="col-md pr-4 d-flex topper align-items-center">
+					    	<div class="icon mr-2 d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
+						    <span class="text">+91 98987 75846</span>
+					    </div>
+					    <div class="col-md pr-4 d-flex topper align-items-center">
+					    	<div class="icon mr-2 d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
+						    <span class="text">enchantededen@email.com</span>
+					    </div>
+              <div class="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
+                {% if request.session.user_first_name %}
+                    <span class="text">Welcome, {{ request.session.user_first_name }}!</span>
+                {% else %}
+                    <span class="text">Welcome, Guest!</span>
+                {% endif %}
+            </div>
+            
+            
+				    </div>
+			    </div>
+		    </div>
+		  </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+      <div class="container">
+          <a class="navbar-brand" href="{% url 'userauths:index' %}">Enchanted Eden</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="oi oi-menu"></span> Menu
+          </button>
+          <div class="collapse navbar-collapse" id="ftco-nav">
+              <ul class="navbar-nav ml-auto">
+                  <li class="nav-item active">
+                      <a href="{% url 'userauths:index' %}" class="nav-link" id="homePageElementId">Home</a>
+                  </li>
+                  <li class="nav-item dropdown" id="nav-shop-dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
+                      <div class="dropdown-menu" aria-labelledby="dropdown04">
+                          <a class="dropdown-item" href="{% url 'products:cproduct_list' %}" id="nav-shop-link">Shop</a>
+                          <a class="dropdown-item" href="{% url 'products:wishlist' %}" id="nav-wishlist-link">Wishlist</a>
+                          <a class="dropdown-item" href="{% url 'purchase:cart_detail' %}" id="nav-cart-link">Cart</a>
+                          <a class="dropdown-item" href="{% url 'purchase:checkout' %}" id="nav-checkout-link">Checkout</a>
+                          {% if request.session.user_id %}
+                              <a class="dropdown-item" href="{% url 'purchase:order_history' %}" id="nav-order-history-link">Order History</a>
+                          {% endif %}
+                      </div>
+                  </li>
+                  <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                  
+                  <!-- Blog Links for Both Guest and Registered Users -->
+                  <li class="nav-item"><a href="{% url 'blog:home' %}" class="nav-link">Blog</a></li>
+                  
+  
+                  <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+  
+                  {% if request.session.is_authenticated %}
+                  <li class="nav-item">
+                    <a href="{% url 'disease_detection:upload_image' %}" class="nav-link">Disease Detection</a>
+                </li>
+                  
+                  <li class="nav-item">
+                      <a href="{% url 'qa_sessions:customer_notifications' %}" class="nav-link">
+                          <i class="fas fa-bell fa-2x"></i>
+                          {% if meetings.count > 0 %}
+                          <span class="badge bg-danger">{{ meetings.count }}</span>
+                          {% endif %}
+                      </a>
+                  </li>
+                  
+                  {% endif %}
+
+                  <li class="nav-item dropdown">
+                      {% if request.session.is_authenticated %}
+                     
+                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fas fa-user fa-2x"></i> <!-- User icon -->
+                          </a>
+                          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <li><a class="dropdown-item" href="{% url 'userauths:update_profile' %}">My Profile</a></li>
+                              
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a id="logout" class="dropdown-item" href="{% url 'userauths:logout' %}">Logout</a></li>
+                          </ul>
+                      {% else %}
+                          <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
+                      {% endif %}
+                  </li>
+                  
+                  <li class="nav-item cta cta-colored">
+                      <a href="{purchase:cart_detail' %}" class="nav-link">
+                          <span class="fas fa-shopping-cart fa-2x"></span> <!-- Changed to fa-2x to match the user icon -->
+                          
+                      </a>
+                  </li>
+              <style>
+  .nav-link {
+    display: flex;
+    align-items: center; /* Centers the icon and text vertically */
+}
+
+.fa-shopping-cart, .fa-user {
+    margin-right: 5px; /* Adds some space between the icon and the text */
+}
+body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+</style>                  
+                  </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="message-box" style="display:none;" class="alert"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#logout-btn').click(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: "{% url 'userauths:logout' %}",  // Ensure this is the correct URL for your logout view
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },  // Include CSRF token for security
+            success: function(response) {
+                $('#message-box').show().html('You have been logged out.').addClass('alert-info');
+                
+                // Optionally, redirect after showing the message
+                setTimeout(function() {
+                    window.location.href = "{% url 'userauths:index' %}";
+                }, 3000);  // Redirect after 3 seconds
+            },
+            error: function(response) {
+                $('#message-box').show().html('Error occurred during logout.').addClass('alert-danger');
+            }
+        });
+    });
+</script>
+
+        <!-- END nav -->
+
+    {% block content %}
+
+    
+    {% endblock content %}
+
+		
+    <footer class="ftco-footer ftco-section">
+        <div class="container">
+            <div class="row">
+                <div class="mouse">
+                          <a href="#" class="mouse-icon">
+                              <div class="mouse-wheel"><span class="ion-ios-arrow-up"></span></div>
+                          </a>
+                      </div>
+            </div>
+          <div class="row mb-5">
+            <div class="col-md">
+              <div class="ftco-footer-widget mb-4">
+                <h2 class="ftco-heading-2">Enchanted Eden</h2>
+                <p>Enchanted Eden: A hidden sanctuary where plant enthusiasts discover premium quality plants and expert planting practices, cultivating sustainable growth far from the ordinary.</p>
+                <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                  <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+                  <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+                  <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="ftco-footer-widget mb-4 ml-md-5">
+                <h2 class="ftco-heading-2">Menu</h2>
+                <ul class="list-unstyled">
+                  <li><a href="#" class="py-2 d-block">Shop</a></li>
+                  <li><a href="#" class="py-2 d-block">About</a></li>
+                  <li><a href="#" class="py-2 d-block">Journal</a></li>
+                  <li><a href="#" class="py-2 d-block">Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+               <div class="ftco-footer-widget mb-4">
+                <h2 class="ftco-heading-2">Help</h2>
+                <div class="d-flex">
+                    <ul class="list-unstyled mr-l-5 pr-l-3 mr-4">
+                      <li><a href="#" class="py-2 d-block">Shipping Information</a></li>
+                      <li><a href="#" class="py-2 d-block">Returns &amp; Exchange</a></li>
+                      <li><a href="#" class="py-2 d-block">Terms &amp; Conditions</a></li>
+                      <li><a href="#" class="py-2 d-block">Privacy Policy</a></li>
+                    </ul>
+                    <ul class="list-unstyled">
+                      <li><a href="#" class="py-2 d-block">FAQs</a></li>
+                      <li><a href="#" class="py-2 d-block">Contact</a></li>
+                    </ul>
+                  </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="ftco-footer-widget mb-4">
+                  <h2 class="ftco-heading-2">Have a Questions?</h2>
+                  <div class="block-23 mb-3">
+                    <ul>
+                      <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
+                      <li><a href="#"><span class="icon icon-phone"></span><span class="text">+2 392 3929 210</span></a></li>
+                      <li><a href="#"><span class="icon icon-envelope"></span><span class="text">info@yourdomain.com</span></a></li>
+                    </ul>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+  
+              <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                          </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+      
+    
+  
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+  
+  
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'js/scrollax.min.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="{% static 'js/google-map.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+      
+    <!-- Add this chatbot section just before the WhatsApp chat -->
+    <div class="container">
+        <!-- Chatbot Icon -->
+        <div id="chatbot-icon" class="chatbot-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+    
+        <!-- Chatbox Modal -->
+        <div id="chatbox" class="chatbox-modal">
+            <div class="chatbox-header">
+                <h2>Plant Care Assistant</h2>
+                <span id="close-chatbox" class="close">&times;</span>
+            </div>
+            <div class="chatbox-body" id="chatbox-body">
+                <!-- Initial greeting message -->
+                <div class="chatbot-message">Hello! I'm your Plant Care Assistant. How can I help you today?</div>
+            </div>
+            <div class="chatbox-footer">
+                <div class="input-group">
+                    <input type="text" id="user-input" class="form-control" placeholder="Type your message..." />
+                    <div class="input-icons">
+                        <button id="speech-button" class="btn btn-secondary">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button id="send-button" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add the chatbot styles -->
+    <style>
+        .chatbot-icon {
+            position: fixed;
+            bottom: 100px;  /* Positioned above WhatsApp button */
+            right: 30px;
+            background-color: #82ae46;  /* Matching your theme color */
+            color: white;
+            border-radius: 50%;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+            background-color: #6a9139;
+        }
+        
+        .chatbot-icon i {
+            font-size: 24px;
+        }
+        
+        .chatbox-modal {
+            display: none;
+            position: fixed;
+            bottom: 170px;  /* Positioned above the chatbot icon */
+            right: 30px;
+            width: 350px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .chatbox-header {
+            background-color: #82ae46;
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbox-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .close {
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .chatbox-body {
+            height: 300px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .chatbox-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .user-message, .chatbot-message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+        }
+        
+        .chatbot-message {
+            background-color: #f5f5f5;
+            margin-right: auto;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: #82ae46;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+
+    <!-- Add the chatbot script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const chatbox = document.getElementById('chatbox');
+        const closeChatbox = document.getElementById('close-chatbox');
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatboxBody = document.getElementById('chatbox-body');
+        const speechButton = document.getElementById('speech-button');
+
+        // Open chatbox
+        chatbotIcon.addEventListener('click', () => {
+            chatbox.style.display = 'block';
+            userInput.focus();
+        });
+
+        // Close chatbox
+        closeChatbox.addEventListener('click', () => {
+            chatbox.style.display = 'none';
+        });
+
+        // Send message on Enter key
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Speech recognition setup
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            speechButton.addEventListener('click', () => {
+                recognition.start();
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                sendMessage();
+            };
+        } else {
+            speechButton.style.display = 'none';
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            appendMessage('You', message);
+            userInput.value = '';
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/chatbot/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                removeTypingIndicator();
+
+                if (data.response) {
+                    appendMessage('Assistant', data.response);
+                } else {
+                    throw new Error('Invalid response format');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator();
+                appendMessage('Assistant', 'I apologize, but I encountered an error. Please try again.');
+            }
+        }
+
+        function appendMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = sender === 'You' ? 'user-message' : 'chatbot-message';
+            
+            // Format message with markdown-style formatting
+            const formattedMessage = formatMessage(message);
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${formattedMessage}
+                    <span class="message-time">${new Date().toLocaleTimeString()}</span>
+                </div>
+            `;
+            
+            chatboxBody.appendChild(messageDiv);
+            chatboxBody.scrollTop = chatboxBody.scrollHeight;
+        }
+
+        function formatMessage(message) {
+            // Convert markdown-style formatting to HTML
+            return message
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/•(.*?)(?=•|$)/g, '<li>$1</li>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chatbot-message typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatboxBody.appendChild(typingDiv);
+            chatboxBody.scrollTop = chatboxBody.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+    </script>
+
+    <!-- WhatsApp chat section -->
+    <style>
+        .whatsapp-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        .whatsapp-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            color: white;
+        }
+
+        .whatsapp-button i {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .chat-tooltip {
+            position: absolute;
+            right: 70px;
+            background-color: white;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .whatsapp-button:hover .chat-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Adjust chatbot position to avoid overlap */
+        .chatbot-icon {
+            bottom: 110px; /* Increased to make room for WhatsApp button */
+        }
+
+        .chatbox-modal {
+            bottom: 180px; /* Adjusted to maintain spacing */
+        }
+    </style>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-chat">
+        <a href="https://web.whatsapp.com/send?phone=919562290332" class="whatsapp-button" id="whatsappButton" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            <span class="chat-tooltip">Chat with us!</span>
+        </a>
+    </div>
+    </body>
+  </html>

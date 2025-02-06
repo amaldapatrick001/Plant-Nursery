@@ -1,0 +1,399 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7faf8;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .card-header h3 {
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, #ffffff, #ffffff);
+        padding: 2rem;
+    }
+
+    /* Table Styling */
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        color: #444;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    /* Button Styling */
+    .btn {
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm {
+        padding: 6px 15px;
+        font-size: 0.875rem;
+    }
+
+    .btn-group .btn {
+        margin-right: 5px;
+    }
+
+    .btn-success {
+        background-color: #82ae46;
+        border-color: #82ae46;
+    }
+
+    .btn-success:hover {
+        background-color: #6d8a2e;
+        box-shadow: 0 5px 15px rgba(109, 138, 46, 0.4);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: #fff;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+    }
+
+    /* Progress Bar */
+    .progress {
+        height: 20px;
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        line-height: 20px;
+        font-weight: 600;
+    }
+
+    /* Badge Styling */
+    .badge {
+        padding: 0.5em 1em;
+        border-radius: 15px;
+        font-weight: 500;
+    }
+
+    /* Section Headers */
+    .bg-success { background-color: #82ae46 !important; }
+    .bg-primary { background-color: #007bff !important; }
+    .bg-secondary { background-color: #6c757d !important; }
+    .bg-danger { background-color: #dc3545 !important; }
+
+    /* Empty State */
+    .text-center {
+        padding: 2rem 0;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            margin-top: 20px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
+
+        .table-responsive {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Ongoing Meetings -->
+            <!-- <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-video me-2"></i>Ongoing Meetings
+                        <span class="badge bg-light text-success float-end">{{ ongoing_meetings.count }}</span>
+                    </h3> -->
+                <!-- </div>
+                <div class="card-body">
+                    {% if ongoing_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Time</th>
+                                        <th>Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in ongoing_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>{{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>{{ meeting.current_participants }}/{{ meeting.max_participants }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if meeting.google_meet_link %}
+                                                    <a href="{{ meeting.google_meet_link }}" 
+                                                       target="_blank" 
+                                                       class="btn btn-success btn-sm">
+                                                        <i class="fas fa-video me-1"></i>Join Now
+                                                    </a>
+                                                {% endif %}
+                                                {% if user.user_type.usertype|lower == 'admin' or meeting.expert == user.expert %}
+                                                    <form method="post" action="{% url 'qa_sessions:cancel_meeting' meeting.session_id %}" 
+                                                          class="d-inline" 
+                                                          onsubmit="return confirm('Are you sure you want to cancel this meeting?');">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-times me-1"></i>Cancel
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No ongoing meetings at the moment.</p>
+                    {% endif %}
+                </div>
+            </div> -->
+
+            <!-- Scheduled Meetings -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>Scheduled Meetings
+                        <span class="badge bg-light text-primary">{{ scheduled_meetings.count }}</span>
+                    </h3>
+                    {% if user.expert %}
+                        <a href="{% url 'qa_sessions:schedule_meeting' %}" class="btn btn-light">
+                            <i class="fas fa-plus me-2"></i>Schedule New Meeting
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if scheduled_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in scheduled_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>{{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}</td>
+                                        <td>{{ meeting.start_time|date:"M d, Y" }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if meeting.current_participants >= meeting.max_participants %}bg-danger{% else %}bg-success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {% widthratio meeting.current_participants meeting.max_participants 100 %}%">
+                                                    {{ meeting.current_participants }}/{{ meeting.max_participants }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{% url 'qa_sessions:ameeting_detail' meeting.session_id %}" 
+                                                   class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
+                                                    <form method="post" 
+                                                          action="{% url 'qa_sessions:cancel_meeting' meeting.session_id %}" 
+                                                          class="d-inline" 
+                                                          onsubmit="return confirm('Are you sure you want to cancel this meeting? This action cannot be undone.');">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-ban me-1"></i>Cancel Meeting
+                                                        </button>
+                                                    </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            {% if user.expert %}
+                                <p class="text-muted mb-3">No meetings scheduled yet.</p>
+                                <a href="{% url 'qa_sessions:schedule_meeting' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Schedule Your First Meeting
+                                </a>
+                            {% else %}
+                                <p class="text-muted mb-0">No upcoming meetings available at the moment.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Completed Meetings -->
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Completed Meetings
+                        <span class="badge bg-light text-secondary float-end">{{ completed_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if completed_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in completed_meetings %}
+                                    <tr>
+                                        <td>{{ meeting.title }}</td>
+                                        <td>{{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}</td>
+                                        <td>{{ meeting.start_time|date:"M d, Y" }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>{{ meeting.current_participants }}/{{ meeting.max_participants }}</td>
+                                        <td>
+                                            <a href="{% url 'qa_sessions:ameeting_detail' meeting.session_id %}" 
+                                               class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye me-1"></i>View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No completed meetings yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Cancelled Meetings -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-ban me-2"></i>Cancelled Meetings
+                        <span class="badge bg-light text-danger float-end">{{ cancelled_meetings.count }}</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if cancelled_meetings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Expert</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meeting in cancelled_meetings %}
+                                    <tr>
+                                        <td>
+                                            <span class="text-decoration-line-through">{{ meeting.title }}</span>
+                                        </td>
+                                        <td>{{ meeting.expert.user.first_name }} {{ meeting.expert.user.last_name }}</td>
+                                        <td>{{ meeting.start_time|date:"M d, Y" }}</td>
+                                        <td>{{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</td>
+                                        <td>{{ meeting.current_participants }}/{{ meeting.max_participants }}</td>
+                                        <td>
+                                            <a href="{% url 'qa_sessions:ameeting_detail' meeting.session_id %}" 
+                                               class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye me-1"></i>View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-0">No cancelled meetings.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

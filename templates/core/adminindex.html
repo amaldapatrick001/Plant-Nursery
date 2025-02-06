@@ -1,0 +1,37 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+    <br><br>
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <i class="fas fa-seedling icon"></i>
+                    <h5 class="card-title">Total Products</h5>
+                    <p class="card-text">{{ product_count }} products available.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <i class="fas fa-users icon"></i>
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">{{ user_count_with_uid_2 }} registered users.</p> <!-- Dynamic user count -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <i class="fas fa-shopping-cart icon"></i>
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text">{{order_count}} orders placed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
