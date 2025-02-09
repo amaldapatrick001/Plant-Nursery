@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import dj_database_url
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -69,6 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_extensions',
 
     'core',
     'userauths',
@@ -81,6 +81,8 @@ INSTALLED_APPS = [
     'blog',
     'qa_sessions',
     'disease_detection',
+    'solar_forecast',
+
     
 
 ]

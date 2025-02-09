@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h2>Dear {{ customer_name }},</h2>
+    <p>Your order with ID {{ order_id }} has been confirmed. Please find the QR code attached for delivery confirmation.</p>
+    <p>Your delivery is scheduled for {{ delivery_date }}.</p>
+    {% if delivery_person_name %}
+        <p>Your delivery will be handled by {{ delivery_person_name }}.</p>
+        {% if vehicle_id %}
+            <p>Vehicle ID: {{ vehicle_id }}</p>
+        {% endif %}
+    {% endif %}
+    <p>Thank you for shopping with us!</p>
+</body>
+</html> 

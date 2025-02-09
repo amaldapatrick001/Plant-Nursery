@@ -1,0 +1,43 @@
+{% extends 'partials/dbase.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg rounded p-4 text-center" style="max-width: 500px; margin: auto; background: #f8f9fa;">
+        <h2 class="text-primary mb-3"><i class="fas fa-qrcode"></i> Confirm Delivery</h2>
+        <p class="text-muted">Scan the QR code to confirm delivery</p>
+
+        <div id="qr-reader" class="border rounded p-3 bg-white shadow-sm" style="width: 100%; max-width: 300px; margin: auto;"></div>
+        <p id="scan-result" class="mt-3 font-weight-bold text-success"></p>
+
+        <form id="confirm-delivery-form" method="POST" action="{% url 'delivery:confirm_delivery' %}" class="mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" id="scanned-order-id">
+            <button type="submit" id="confirm-btn" class="btn btn-success btn-lg mt-2" disabled>
+                <i class="fas fa-check-circle"></i> Confirm Delivery
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- QR Scanner Script -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    function onScanSuccess(qrCodeMessage) {
+        let orderId = qrCodeMessage.split("/").pop(); // Extracts order ID from URL
+        document.getElementById("scan-result").innerText = "Scanned Order ID: " + orderId;
+        document.getElementById("scanned-order-id").value = orderId;
+        document.getElementById("confirm-btn").disabled = false;
+    }
+
+    function onScanError(errorMessage) {
+        console.error(errorMessage);
+    }
+
+    let html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+        { facingMode: "environment" }, // Uses back camera if available
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        onScanSuccess,
+        onScanError
+    );
+</script>
+{% endblock %}

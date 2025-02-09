@@ -27,6 +27,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
 from reportlab.lib.units import inch
 from io import BytesIO
+import qrcode
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 
 def ensure_user_logged_in(request):
@@ -453,10 +456,38 @@ def razorpay_checkout(request):
             # Clear session data
             request.session['current_order_id'] = None
             
-            # Prepare response message with correct delivery person name access
-            message = "Payment processed successfully. "
+            # Generate QR code
+            qr_path = generate_qr(order.id)
+
+            # Prepare email content
+            delivery_person_name = None
+            vehicle_id = None
             if order.status == 'assigned' and order.assigned_delivery_person:
                 delivery_person_name = f"{order.assigned_delivery_person.user.first_name} {order.assigned_delivery_person.user.last_name}"
+                vehicle_id = order.assigned_delivery_person.vehicle_number
+
+            subject = "Order Confirmation and QR Code"
+            message = render_to_string('emails/order_confirmation.html', {
+                'customer_name': f"{order.billing.first_name} {order.billing.last_name}",
+                'order_id': order.id,
+                'delivery_date': order.delivery_date.strftime('%B %d, %Y'),
+                'delivery_person_name': delivery_person_name,
+                'vehicle_id': vehicle_id,
+            })
+
+            # Send email with QR code
+            email = EmailMessage(
+                subject,
+                message,
+                'no-reply@yourstore.com',
+                [order.billing.email]
+            )
+            email.attach_file(qr_path)
+            email.send()
+
+            # Prepare response message
+            message = "Payment processed successfully. "
+            if order.status == 'assigned' and order.assigned_delivery_person:
                 message += f"Delivery assigned to {delivery_person_name} for {order.delivery_date.strftime('%B %d, %Y')}"
             else:
                 message += f"Delivery scheduled for {order.delivery_date.strftime('%B %d, %Y')}"
@@ -467,8 +498,7 @@ def razorpay_checkout(request):
                 'message': message,
                 'status': order.status,
                 'delivery_date': order.delivery_date.strftime('%B %d, %Y'),
-                'delivery_person': (f"{order.assigned_delivery_person.user.first_name} {order.assigned_delivery_person.user.last_name}" 
-                                  if order.assigned_delivery_person else None)
+                'delivery_person': delivery_person_name
             })
 
         except Exception as e:
@@ -508,6 +538,7 @@ def order_summary(request, order_id):
     total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
 
     # Prepare context for rendering template
+    qr_code_url = generate_qr(order_id)  # Ensure this returns the correct URL
     context = {
         'order': order,
         'order_items': order_items,
@@ -517,6 +548,7 @@ def order_summary(request, order_id):
         'total_price_with_delivery_and_discount': total_price_with_delivery_and_discount,
         'selected_address_id': request.session.get('selected_address_id'),
         'user_addresses': Billing.objects.filter(user_id=user_id),
+        'qr_code_url': qr_code_url,
     }
 
     return render(request, 'purchase/order_summary.html', context)
@@ -713,6 +745,7 @@ def update_order_status(request, order_id):
         }, status=500)
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from .models import Order, OrderItem, Login
 
 def get_order_details(request, order_id):
@@ -1225,3 +1258,21 @@ def download_bill(request, order_id):
         content_type='application/pdf',
         headers={'Content-Disposition': f'attachment; filename="EE_Invoice_{order_id}.pdf"'}
     )
+
+def generate_qr(order_id):
+    # Define the directory path
+    qr_directory = os.path.join(settings.MEDIA_ROOT, 'qr_codes')
+
+    # Check if the directory exists, if not, create it
+    if not os.path.exists(qr_directory):
+        os.makedirs(qr_directory)
+
+    # Generate the QR code with the URL to confirm delivery
+    qr = qrcode.make(f"http://localhost:8000/delivery/confirm_delivery/{order_id}")
+
+    # Save the QR code image
+    qr_path = os.path.join(qr_directory, f"order_{order_id}.png")
+    qr.save(qr_path)
+
+    # Return the URL path for the QR code
+    return os.path.join(settings.MEDIA_URL, 'qr_codes', f"order_{order_id}.png")
