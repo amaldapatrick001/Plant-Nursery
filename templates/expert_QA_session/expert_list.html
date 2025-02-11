@@ -1,0 +1,213 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread text-white">Expert Consultation</h1>
+                <p class="breadcrumbs text-white">
+                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
+                    <span class="text-white">Experts</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experts List Section -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="row">
+            {% for expert in experts %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card expert-card h-100">
+                    <div class="expert-image">
+                        {% if expert.profile_picture %}
+                            <img src="{{ expert.profile_picture.url }}" alt="{{ expert.user.first_name }}" class="card-img-top">
+                        {% else %}
+                            <img src="{% static 'images/default-expert.jpg' %}" alt="Default Profile" class="card-img-top">
+                        {% endif %}
+                        <div class="expert-rating">
+                            <i class="fas fa-star"></i>
+                            <span>{{ expert.rating|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{ expert.user.first_name }} {{ expert.user.last_name }}</h3>
+                        <p class="expertise-area">
+                            <i class="fas fa-leaf"></i> {{ expert.expertise_area }}
+                        </p>
+                        <p class="expert-description">{{ expert.description|truncatewords:20 }}</p>
+                        <!-- <div class="expert-stats">
+                            <span><i class="fas fa-comments"></i> {{ expert.consultation_count }} consultations</span>
+                            <span><i class="fas fa-star"></i> {{ expert.total_reviews }} reviews</span>
+                        </div> -->
+                        <div class="expert-price">
+                            <span class="price">₹{{ expert.session_price }}/session</span>
+                            <span class="duration">({{ expert.session_duration }} mins)</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="consultation-buttons">
+                            {% if expert.chat_enabled %}
+                            <a href="{% url 'expert_QA_session:chat_with_expert' expert.expert_id %}" class="btn btn-chat">
+                                <i class="fas fa-comments"></i> Chat
+                            </a>
+                            {% endif %}
+                            {% if expert.phone_enabled %}
+                            <a href="{% url 'expert_QA_session:phone_qa' expert.expert_id %}" class="btn btn-phone">
+                                <i class="fas fa-phone"></i> Call
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'expert_QA_session:book_session' expert.expert_id %}" class="btn btn-book">
+                                Book
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center no-experts">
+                <i class="fas fa-user-tie"></i>
+                <h3>No Experts Available</h3>
+                <p>Please check back later for expert consultations.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .expert-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .expert-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .expert-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .expert-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .expert-rating {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(130, 174, 70, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .card-title {
+        color: #333;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .expertise-area {
+        color: #82ae46;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    .expert-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .expert-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .expert-price {
+        margin-bottom: 15px;
+    }
+
+    .price {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #82ae46;
+    }
+
+    .duration {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .consultation-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 8px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-chat {
+        background: #82ae46;
+        color: white;
+    }
+
+    .btn-phone {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-book {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .no-experts {
+        padding: 50px 20px;
+    }
+
+    .no-experts i {
+        font-size: 50px;
+        color: #82ae46;
+        margin-bottom: 20px;
+    }
+
+    .no-experts h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .no-experts p {
+        color: #666;
+    }
+</style>
+{% endblock %}

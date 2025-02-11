@@ -1,0 +1,358 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread text-white">My Bookings</h1>
+                <p class="breadcrumbs text-white">
+                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
+                    <span class="text-white">My Bookings</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bookings Section -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="booking-tabs">
+            <button class="tab-btn active" data-tab="upcoming">Upcoming Sessions</button>
+            <button class="tab-btn" data-tab="past">Past Sessions</button>
+        </div>
+
+        <!-- Upcoming Sessions -->
+        <div class="tab-content active" id="upcoming">
+            {% for session in upcoming_sessions %}
+            <div class="booking-card">
+                <div class="expert-info">
+                    {% if session.expert.profile_picture %}
+                        <img src="{{ session.expert.profile_picture.url }}" alt="{{ session.expert.user.first_name }}" class="expert-img">
+                    {% else %}
+                        <img src="{% static 'images/default-expert.jpg' %}" alt="{{ session.expert.user.first_name }}" class="expert-img">
+                    {% endif %}
+                    <div class="details">
+                        <h3>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</h3>
+                        <p class="expertise">{{ session.expert.expertise_area }}</p>
+                    </div>
+                </div>
+                <div class="session-info">
+                    <div class="info-item">
+                        <i class="fas {% if session.session_type == 'chat' %}fa-comments{% elif session.session_type == 'phone' %}fa-phone{% else %}fa-video{% endif %}"></i>
+                        <span>{{ session.session_type|title }} Session</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="far fa-calendar"></i>
+                        <span>{{ session.session_date|date:"F d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="far fa-clock"></i>
+                        <span>{{ session.session_date|date:"g:i A" }}</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    {% if session.can_be_cancelled %}
+                        <button onclick="cancelSession({{ session.session_id }})" class="btn-action cancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    {% endif %}
+                    {% if session.session_type == 'chat' %}
+                        <a href="{% url 'expert_QA_session:active_chat_session' session.session_id %}" class="btn-action chat">
+                            <i class="fas fa-comments"></i> Start Chat
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-bookings">
+                <i class="far fa-calendar-times"></i>
+                <h3>No Upcoming Sessions</h3>
+                <p>You don't have any upcoming sessions scheduled.</p>
+                <a href="{% url 'expert_QA_session:expert_list' %}" class="btn-book-now">Book a Session</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Past Sessions -->
+        <div class="tab-content" id="past">
+            {% for session in past_sessions %}
+            <div class="booking-card past">
+                <div class="expert-info">
+                    {% if session.expert.profile_picture and session.expert.profile_picture.url %}
+                        <img src="{{ session.expert.profile_picture.url }}" alt="{{ session.expert.user.first_name }}" class="expert-img">
+                    {% else %}
+                        <img src="{% static 'images/default-expert.jpg' %}" alt="{{ session.expert.user.first_name }}" class="expert-img">
+                    {% endif %}
+                    <div class="details">
+                        <h3>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</h3>
+                        <p class="expertise">{{ session.expert.expertise_area }}</p>
+                    </div>
+                </div>
+                <div class="session-info">
+                    <div class="info-item">
+                        <i class="fas {% if session.session_type == 'chat' %}fa-comments{% elif session.session_type == 'phone' %}fa-phone{% else %}fa-video{% endif %}"></i>
+                        <span>{{ session.session_type|title }} Session</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="far fa-calendar"></i>
+                        <span>{{ session.session_date|date:"F d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="far fa-clock"></i>
+                        <span>{{ session.session_date|date:"g:i A" }}</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    {% if not session.is_rated %}
+                    <button class="btn-action rate" onclick="rateSession({{ session.session_id }})">
+                        <i class="fas fa-star"></i> Rate Session
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-bookings">
+                <i class="far fa-calendar-check"></i>
+                <h3>No Past Sessions</h3>
+                <p>You haven't attended any sessions yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .booking-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        border: none;
+        background: none;
+        color: #666;
+        font-size: 1.1rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+        color: #82ae46;
+        border-bottom-color: #82ae46;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .booking-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .booking-card.past {
+        opacity: 0.8;
+    }
+
+    .expert-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .expert-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .details h3 {
+        margin: 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .expertise {
+        margin: 5px 0 0;
+        color: #82ae46;
+        font-size: 0.9rem;
+    }
+
+    .session-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #666;
+    }
+
+    .info-item i {
+        color: #82ae46;
+        width: 20px;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-action {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-action.chat {
+        background: #82ae46;
+    }
+
+    .btn-action.phone {
+        background: #6c757d;
+    }
+
+    .btn-action.video {
+        background: #28a745;
+    }
+
+    .btn-action.cancel {
+        background: #dc3545;
+    }
+
+    .btn-action.rate {
+        background: #ffc107;
+        color: #333;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .btn-action:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .no-bookings {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+    }
+
+    .no-bookings i {
+        font-size: 50px;
+        color: #82ae46;
+        margin-bottom: 20px;
+    }
+
+    .btn-book-now {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 25px;
+        background: #82ae46;
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-book-now:hover {
+        background: #6a9139;
+        transform: translateY(-2px);
+        color: white;
+    }
+</style>
+
+<script>
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding content
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Cancel session
+    function cancelSession(sessionId) {
+        if (confirm('Are you sure you want to cancel this session?')) {
+            fetch(`/expert_QA_session/cancel_session/${sessionId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    }
+
+    // Rate session
+    function rateSession(sessionId) {
+        const rating = prompt('Rate this session (1-5 stars):', '5');
+        if (rating && !isNaN(rating) && rating >= 1 && rating <= 5) {
+            fetch(`/expert_QA_session/rate_session/${sessionId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ rating: rating })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,315 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-wrapper">
+    <!-- Expert Info Header -->
+    <div class="expert-header">
+        <div class="expert-info">
+            {% if session.expert.profile_picture %}
+                <img src="{{ session.expert.profile_picture.url }}" alt="{{ session.expert.user.first_name }}" class="expert-avatar">
+            {% else %}
+                <img src="{% static 'images/default-expert.jpg' %}" alt="{{ session.expert.user.first_name }}" class="expert-avatar">
+            {% endif %}
+            <div class="expert-details">
+                <h3>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</h3>
+                <p>{{ session.expert.expertise_area }}</p>
+            </div>
+        </div>
+        <div class="session-info">
+            <span class="session-time">
+                <i class="far fa-clock"></i> 
+                Session Time: {{ session.session_date|time:"g:i A" }} - {{ session_end_time|time:"g:i A" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-container">
+        {% if is_active %}
+            <!-- Active Chat -->
+            <div class="chat-messages" id="chat-messages">
+                {% for message in messages %}
+                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        <div class="message-content">{{ message.message }}</div>
+                        <div class="message-time">{{ message.timestamp|time:"g:i A" }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="chat-input">
+                <form id="chat-form">
+                    {% csrf_token %}
+                    <input type="text" id="message-input" placeholder="Type your message..." required>
+                    <button type="submit">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+        {% elif is_upcoming %}
+            <!-- Upcoming Session -->
+            <div class="waiting-container">
+                <div class="waiting-message">
+                    <i class="far fa-clock waiting-icon"></i>
+                    <h3>Your session starts in</h3>
+                    <div id="countdown" class="countdown"></div>
+                    <p>Please wait until your scheduled time to start chatting.</p>
+                </div>
+            </div>
+
+        {% else %}
+            <!-- Expired Session -->
+            <div class="expired-container">
+                <div class="expired-message">
+                    <i class="fas fa-hourglass-end expired-icon"></i>
+                    <h3>Session Expired</h3>
+                    <p>This chat session has ended. You can book a new session with the expert.</p>
+                    <a href="{% url 'expert_QA_session:expert_list' %}" class="btn-book">Book Another Session</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .chat-wrapper {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .expert-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .expert-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .expert-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .expert-details h3 {
+        margin: 0;
+        color: #333;
+    }
+
+    .expert-details p {
+        margin: 5px 0 0;
+        color: #666;
+    }
+
+    .session-info {
+        color: #666;
+    }
+
+    .chat-container {
+        height: 500px;
+        position: relative;
+    }
+
+    .chat-messages {
+        height: calc(100% - 70px);
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        max-width: 70%;
+    }
+
+    .message.sent {
+        margin-left: auto;
+    }
+
+    .message-content {
+        padding: 12px 18px;
+        border-radius: 15px;
+        background: #f0f2f5;
+        display: inline-block;
+    }
+
+    .message.sent .message-content {
+        background: #82ae46;
+        color: white;
+    }
+
+    .message-time {
+        font-size: 0.8em;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .chat-input {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+    }
+
+    .chat-input form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+    }
+
+    .chat-input button {
+        padding: 12px 20px;
+        background: #82ae46;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .chat-input button:hover {
+        background: #6a9139;
+    }
+
+    .waiting-container, .expired-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .waiting-icon, .expired-icon {
+        font-size: 48px;
+        color: #82ae46;
+        margin-bottom: 20px;
+    }
+
+    .countdown {
+        font-size: 36px;
+        color: #82ae46;
+        margin: 20px 0;
+        font-weight: bold;
+    }
+
+    .btn-book {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 30px;
+        background: #82ae46;
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-book:hover {
+        background: #6a9139;
+        transform: translateY(-2px);
+    }
+</style>
+
+<script>
+    {% if is_active %}
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        let lastMessageId = '{{ messages.last.id|default:0 }}';
+
+        // Scroll to bottom initially
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Handle message submission
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            fetch("{% url 'expert_QA_session:send_message' session.expert.expert_id %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `message=${encodeURIComponent(message)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    appendMessage(message, true);
+                    messageInput.value = '';
+                }
+            });
+        });
+
+        function appendMessage(message, isSent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">${message}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Poll for new messages
+        setInterval(() => {
+            fetch(`{% url 'expert_QA_session:get_messages' session.expert.expert_id %}?last_message=${lastMessageId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.messages && data.messages.length > 0) {
+                        data.messages.forEach(msg => {
+                            if (!msg.is_sent) {
+                                appendMessage(msg.message, false);
+                            }
+                        });
+                        lastMessageId = data.messages[data.messages.length - 1].id;
+                    }
+                });
+        }, 3000);
+
+    {% elif is_upcoming %}
+        function updateCountdown() {
+            const sessionTime = new Date("{{ session.session_date|date:'c' }}");
+            const now = new Date();
+            const diff = sessionTime - now;
+
+            if (diff <= 0) {
+                location.reload();
+                return;
+            }
+
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    {% endif %}
+</script>
+{% endblock %} 

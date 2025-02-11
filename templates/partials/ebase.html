@@ -402,10 +402,12 @@
             <i class="fas fa-comments"></i> Q & A Session
         </a>
         <ul class="dropdown-menu">
-            <li><a href="{% url 'qa_sessions:eschedule_meeting' %}">
-                <i class="fas fa-calendar-plus"></i> Schedule Session</a></li>
-            <li><a href="{% url 'qa_sessions:eview_scheduled_meetings' %}">
-                <i class="fas fa-video"></i> My Sessions</a></li>
+            <li>
+                <a href="{% url 'expert_QA_session:expert_sessions' %}">
+                    <i class="fas fa-calendar-check"></i> My Sessions
+                </a>
+            </li>
+           
         </ul>
     </div>
 

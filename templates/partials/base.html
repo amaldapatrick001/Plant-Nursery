@@ -135,6 +135,18 @@
                       </a>
                   </li>
                   
+                  <!-- Add Expert Q&A Dropdown after Disease Detection -->
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="qaDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Expert Q&A
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="qaDropdown">
+                          <a class="dropdown-item" href="{% url 'expert_QA_session:expert_list' %}">Find Experts</a>
+                          <a class="dropdown-item" href="{% url 'expert_QA_session:my_bookings' %}">My Boookings</a>
+                          <!-- Add session history if needed -->
+                      </div>
+                  </li>
+                  
                   {% endif %}
 
                   <li class="nav-item dropdown">

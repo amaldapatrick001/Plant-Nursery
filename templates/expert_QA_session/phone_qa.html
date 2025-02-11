@@ -1,0 +1,246 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread text-white">Phone Consultation</h1>
+                <p class="breadcrumbs text-white">
+                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
+                    <span class="mr-2"><a href="{% url 'expert_QA_session:expert_list' %}" class="text-white">Experts</a></span>
+                    <span class="text-white">Phone Call</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Section -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="booking-container">
+            <div class="expert-profile">
+                {% if expert.profile_picture and expert.profile_picture.url %}
+                    <img src="{{ expert.profile_picture.url }}" alt="{{ expert.user.first_name }}" class="expert-img">
+                {% else %}
+                    <img src="{% static 'images/default-expert.jpg' %}" alt="{{ expert.user.first_name }}" class="expert-img">
+                {% endif %}
+                <div class="expert-info">
+                    <h3>{{ expert.user.first_name }} {{ expert.user.last_name }}</h3>
+                    <p class="expertise">{{ expert.expertise_area }}</p>
+                    <div class="stats">
+                        <span><i class="fas fa-star"></i> {{ expert.rating|floatformat:1 }}</span>
+                        <span><i class="fas fa-phone"></i> {{ expert.consultation_count }} calls</span>
+                    </div>
+                    <p class="session-info">
+                        <span class="price">₹{{ expert.session_price }}</span>
+                        <span class="duration">{{ expert.session_duration }} mins</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="booking-form">
+                <h4>Schedule a Phone Consultation</h4>
+                <form id="phone-booking-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Select Date</label>
+                        <input type="date" id="session-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Time Slots</label>
+                        <select id="session-time" class="form-control" required disabled>
+                            <option value="">Select a date first</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Phone Number</label>
+                        <input type="tel" value="{{ user.phoneno }}" readonly>
+                    </div>
+                    <button type="submit" class="btn-book">
+                        Schedule Call
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Scheduling functionality
+    document.getElementById('session-date').addEventListener('change', function() {
+        const date = this.value;
+        const timeSelect = document.getElementById('session-time');
+        
+        timeSelect.innerHTML = '<option value="">Loading available slots...</option>';
+        timeSelect.disabled = true;
+
+        fetch(`/expert_QA_session/check_availability/{{ expert.expert_id }}/?date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                timeSelect.innerHTML = '';
+                if (data.available_slots && data.available_slots.length > 0) {
+                    data.available_slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot;
+                        option.textContent = slot;
+                        timeSelect.appendChild(option);
+                    });
+                    timeSelect.disabled = false;
+                } else {
+                    timeSelect.innerHTML = '<option value="">No slots available</option>';
+                    timeSelect.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+                timeSelect.disabled = true;
+            });
+    });
+
+    document.getElementById('phone-booking-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const date = document.getElementById('session-date').value;
+        const time = document.getElementById('session-time').value;
+        const datetime = `${date}T${time}`;
+
+        fetch("{% url 'expert_QA_session:book_session' expert.expert_id %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `session_type=call&session_date=${datetime}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Phone consultation scheduled successfully!');
+                window.location.href = "{% url 'expert_QA_session:my_bookings' %}";
+            } else {
+                alert(data.error || 'Failed to schedule phone consultation');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while scheduling the consultation');
+        });
+    });
+
+    // Set minimum date to today
+    const dateInput = document.getElementById('session-date');
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    dateInput.min = today.toISOString().split('T')[0];
+</script>
+
+<style>
+    .booking-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    .expert-profile {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .expert-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .expert-info h3 {
+        margin: 0 0 5px;
+        color: #333;
+    }
+
+    .expertise {
+        color: #82ae46;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .stats {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .session-info {
+        margin: 0;
+    }
+
+    .price {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #82ae46;
+        margin-right: 10px;
+    }
+
+    .duration {
+        color: #666;
+    }
+
+    .booking-form {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .booking-form h4 {
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #666;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .btn-book {
+        width: 100%;
+        padding: 12px;
+        background: #82ae46;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-book:hover {
+        background: #6a9139;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

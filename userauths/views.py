@@ -1,3 +1,4 @@
+import json
 import logging
 import random
 import string
@@ -800,21 +801,27 @@ def update_expert_profile(request):
             if form.is_valid():
                 expert = form.save(commit=False)
                 
-                # Handle profile picture if provided
+                # Handle profile picture
                 if 'profile_picture' in request.FILES:
                     expert.profile_picture = request.FILES['profile_picture']
                 
-                # Get availability status from form
-                expert.availability_status = form.cleaned_data['availability_status']
+                # Handle availability schedule
+                schedule_data = request.POST.get('availability_schedule')
+                if schedule_data:
+                    try:
+                        expert.availability_schedule = json.loads(schedule_data)
+                    except json.JSONDecodeError:
+                        return JsonResponse({
+                            'status': 'error',
+                            'message': 'Invalid schedule format'
+                        }, status=400)
                 
                 expert.save()
-                
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Profile updated successfully'
                 })
             else:
-                print(form.errors)  # For debugging
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Please correct the following errors:',
@@ -822,10 +829,21 @@ def update_expert_profile(request):
                 }, status=400)
         else:
             form = ExpertProfileUpdateForm(instance=expert)
-            return render(request, 'userauths/eupdate_profile.html', {'form': form})
+            # Initialize empty schedule if None
+            if expert.availability_schedule is None:
+                expert.availability_schedule = {
+                    day: {'available': False, 'start': '09:00', 'end': '17:00'}
+                    for day, _ in expert.DAYS_OF_WEEK
+                }
+                expert.save()
+            
+            return render(request, 'userauths/eupdate_profile.html', {
+                'form': form,
+                'expert': expert
+            })
 
     except Exception as e:
-        print(f"Error updating profile: {str(e)}")  # For debugging
+        print(f"Error updating profile: {str(e)}")
         return JsonResponse({
             'status': 'error',
             'message': str(e)

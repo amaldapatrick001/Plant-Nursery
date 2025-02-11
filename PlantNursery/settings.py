@@ -82,11 +82,20 @@ INSTALLED_APPS = [
     'qa_sessions',
     'disease_detection',
     'solar_forecast',
-
-    
-
+    'expert_QA_session',
+    'channels',
 ]
 
+
+ASGI_APPLICATION = 'PlantNursery.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Authentication backends
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',

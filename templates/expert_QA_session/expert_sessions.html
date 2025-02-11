@@ -1,0 +1,169 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="sessions-container">
+    <h2 class="section-title">My Sessions</h2>
+
+    <!-- Active Sessions -->
+    <div class="session-section">
+        <h3>Active Sessions</h3>
+        <div class="session-cards">
+            {% for session in active_sessions %}
+            <div class="session-card active">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <h4>{{ session.user.first_name }} {{ session.user.last_name }}</h4>
+                </div>
+                <div class="session-details">
+                    <p><i class="far fa-clock"></i> {{ session.session_date|time:"g:i A" }}</p>
+                    <p><i class="far fa-calendar"></i> {{ session.session_date|date:"M d, Y" }}</p>
+                    <p><i class="fas {% if session.session_type == 'chat' %}fa-comments{% else %}fa-phone{% endif %}"></i> 
+                        {{ session.session_type|title }} Session
+                    </p>
+                </div>
+                <div class="session-actions">
+                    {% if session.session_type == 'chat' %}
+                    <a href="{% url 'expert_QA_session:expert_chat_session' session.session_id %}" class="btn-join">
+                        <i class="fas fa-comments"></i> Join Chat
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="no-sessions">No active sessions at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Upcoming Sessions -->
+    <div class="session-section">
+        <h3>Upcoming Sessions</h3>
+        <div class="session-cards">
+            {% for session in upcoming_sessions %}
+            <div class="session-card upcoming">
+                <!-- Similar structure as active sessions -->
+                <!-- ... card content ... -->
+            </div>
+            {% empty %}
+            <p class="no-sessions">No upcoming sessions scheduled.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Past Sessions -->
+    <div class="session-section">
+        <h3>Past Sessions</h3>
+        <div class="session-cards">
+            {% for session in past_sessions %}
+            <div class="session-card past">
+                <!-- Similar structure as active sessions -->
+                <!-- ... card content ... -->
+            </div>
+            {% empty %}
+            <p class="no-sessions">No past sessions.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .sessions-container {
+        padding: 20px;
+    }
+
+    .section-title {
+        color: var(--primary-color);
+        margin-bottom: 30px;
+    }
+
+    .session-section {
+        margin-bottom: 40px;
+    }
+
+    .session-section h3 {
+        color: var(--dark-color);
+        margin-bottom: 20px;
+    }
+
+    .session-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s ease;
+    }
+
+    .session-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .session-card.active {
+        border-left: 5px solid #4CAF50;
+    }
+
+    .session-card.upcoming {
+        border-left: 5px solid #2196F3;
+    }
+
+    .session-card.past {
+        border-left: 5px solid #9E9E9E;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .user-info i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+    }
+
+    .session-details {
+        margin-bottom: 20px;
+    }
+
+    .session-details p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .session-details i {
+        width: 20px;
+        margin-right: 10px;
+        color: var(--primary-color);
+    }
+
+    .btn-join {
+        display: inline-block;
+        padding: 10px 20px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-join:hover {
+        background: var(--dark-color);
+        transform: translateY(-2px);
+    }
+
+    .no-sessions {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %} 

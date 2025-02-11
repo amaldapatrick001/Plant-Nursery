@@ -1,0 +1,480 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread text-white">Chat with Expert</h1>
+                <p class="breadcrumbs text-white">
+                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
+                    <span class="mr-2"><a href="{% url 'expert_QA_session:expert_list' %}" class="text-white">Experts</a></span>
+                    <span class="text-white">Chat</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Section -->
+<section class="ftco-section">
+    <div class="container">
+        {% if active_session %}
+            <!-- Existing chat container for active sessions -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="expert-info">
+                        {% if expert.profile_picture and expert.profile_picture.url %}
+                            <img src="{{ expert.profile_picture.url }}" alt="{{ expert.user.first_name }}" class="expert-avatar">
+                        {% else %}
+                            <img src="{% static 'images/default-expert.jpg' %}" alt="{{ expert.user.first_name }}" class="expert-avatar">
+                        {% endif %}
+                        <div class="expert-details">
+                            <h3>{{ expert.user.first_name }} {{ expert.user.last_name }}</h3>
+                            <p>{{ expert.expertise_area }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    {% for message in messages %}
+                        <div class="message {% if message.sender.uid == request.session.user_id %}sent{% else %}received{% endif %}">
+                            <div class="message-content">{{ message.message }}</div>
+                            <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+<!-- 
+                <div class="chat-input">
+                    <form id="chat-form">
+                        {% csrf_token %}
+                        <input type="text" id="message-input" placeholder="Type your message..." required>
+                        <button type="submit" class="btn-send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>-->
+
+            <!-- WebSocket Connection Status -->
+            <!-- <div id="connection-status" style="display: none; text-align: center; padding: 10px; background: #fff3cd; color: #856404;">
+                Reconnecting to chat... Please wait.
+            </div> --> 
+
+            <script>
+                let chatSocket;
+                let reconnectAttempts = 0;
+                const maxReconnectAttempts = 5;
+
+                function connectWebSocket() {
+                    // Update WebSocket URL to use window.location.protocol
+                    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    const wsUrl = `${wsProtocol}//${window.location.host}/ws/chat/{{ expert.expert_id }}/`;
+                    
+                    console.log('Connecting to WebSocket:', wsUrl);  // Debug log
+                    
+                    chatSocket = new WebSocket(wsUrl);
+
+                    chatSocket.onopen = function(e) {
+                        console.log('WebSocket connected');
+                        reconnectAttempts = 0;
+                        document.getElementById('connection-status').style.display = 'none';
+                    };
+
+                    chatSocket.onmessage = function(e) {
+                        const data = JSON.parse(e.data);
+                        appendMessage(data.message, data.sender === '{{ request.session.user_id }}', data.timestamp);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    };
+
+                    chatSocket.onclose = function(e) {
+                        console.log('WebSocket disconnected:', e.code, e.reason);  // Debug log
+                        document.getElementById('connection-status').style.display = 'block';
+                        
+                        if (reconnectAttempts < maxReconnectAttempts) {
+                            setTimeout(function() {
+                                reconnectAttempts++;
+                                connectWebSocket();
+                            }, 3000);
+                        }
+                    };
+
+                    chatSocket.onerror = function(err) {
+                        console.error('WebSocket error:', err);  // Debug log
+                    };
+                }
+
+                const messageInput = document.getElementById('message-input');
+                const chatForm = document.getElementById('chat-form');
+                const chatMessages = document.getElementById('chat-messages');
+
+                // Initialize WebSocket connection when document is ready
+                document.addEventListener('DOMContentLoaded', function() {
+                    connectWebSocket();
+                });
+
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const message = messageInput.value.trim();
+                    
+                    if (message && chatSocket.readyState === WebSocket.OPEN) {
+                        chatSocket.send(JSON.stringify({
+                            'message': message,
+                            'sender': '{{ request.session.user_id }}',
+                            'recipient': '{{ expert.user.uid }}'
+                        }));
+                        messageInput.value = '';
+                    } else if (chatSocket.readyState !== WebSocket.OPEN) {
+                        alert('Connection lost. Trying to reconnect...');
+                    }
+                });
+
+                function appendMessage(message, isSent, timestamp) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+                    
+                    // Escape HTML to prevent XSS
+                    const escapedMessage = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    
+                    messageDiv.innerHTML = `
+                        <div class="message-content">${escapedMessage}</div>
+                        <div class="message-time">${timestamp || new Date().toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}</div>
+                    `;
+                    chatMessages.appendChild(messageDiv);
+                }
+
+                // Add these event listeners for better UX
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chatForm.dispatchEvent(new Event('submit'));
+                    }
+                });
+
+                // Auto-scroll to bottom when new messages arrive
+                const observer = new MutationObserver(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+
+                observer.observe(chatMessages, {
+                    childList: true,
+                    subtree: true
+                });
+
+                // Scroll to bottom on load
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Handle visibility change
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'visible' && chatSocket.readyState !== WebSocket.OPEN) {
+                        connectWebSocket();
+                    }
+                });
+            </script>
+
+        {% else %}
+            <!-- Scheduling container for new sessions -->
+            <div class="scheduling-container">
+                <div class="expert-profile">
+                    <div class="expert-info">
+                        {% if expert.profile_picture %}
+                            <img src="{{ expert.profile_picture.url }}" alt="{{ expert.user.first_name }}" class="expert-avatar">
+                        {% else %}
+                            <img src="{% static 'images/default-expert.jpg' %}" alt="{{ expert.user.first_name }}" class="expert-avatar">
+                        {% endif %}
+                        <div class="expert-details">
+                            <h3>{{ expert.user.first_name }} {{ expert.user.last_name }}</h3>
+                            <p>{{ expert.expertise_area }}</p>
+                            <div class="session-info">
+                                <span class="price">₹{{ expert.session_price }}/session</span>
+                                <span class="duration">{{ expert.session_duration }} minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scheduling-form">
+                    <h4>Schedule a Chat Session</h4>
+                    <form id="schedule-chat-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Select Date</label>
+                            <input type="date" id="session-date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Available Time Slots</label>
+                            <select id="session-time" class="form-control" required disabled>
+                                <option value="">Select a date first</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-schedule">
+                            Schedule Chat Session
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                // Scheduling functionality
+                document.getElementById('session-date').addEventListener('change', function() {
+                    const date = this.value;
+                    const timeSelect = document.getElementById('session-time');
+                    
+                    timeSelect.innerHTML = '<option value="">Loading available slots...</option>';
+                    timeSelect.disabled = true;
+
+                    fetch(`/expert_QA_session/check_availability/{{ expert.expert_id }}/?date=${date}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            timeSelect.innerHTML = '';
+                            if (data.available_slots && data.available_slots.length > 0) {
+                                data.available_slots.forEach(slot => {
+                                    const option = document.createElement('option');
+                                    option.value = slot;
+                                    option.textContent = slot;
+                                    timeSelect.appendChild(option);
+                                });
+                                timeSelect.disabled = false;
+                            } else {
+                                timeSelect.innerHTML = '<option value="">No slots available</option>';
+                                timeSelect.disabled = true;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+                            timeSelect.disabled = true;
+                        });
+                });
+
+                document.getElementById('schedule-chat-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const date = document.getElementById('session-date').value;
+                    const time = document.getElementById('session-time').value;
+                    const datetime = `${date}T${time}`;
+
+                    fetch("{% url 'expert_QA_session:book_session' expert.expert_id %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: `session_type=chat&session_date=${datetime}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Chat session scheduled successfully!');
+                            window.location.href = "{% url 'expert_QA_session:my_bookings' %}";
+                        } else {
+                            alert(data.error || 'Failed to schedule chat session');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while scheduling the session');
+                    });
+                });
+
+                // Set minimum date to today
+                const dateInput = document.getElementById('session-date');
+                const today = new Date();
+                today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+                dateInput.min = today.toISOString().split('T')[0];
+            </script>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .chat-header {
+        padding: 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .expert-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .expert-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .expert-details h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    .expert-details p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .chat-messages {
+        height: 400px;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        position: relative;
+    }
+
+    .message.sent {
+        background: #82ae46;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 5px;
+    }
+
+    .message.received {
+        background: #f1f1f1;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 5px;
+    }
+
+    .message-time {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-top: 5px;
+    }
+
+    .chat-input {
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    #chat-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #message-input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+    }
+
+    .btn-send {
+        background: #82ae46;
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-send:hover {
+        background: #6a9139;
+        transform: scale(1.05);
+    }
+
+    .scheduling-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    .expert-profile {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .session-info {
+        margin-top: 10px;
+        display: flex;
+        gap: 20px;
+    }
+
+    .price {
+        color: #82ae46;
+        font-weight: bold;
+    }
+
+    .duration {
+        color: #666;
+    }
+
+    .scheduling-form {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .btn-schedule {
+        width: 100%;
+        padding: 12px;
+        background: #82ae46;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-schedule:hover {
+        background: #6a9139;
+        transform: translateY(-2px);
+    }
+
+    .btn-schedule:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}

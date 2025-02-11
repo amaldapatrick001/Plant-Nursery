@@ -2,46 +2,253 @@
 {% load static %}
 
 {% block content %}
+<!-- Hero Section -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread text-white">Order History</h1>
+                <p class="breadcrumbs text-white">
+                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
+                    <span class="text-white">Orders</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Orders List Section -->
 <div class="container my-5">
-    <div class="order-summary">
-        <h2 class="mb-4">Order Summary</h2>
+    <div class="order-history-container">
         {% if orders %}
-        <table class="table table-striped table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Order ID</th>
-                    <th>Status</th>
-                    <th>Payment Status</th>
-                    <th>Total Amount (₹)</th>
-                    <th>Order Date</th>
-                    <th>Details</th>
-                    <th>Review</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr>
-                    <td>{{ order.id }}</td>
-                    <td>{{ order.status }}</td>
-                    <td>{{ order.payment_status }}</td>
-                    <td>₹{{ order.total_amount }}</td>
-                    <td>{{ order.order_date|date:"F j, Y" }}</td>
-                    <td><a href="{% url 'purchase:order_summary' order.id %}" class="btn btn-info">View Summary</a></td>
-                    <td>
-                        {% if order.status == "delivered" %}
-                        <a href="{% url 'purchase:submit_review' order.id %}" class="btn btn-secondary">Review</a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                
-            </tbody>
-        </table>
+            <div class="table-responsive">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr class="order-row">
+                            <td class="order-id">#{{ order.id }}</td>
+                            <td>
+                                <span class="status-badge status-{{ order.status|lower }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="payment-badge payment-{{ order.payment_status|lower }}">
+                                    {{ order.payment_status }}
+                                </span>
+                            </td>
+                            <td class="amount">₹{{ order.total_amount }}</td>
+                            <td>{{ order.order_date|date:"d M, Y" }}</td>
+                            <td class="actions">
+                                <a href="{% url 'purchase:order_summary' order.id %}" class="btn btn-view">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                {% if order.status == "delivered" %}
+                                <a href="{% url 'purchase:submit_review' order.id %}" class="btn btn-review">
+                                    <i class="fas fa-star"></i> Review
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
-        <p>No orders found.</p>
+            <div class="no-orders">
+                <i class="fas fa-shopping-bag"></i>
+                <h3>No Orders Yet</h3>
+                <p>Looks like you haven't made your first order yet.</p>
+                <a href="{% url 'products:cproduct_list' %}" class="btn btn-shop">Start Shopping</a>
+            </div>
         {% endif %}
     </div>
 </div>
+
+{% block styles %}
+<style>
+    /* Enhanced Order History Styles */
+    .order-history-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        padding: 40px;
+        margin-top: -50px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .custom-table {
+        border-collapse: separate;
+        border-spacing: 0 15px;
+        margin-top: 20px;
+    }
+
+    .custom-table thead th {
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        padding: 20px;
+        border: none;
+        letter-spacing: 1px;
+    }
+
+    .order-row {
+        background: #ffffff;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .order-row:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    }
+
+    .order-row td {
+        padding: 25px 20px;
+        vertical-align: middle;
+        border: none;
+    }
+
+    .order-id {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1em;
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge, .payment-badge {
+        padding: 8px 18px;
+        border-radius: 25px;
+        font-size: 0.9em;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .status-delivered { 
+        background: linear-gradient(145deg, #4CAF50, #45a049);
+        color: white;
+    }
+    
+    .status-pending { 
+        background: linear-gradient(145deg, #ffc107, #ffb300);
+        color: white;
+    }
+    
+    .status-processing { 
+        background: linear-gradient(145deg, #2196F3, #1e88e5);
+        color: white;
+    }
+
+    .payment-completed { 
+        background: linear-gradient(145deg, #4CAF50, #45a049);
+        color: white;
+    }
+    
+    .payment-pending { 
+        background: linear-gradient(145deg, #ffc107, #ffb300);
+        color: white;
+    }
+
+    .amount {
+        font-weight: 600;
+        font-size: 1.1em;
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .btn-view, .btn-review {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9em;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-view {
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        color: white;
+        border: none;
+    }
+
+    .btn-review {
+        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        color: #666;
+        border: none;
+    }
+
+    .btn-view:hover, .btn-review:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .no-orders {
+        text-align: center;
+        padding: 80px 20px;
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .no-orders i {
+        font-size: 80px;
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 30px;
+    }
+
+    .no-orders h3 {
+        color: #333;
+        font-size: 1.8em;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .no-orders p {
+        color: #666;
+        font-size: 1.1em;
+        margin-bottom: 30px;
+    }
+
+    .btn-shop {
+        background: linear-gradient(145deg, #82ae46, #6a9139);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 30px;
+        font-size: 1.1em;
+        font-weight: 500;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(130, 174, 70, 0.3);
+    }
+
+    .btn-shop:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(130, 174, 70, 0.4);
+        background: linear-gradient(145deg, #6a9139, #82ae46);
+        color: white;
+    }
+</style>
+{% endblock %}
 {% endblock %}
