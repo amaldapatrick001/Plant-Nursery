@@ -29,7 +29,7 @@ urlpatterns = [
      path('blog/', include('blog.urls')),  
      path('qa_sessions/', include('qa_sessions.urls')),
  path('disease/', include('disease_detection.urls')),  # Include app routes
-    path('solar_forecast/', include('solar_forecast.urls')),  # Include solar forecast URLs
     path('expert_QA_session/', include('expert_QA_session.urls')),  # Include expert sessions URLs
+    path('solar/', include('solar_forecast.urls')),  # Include solar forecast URLs
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

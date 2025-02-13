@@ -352,69 +352,71 @@ def password_reset_request(request):
             email = form.cleaned_data['email']
             try:
                 user = Login.objects.get(email=email)
+                
+                # Create token manually
+                uid = urlsafe_base64_encode(force_bytes(user.login_id))
+                token = default_token_generator.make_token(user)
+                
+                # Build reset URL
+                current_site = get_current_site(request)
+                reset_url = f"{request.scheme}://{current_site.domain}/userauths/reset/{uid}/{token}/"
+                
+                # Send email
+                subject = "Password Reset Request"
+                email_body = render_to_string('userauths/password_reset_email.html', {
+                    'email': user.email,
+                    'reset_url': reset_url,
+                    'site_name': current_site.name,
+                    'protocol': request.scheme,
+                    'domain': current_site.domain,
+                    'uid': uid,
+                    'token': token,
+                })
+                
+                send_mail(
+                    subject,
+                    email_body,
+                    'noreply@enchantededen.com',
+                    [user.email],
+                    fail_silently=False,
+                )
+                
+                messages.success(request, "Password reset instructions have been sent to your email.")
+                return redirect('userauths:password_reset_done')
+                
             except Login.DoesNotExist:
-                messages.error(request, 'No user is associated with this email.')
-                return redirect('userauths:password_reset_form')
-
-            # Generate token and UID for password reset
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-            # Send password reset email
-            current_site = get_current_site(request)
-            subject = 'Password Reset Requested'
-            message = render_to_string('userauths/password_reset_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': uid,
-                'token': token,
-            })
-            send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
-
-            # Redirect to password reset done page
-            return redirect('userauths:password_reset_done')
+                messages.error(request, "No account found with this email address.")
+                
     else:
         form = CustomPasswordResetForm()
-
+    
     return render(request, 'userauths/password_reset_form.html', {'form': form})
 
 
-def password_reset_confirm(request, uidb64=None, token=None, *args, **kwargs):
-    error_message = None
-    validlink = False  # Default to False
-
+def password_reset_confirm(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = Login.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Login.DoesNotExist) as e:
+        user = Login.objects.get(login_id=uid)
+    except (TypeError, ValueError, OverflowError, Login.DoesNotExist):
         user = None
-        error_message = str(e)
-
-    if user is not None and default_token_generator.check_token(user, token):
-        validlink = True  # Set validlink to True if token and user are valid
-
-        if request.method == 'POST':
-            form = CustomSetPasswordForm(user=user, data=request.POST)
-            if form.is_valid():
-                form.save()  # Save the new password
-                return redirect('userauths:password_reset_complete')
-
-        else:
-            form = CustomSetPasswordForm(user=user)
         
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = CustomSetPasswordForm(user, request.POST)
+            if form.is_valid():
+                new_password = form.cleaned_data['new_password1']
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, "Your password has been reset successfully!")
+                return redirect('userauths:password_reset_complete')
+        else:
+            form = CustomSetPasswordForm(user)
         return render(request, 'userauths/password_reset_confirm.html', {
             'form': form,
-            'validlink': validlink,
-            'uid': uidb64,
-            'token': token,
+            'validlink': True
         })
     else:
-        if not error_message:
-            error_message = "The reset link is invalid or has expired. Please try resetting your password again."
-        return render(request, 'userauths/password_reset_confirm.html', {
-            'error_message': error_message,
-            'validlink': validlink
-        })
+        return render(request, 'userauths/password_reset_invalid.html')
 
 
 
@@ -680,6 +682,7 @@ def google_callback(request):
                 1: 'userauths:adminindex',
                 2: 'userauths:index',
                 3: 'userauths:delivery_dashboard',
+                
                 4: 'userauths:update_expert_profile'
             }
 
@@ -793,7 +796,10 @@ def update_expert_profile(request):
         return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
 
     try:
-        user = User_Reg.objects.get(uid=request.session['user_id'])
+        # First get the Login object using login_id from session
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        # Then get the User_Reg through the uid field
+        user = login_user.uid
         expert = get_object_or_404(Expert, user=user)
 
         if request.method == 'POST':
@@ -829,19 +835,21 @@ def update_expert_profile(request):
                 }, status=400)
         else:
             form = ExpertProfileUpdateForm(instance=expert)
-            # Initialize empty schedule if None
-            if expert.availability_schedule is None:
-                expert.availability_schedule = {
-                    day: {'available': False, 'start': '09:00', 'end': '17:00'}
-                    for day, _ in expert.DAYS_OF_WEEK
-                }
-                expert.save()
-            
             return render(request, 'userauths/eupdate_profile.html', {
                 'form': form,
                 'expert': expert
             })
 
+    except Login.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'User not found'
+        }, status=404)
+    except Expert.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Expert profile not found'
+        }, status=404)
     except Exception as e:
         print(f"Error updating profile: {str(e)}")
         return JsonResponse({

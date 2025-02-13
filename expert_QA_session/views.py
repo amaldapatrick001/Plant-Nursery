@@ -6,8 +6,7 @@ from userauths.models import User_Reg, Expert
 from django.utils import timezone
 from datetime import timedelta
 from .asterisk_utils import AsteriskHandler
-from django.db.models import Avg
-from django.core.exceptions import ValidationError
+from django.db.models import Avg, Q
 import json
 from django.db import models
 
@@ -369,67 +368,148 @@ def active_chat_session(request, session_id):
 
 @check_auth
 def expert_sessions(request):
-    # Get the expert
-    expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
-    
     # Get current time
     now = timezone.now()
     
-    # Get upcoming sessions
-    upcoming_sessions = ExpertSession.objects.filter(
-        expert=expert,
-        session_date__gt=now
+    # Get active sessions (happening right now)
+    active_sessions = ExpertSession.objects.filter(
+        session_date__lte=now,
+        session_date__gte=now - timezone.timedelta(minutes=30)  # Consider sessions within last 30 minutes as active
     ).order_by('session_date')
     
-    # Get active sessions
-    active_sessions = ExpertSession.objects.filter(
-        expert=expert,
-        session_date__lte=now,
-        session_date__gte=now - timezone.timedelta(minutes=expert.session_duration)
+    # Get upcoming sessions
+    upcoming_sessions = ExpertSession.objects.filter(
+        session_date__gt=now
     ).order_by('session_date')
     
     # Get past sessions
     past_sessions = ExpertSession.objects.filter(
-        expert=expert,
-        session_date__lt=now - timezone.timedelta(minutes=expert.session_duration)
+        session_date__lt=now - timezone.timedelta(minutes=30)  # Sessions older than 30 minutes
     ).order_by('-session_date')
     
     context = {
-        'upcoming_sessions': upcoming_sessions,
         'active_sessions': active_sessions,
+        'upcoming_sessions': upcoming_sessions,
         'past_sessions': past_sessions,
     }
-    
     return render(request, 'expert_QA_session/expert_sessions.html', context)
 
 @check_auth
 def expert_chat_session(request, session_id):
-    # Get the expert
+    """View for experts to handle chat sessions"""
     expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
-    
-    # Get the session
     session = get_object_or_404(ExpertSession, session_id=session_id, expert=expert)
     
     # Check if session is active
     now = timezone.now()
-    session_end_time = session.session_date + timezone.timedelta(minutes=expert.session_duration)
+    session_end_time = session.session_date + timedelta(minutes=expert.session_duration)
     
     is_active = session.session_date <= now <= session_end_time
     is_upcoming = session.session_date > now
     
     # Get chat messages
-    chat_messages = ChatMessage.objects.filter(
-        models.Q(sender=session.user, recipient=expert.user) |
-        models.Q(sender=expert.user, recipient=session.user)
+    messages = ChatMessage.objects.filter(
+        Q(sender=session.user, recipient=expert.user) |
+        Q(sender=expert.user, recipient=session.user)
     ).order_by('timestamp')
     
     context = {
         'session': session,
-        'user': session.user,
-        'messages': chat_messages,
+        'messages': messages,
         'is_active': is_active,
         'is_upcoming': is_upcoming,
         'session_end_time': session_end_time,
     }
     
     return render(request, 'expert_QA_session/expert_chat_session.html', context)
+
+@check_auth
+def expert_call_session(request, session_id):
+    """View for experts to handle call sessions"""
+    expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
+    session = get_object_or_404(ExpertSession, session_id=session_id, expert=expert, session_type='call')
+    
+    now = timezone.now()
+    session_end_time = session.session_date + timedelta(minutes=expert.session_duration)
+    
+    is_active = session.session_date <= now <= session_end_time
+    is_upcoming = session.session_date > now
+    
+    context = {
+        'session': session,
+        'is_active': is_active,
+        'is_upcoming': is_upcoming,
+        'session_end_time': session_end_time,
+    }
+    
+    return render(request, 'expert_QA_session/expert_call_session.html', context)
+
+@check_auth
+def expert_send_message(request, session_id):
+    """API endpoint for sending chat messages"""
+    if request.method == 'POST':
+        expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
+        session = get_object_or_404(ExpertSession, session_id=session_id, expert=expert)
+        message = request.POST.get('message')
+        
+        if message:
+            ChatMessage.objects.create(
+                sender=expert.user,
+                recipient=session.user,
+                message=message,
+                session=session
+            )
+            return JsonResponse({'success': True})
+    
+    return JsonResponse({'success': False})
+
+@check_auth
+def get_chat_messages(request, session_id):
+    """API endpoint for getting chat messages"""
+    expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
+    session = get_object_or_404(ExpertSession, session_id=session_id, expert=expert)
+    
+    messages = ChatMessage.objects.filter(
+        Q(sender=session.user, recipient=expert.user) |
+        Q(sender=expert.user, recipient=session.user)
+    ).order_by('timestamp')
+    
+    messages_data = [{
+        'message': msg.message,
+        'sender_id': msg.sender.uid,
+        'timestamp': msg.timestamp.strftime('%I:%M %p')
+    } for msg in messages]
+    
+    return JsonResponse({'messages': messages_data})
+
+@check_auth
+def update_call_status(request, session_id):
+    """API endpoint for updating call status"""
+    if request.method == 'POST':
+        expert = get_object_or_404(Expert, user__uid=request.session['user_id'])
+        session = get_object_or_404(ExpertSession, session_id=session_id, expert=expert)
+        
+        status = request.POST.get('status')
+        if status in ['started', 'ended']:
+            session.call_status = status
+            session.save()
+            return JsonResponse({'success': True})
+    
+    return JsonResponse({'success': False})
+
+@check_auth
+def session_report(request):
+    # Get all sessions ordered by date (most recent first)
+    past_sessions = ExpertSession.objects.filter(
+        session_date__lt=timezone.now()
+    ).order_by('-session_date')
+    
+    upcoming_sessions = ExpertSession.objects.filter(
+        session_date__gte=timezone.now()
+    ).order_by('-session_date')
+    
+    context = {
+        'past_sessions': past_sessions,
+        'upcoming_sessions': upcoming_sessions,
+    }
+    return render(request, 'expert_QA_session/session_report.html', context)

@@ -1,0 +1,159 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-wrapper">
+    <div class="chat-header">
+        <div class="user-info">
+            <img src="{% if session.user.profile_picture %}{{ session.user.profile_picture.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" alt="{{ session.user.first_name }}">
+            <div class="user-details">
+                <h3>{{ session.user.first_name }} {{ session.user.last_name }}</h3>
+                <p class="session-time">
+                    <i class="far fa-clock"></i> {{ session.session_date|time:"g:i A" }}
+                    {% if is_active %}
+                    <span class="status active">Active Now</span>
+                    {% elif is_upcoming %}
+                    <span class="status upcoming">Upcoming</span>
+                    {% else %}
+                    <span class="status ended">Ended</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="actions">
+            <a href="tel:{{ session.user.phone }}" class="btn-call">
+                <i class="fas fa-phone"></i> Call
+            </a>
+            <a href="https://wa.me/{{ session.user.phone }}" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <div class="message-content">{{ message.message }}</div>
+                <div class="message-time">{{ message.timestamp|time:"g:i A" }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_active %}
+        <form id="chat-form" class="chat-input">
+            {% csrf_token %}
+            <input type="text" id="message-input" placeholder="Type your message..." required>
+            <button type="submit">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .chat-wrapper {
+        max-width: 1000px;
+        margin: 2rem auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .chat-header {
+        padding: 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-messages {
+        height: 500px;
+        overflow-y: auto;
+        padding: 1.5rem;
+    }
+
+    .message {
+        margin-bottom: 1rem;
+        max-width: 70%;
+    }
+
+    .message.sent {
+        margin-left: auto;
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .message.received {
+        background: #f0f2f5;
+    }
+
+    .chat-input {
+        padding: 1rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-call, .btn-whatsapp {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1rem;
+    }
+
+    .btn-call {
+        background: #28a745;
+    }
+
+    .btn-whatsapp {
+        background: #25d366;
+    }
+</style>
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/{{ session.session_id }}/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        addMessage(data.message, data.sender === '{{ request.user.id }}');
+    };
+
+    document.querySelector('#chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('#message-input');
+        const message = messageInput.value;
+        
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': '{{ request.user.id }}',
+                'recipient': '{{ session.user.id }}'
+            }));
+            messageInput.value = '';
+        }
+    });
+
+    function addMessage(message, isSent) {
+        const messagesContainer = document.querySelector('#chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+        messageDiv.innerHTML = `
+            <div class="message-content">${message}</div>
+            <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+</script>
+{% endblock %}

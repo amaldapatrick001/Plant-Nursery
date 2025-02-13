@@ -1,0 +1,62 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Solar and Weather Forecast</h2>
+
+    <!-- Location Selector -->
+    <form method="get" class="mb-4">
+        <div class="form-group">
+            <label for="location">Select Location:</label>
+            <select name="location" id="location" class="form-control" onchange="this.form.submit()">
+                {% for location in locations %}
+                    <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}>
+                        {{ location }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    {% if today_data %}
+    <div class="row">
+        <!-- Today's Forecast -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Today's Weather ({{ today_data.date }})</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">Temperature: {{ today_data.temperature }}°C</li>
+                        <li class="list-group-item">Humidity: {{ today_data.humidity }}%</li>
+                        <li class="list-group-item">Wind Speed: {{ today_data.wind_speed }} m/s</li>
+                        <li class="list-group-item">Precipitation: {{ today_data.precipitation }} mm</li>
+                        <li class="list-group-item">Cloud Coverage: {{ today_data.cloud_coverage }}%</li>
+                        <li class="list-group-item">Solar Radiation: {{ today_data.solar_radiation }} W/m²</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tomorrow's Prediction -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Tomorrow's Prediction ({{ tomorrow_prediction.date }})</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">Predicted Solar Radiation: {{ tomorrow_prediction.solar_radiation }} W/m²</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        No data available for the selected location.
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

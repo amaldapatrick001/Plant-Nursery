@@ -1,10 +1,8 @@
-import os
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
-from django.conf import settings
 
-SCOPES = [os.getenv('GOOGLE_CALENDAR_SCOPES')]
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 def create_google_meet_event(summary, description, start_time, end_time, attendees_emails, credentials_json):
     """
@@ -18,11 +16,11 @@ def create_google_meet_event(summary, description, start_time, end_time, attende
         'description': description,
         'start': {
             'dateTime': start_time.isoformat(),
-            'timeZone': os.getenv('GOOGLE_CALENDAR_TIMEZONE', 'UTC'),
+            'timeZone': 'UTC',
         },
         'end': {
             'dateTime': end_time.isoformat(),
-            'timeZone': os.getenv('GOOGLE_CALENDAR_TIMEZONE', 'UTC'),
+            'timeZone': 'UTC',
         },
         'attendees': [{'email': email} for email in attendees_emails],
         'conferenceData': {

@@ -2,168 +2,285 @@
 {% load static %}
 
 {% block content %}
-<div class="sessions-container">
-    <h2 class="section-title">My Sessions</h2>
+<!-- Add this at the top of your template for debugging -->
+{% if debug %}
+<div class="debug-info">
+    <p>Number of upcoming sessions: {{ upcoming_sessions|length }}</p>
+    <p>Current user: {{ request.user.username }}</p>
+    {% for session in upcoming_sessions %}
+        <p>Session: {{ session.session_date }} - {{ session.user.first_name }}</p>
+    {% endfor %}
+</div>
+{% endif %}
 
+<div class="sessions-container fade-in">
     <!-- Active Sessions -->
-    <div class="session-section">
-        <h3>Active Sessions</h3>
+    <div class="session-section mb-4">
+        <h3 class="section-title">
+            <i class="fas fa-circle-dot pulse"></i> Active Sessions
+        </h3>
         <div class="session-cards">
             {% for session in active_sessions %}
-            <div class="session-card active">
-                <div class="user-info">
-                    <i class="fas fa-user-circle"></i>
-                    <h4>{{ session.user.first_name }} {{ session.user.last_name }}</h4>
-                </div>
-                <div class="session-details">
-                    <p><i class="far fa-clock"></i> {{ session.session_date|time:"g:i A" }}</p>
-                    <p><i class="far fa-calendar"></i> {{ session.session_date|date:"M d, Y" }}</p>
-                    <p><i class="fas {% if session.session_type == 'chat' %}fa-comments{% else %}fa-phone{% endif %}"></i> 
-                        {{ session.session_type|title }} Session
-                    </p>
+            <div class="session-card active glass-effect">
+                <div class="session-info">
+                    <div class="client-info">
+                        <!-- <div class="profile-image">
+                            <img src="{% if session.user.profile_picture %}{{ session.user.profile_picture.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" alt="{{ session.user.first_name }}">
+                        </div> -->
+                        <div class="user-details">
+                            <h4>{{ session.user.first_name }} {{ session.user.last_name }}</h4>
+                            <span class="session-type {{ session.session_type }}">
+                                {{ session.get_session_type_display }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="session-details">
+                        <div class="detail-item">
+                            <i class="far fa-clock"></i>
+                            <span>{{ session.session_date|time:"g:i A" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="far fa-calendar"></i>
+                            <span>{{ session.session_date|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="session-actions">
                     {% if session.session_type == 'chat' %}
-                    <a href="{% url 'expert_QA_session:expert_chat_session' session.session_id %}" class="btn-join">
-                        <i class="fas fa-comments"></i> Join Chat
-                    </a>
+                        <a href="{% url 'expert_QA_session:expert_chat_session' session.session_id %}" class="btn btn-primary btn-glow">
+                            <i class="fas fa-comments"></i> Join Chat
+                        </a>
+                    {% elif session.session_type == 'phone' %}
+                        <a href="{% url 'expert_QA_session:expert_call_session' session.session_id %}" class="btn btn-success btn-glow">
+                            <i class="fas fa-phone"></i> Join Call
+                        </a>
+                    {% elif session.session_type == 'video' %}
+                        <a href="{% url 'expert_QA_session:expert_video_session' session.session_id %}" class="btn btn-info btn-glow">
+                            <i class="fas fa-video"></i> Join Video
+                        </a>
                     {% endif %}
                 </div>
             </div>
             {% empty %}
-            <p class="no-sessions">No active sessions at the moment.</p>
+            <div class="empty-state">
+                <i class="fas fa-calendar-xmark"></i>
+                <p>No active sessions at the moment</p>
+            </div>
             {% endfor %}
         </div>
     </div>
 
     <!-- Upcoming Sessions -->
-    <div class="session-section">
-        <h3>Upcoming Sessions</h3>
+    <div class="session-section mb-4">
+        <h3 class="text-primary"><i class="fas fa-clock"></i> Upcoming Sessions</h3>
         <div class="session-cards">
             {% for session in upcoming_sessions %}
             <div class="session-card upcoming">
-                <!-- Similar structure as active sessions -->
-                <!-- ... card content ... -->
+                <div class="session-info">
+                    <div class="client-info">
+                        <!-- <img src="{% if session.user.profile_picture %}{{ session.user.profile_picture.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" alt="{{ session.user.first_name }}">
+                        --><h4>{{ session.user.first_name }} {{ session.user.last_name }}</h4> 
+                    </div>
+                    <div class="session-details">
+                        <p><i class="far fa-clock"></i> {{ session.session_date|time:"g:i A" }}</p>
+                        <p><i class="far fa-calendar"></i> {{ session.session_date|date:"M d, Y" }}</p>
+                        <p><i class="fas fa-tag"></i> {{ session.get_session_type_display }}</p>
+                    </div>
+                </div>
+                <div class="countdown" data-time="{{ session.session_date|date:'c' }}">
+                    Starts in: <span class="timer">Loading...</span>
+                </div>
             </div>
             {% empty %}
-            <p class="no-sessions">No upcoming sessions scheduled.</p>
+            <p class="text-muted">No upcoming sessions</p>
             {% endfor %}
         </div>
     </div>
 
     <!-- Past Sessions -->
     <div class="session-section">
-        <h3>Past Sessions</h3>
+        <h3 class="text-secondary"><i class="fas fa-history"></i> Past Sessions</h3>
         <div class="session-cards">
             {% for session in past_sessions %}
             <div class="session-card past">
-                <!-- Similar structure as active sessions -->
-                <!-- ... card content ... -->
+                <div class="session-info">
+                    <div class="client-info">
+                        <!-- <img src="{% if session.user.profile_picture %}{{ session.user.profile_picture.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" alt="{{ session.user.first_name }}">
+                       -->
+                    </div> <h4>{{ session.user.first_name }} {{ session.user.last_name }}</h4> 
+                    <div class="session-details">
+                        <p><i class="far fa-clock"></i> {{ session.session_date|time:"g:i A" }}</p>
+                        <p><i class="far fa-calendar"></i> {{ session.session_date|date:"M d, Y" }}</p>
+                        <p><i class="fas fa-tag"></i> {{ session.get_session_type_display }}</p>
+                    </div>
+                </div>
+                <div class="session-actions">
+                    <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#sessionDetails{{ session.session_id }}">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                </div>
             </div>
             {% empty %}
-            <p class="no-sessions">No past sessions.</p>
+            <p class="text-muted">No past sessions</p>
             {% endfor %}
         </div>
     </div>
 </div>
 
 <style>
+    /* Enhanced Session Styles */
     .sessions-container {
-        padding: 20px;
+        padding: 2rem;
     }
 
     .section-title {
-        color: var(--primary-color);
-        margin-bottom: 30px;
-    }
-
-    .session-section {
-        margin-bottom: 40px;
-    }
-
-    .session-section h3 {
         color: var(--dark-color);
-        margin-bottom: 20px;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
-    .session-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .session-card {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+        transition: var(--transition);
         box-shadow: var(--shadow-md);
-        transition: transform 0.3s ease;
     }
 
     .session-card:hover {
         transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
     }
 
     .session-card.active {
-        border-left: 5px solid #4CAF50;
+        border-left: 4px solid var(--primary-color);
     }
 
-    .session-card.upcoming {
-        border-left: 5px solid #2196F3;
-    }
-
-    .session-card.past {
-        border-left: 5px solid #9E9E9E;
-    }
-
-    .user-info {
+    .client-info {
         display: flex;
         align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
+        gap: 1.5rem;
     }
 
-    .user-info i {
-        font-size: 2.5rem;
-        color: var(--primary-color);
+    .profile-image img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid var(--accent-color);
+        box-shadow: var(--shadow-sm);
     }
+
+    .user-details h4 {
+        margin: 0;
+        color: var(--dark-color);
+        font-weight: 600;
+    }
+
+    .session-type {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+
+    .session-type.chat { background: rgba(46, 125, 50, 0.1); color: var(--primary-color); }
+    .session-type.phone { background: rgba(25, 118, 210, 0.1); color: #1976D2; }
+    .session-type.video { background: rgba(156, 39, 176, 0.1); color: #9C27B0; }
 
     .session-details {
-        margin-bottom: 20px;
+        margin-top: 1rem;
+        display: flex;
+        gap: 1.5rem;
     }
 
-    .session-details p {
-        margin: 5px 0;
-        color: #666;
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-dark);
     }
 
-    .session-details i {
-        width: 20px;
-        margin-right: 10px;
-        color: var(--primary-color);
+    .btn-glow {
+        position: relative;
+        overflow: hidden;
     }
 
-    .btn-join {
-        display: inline-block;
-        padding: 10px 20px;
-        background: var(--primary-color);
-        color: white;
-        border-radius: 25px;
-        text-decoration: none;
-        transition: all 0.3s ease;
+    .btn-glow::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255,255,255,0.3),
+            transparent
+        );
+        transform: rotate(45deg);
+        animation: glow 2s infinite;
     }
 
-    .btn-join:hover {
-        background: var(--dark-color);
-        transform: translateY(-2px);
-    }
-
-    .no-sessions {
+    .empty-state {
         text-align: center;
-        color: #666;
-        padding: 20px;
-        background: #f5f5f5;
-        border-radius: 10px;
+        padding: 3rem;
+        color: var(--text-dark);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.1); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes glow {
+        0% { transform: rotate(45deg) translateX(-100%); }
+        100% { transform: rotate(45deg) translateX(100%); }
     }
 </style>
-{% endblock %} 
+
+<script>
+// Countdown timer functionality
+function updateCountdowns() {
+    document.querySelectorAll('.countdown').forEach(countdown => {
+        const targetTime = new Date(countdown.dataset.time);
+        const now = new Date();
+        const diff = targetTime - now;
+
+        if (diff > 0) {
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            countdown.querySelector('.timer').textContent = 
+                `${hours}h ${minutes}m`;
+        } else {
+            countdown.querySelector('.timer').textContent = 'Starting soon';
+        }
+    });
+}
+
+// Update countdowns every minute
+setInterval(updateCountdowns, 60000);
+updateCountdowns();
+</script>
+{% endblock %}

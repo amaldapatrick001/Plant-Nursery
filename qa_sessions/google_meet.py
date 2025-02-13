@@ -1,10 +1,8 @@
-import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from django.conf import settings
 
-SCOPES = [os.getenv('GOOGLE_CALENDAR_SCOPES')]
-SERVICE_ACCOUNT_FILE = os.getenv('GOOGLE_SERVICE_ACCOUNT_FILE')
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+SERVICE_ACCOUNT_FILE = 'F:\Main project\Plant-Nursery\qa_sessions\client_secret_130668388328-iv5f4kas0v5crf8tilda7qietm38714n.apps.googleusercontent.com (1).json'  # Replace with your credentials.json path
 
 def create_google_meet(event_details):
     """Creates a Google Meet event and returns the event details."""
@@ -17,11 +15,11 @@ def create_google_meet(event_details):
         'description': event_details['description'],
         'start': {
             'dateTime': event_details['start_time'],
-            'timeZone': os.getenv('GOOGLE_CALENDAR_TIMEZONE', 'UTC'),
+            'timeZone': 'UTC',
         },
         'end': {
             'dateTime': event_details['end_time'],
-            'timeZone': os.getenv('GOOGLE_CALENDAR_TIMEZONE', 'UTC'),
+            'timeZone': 'UTC',
         },
         'conferenceData': {
             'createRequest': {

@@ -117,9 +117,10 @@
                   
                   <!-- Blog Links for Both Guest and Registered Users -->
                   <li class="nav-item"><a href="{% url 'blog:home' %}" class="nav-link">Blog</a></li>
+                  <li class="nav-item"><a href="{% url 'solar_forecast' %}" class="nav-link">Solar Forecast</a></li>
+
                   
-                <li class="nav-item"><a href="{% url 'solar_forecast:get_solar_radiation' %}" class="nav-link">Solar Forecast</a></li>
-                  <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
   
                   {% if request.session.is_authenticated %}
                   <li class="nav-item">

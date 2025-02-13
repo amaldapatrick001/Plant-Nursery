@@ -1,0 +1,198 @@
+{% extends 'partials/ebase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="call-wrapper">
+    <!-- Session Info Header -->
+    <div class="session-header">
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if session.user.profile_picture %}
+                    <img src="{{ session.user.profile_picture.url }}" alt="{{ session.user.first_name }}">
+                {% else %}
+                    <i class="fas fa-user-circle"></i>
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <h3>{{ session.user.first_name }} {{ session.user.last_name }}</h3>
+                <p class="session-type">Phone Session</p>
+            </div>
+        </div>
+        <div class="session-info">
+            <div class="info-item">
+                <i class="far fa-calendar"></i>
+                <span>{{ session.session_date|date:"F d, Y" }}</span>
+            </div>
+            <div class="info-item">
+                <i class="far fa-clock"></i>
+                <span>{{ session.session_date|time:"g:i A" }} - {{ session_end_time|time:"g:i A" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Interface -->
+    <div class="call-container">
+        {% if is_active %}
+            <div class="active-call">
+                <div class="call-status">
+                    <i class="fas fa-phone"></i>
+                    <span>Call in Progress</span>
+                    <div class="call-timer" id="callTimer">00:00</div>
+                </div>
+                <div class="call-actions">
+                    <button class="btn-action mute">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="btn-action end-call">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+        {% elif is_upcoming %}
+            <div class="waiting-container">
+                <div class="waiting-message">
+                    <i class="far fa-clock"></i>
+                    <h3>Upcoming Call</h3>
+                    <div id="countdown"></div>
+                    <p>The call will start at the scheduled time.</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="expired-container">
+                <div class="expired-message">
+                    <i class="fas fa-times-circle"></i>
+                    <h3>Call Ended</h3>
+                    <p>This call session has ended.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .call-wrapper {
+        max-width: 800px;
+        margin: 30px auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .session-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-avatar img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .call-container {
+        padding: 40px;
+        text-align: center;
+    }
+
+    .active-call {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+    .call-status {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .call-timer {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .call-actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .btn-action {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-action.mute {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-action.end-call {
+        background: #dc3545;
+        color: white;
+    }
+
+    .waiting-container, .expired-container {
+        padding: 40px;
+        text-align: center;
+    }
+
+    #countdown {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 20px 0;
+        color: var(--primary-color);
+    }
+</style>
+
+<script>
+    {% if is_active %}
+        // Call timer
+        let startTime = new Date();
+        setInterval(() => {
+            let now = new Date();
+            let diff = Math.floor((now - startTime) / 1000);
+            let minutes = Math.floor(diff / 60);
+            let seconds = diff % 60;
+            document.getElementById('callTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    {% elif is_upcoming %}
+        // Countdown timer
+        function updateCountdown() {
+            const sessionTime = new Date("{{ session.session_date|date:'c' }}");
+            const now = new Date();
+            const diff = sessionTime - now;
+
+            if (diff <= 0) {
+                location.reload();
+                return;
+            }
+
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    {% endif %}
+</script>
+{% endblock %} 

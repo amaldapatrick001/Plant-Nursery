@@ -66,11 +66,22 @@ class Login(models.Model):
 
     def __str__(self):
         return f'Login entry for {self.email}'
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
 
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
+    def get_email_field_name(self):
+        return 'email'
+    
+    def get_username(self):
+        return self.email
+    
+    @property
+    def is_active(self):
+        return True
+    
+    def has_usable_password(self):
+        return True
+    
+    def get_session_auth_hash(self):
+        return self.password
 
 class Expert(models.Model):
     DAYS_OF_WEEK = [

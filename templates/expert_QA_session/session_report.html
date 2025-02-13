@@ -1,0 +1,499 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block title %}Session Report{% endblock %}
+
+{% block content %}
+<div class="report-container fade-in">
+    <div class="analytics-header glass-effect">
+        <div class="header-content">
+            <div class="title-section">
+                <h2>
+                    <i class="fas fa-chart-line gradient-icon"></i>
+                    Expert Session Analytics
+                </h2>
+            </div>
+            <div class="stats-cards">
+                <div class="stat-card glass-effect live-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-broadcast-tower pulse-icon"></i>
+                        <div class="ripple-effect"></div>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Live Now</h4>
+                        <div class="stat-number">
+                            <span class="number">{{ live_sessions.count }}</span>
+                            <span class="label">Active Sessions</span>
+                        </div>
+                        <div class="live-indicator">
+                            <span class="pulse-dot"></span> LIVE
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Sessions</h4>
+                        <div class="stat-number">
+                            <span class="number">{{ upcoming_sessions.count|add:past_sessions.count }}</span>
+                            <span class="label">Sessions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Upcoming</h4>
+                        <div class="stat-number">
+                            <span class="number">{{ upcoming_sessions.count }}</span>
+                            <span class="label">Sessions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Sessions (New Section) -->
+    {% if live_sessions %}
+    <div class="report-section">
+        <div class="section-title">
+            <i class="fas fa-broadcast-tower text-danger pulse-icon"></i>
+            <h3>Live Sessions</h3>
+            <span class="live-indicator">• LIVE</span>
+        </div>
+        <div class="sessions-grid">
+            {% for session in live_sessions %}
+            <div class="session-card glass-effect live-card" data-index="{{ forloop.counter0 }}">
+                <div class="live-badge">
+                    <span class="pulse-dot"></span> LIVE
+                </div>
+                <div class="card-header">
+                    <div class="expert-info">
+                        <img src="{% if session.expert.user.profile_picture %}{{ session.expert.user.profile_picture.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" alt="Expert">
+                        <div class="expert-details">
+                            <h4>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</h4>
+                            <span class="badge badge-danger">
+                                <i class="fas fa-circle"></i> In Progress
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="session-detail">
+                        <i class="far fa-clock"></i>
+                        <span>Started at {{ session.session_date|time:"g:i A" }}</span>
+                    </div>
+                    <div class="session-detail">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>Duration: {{ session.expert.session_duration }} minutes</span>
+                    </div>
+                    <div class="session-type {{ session.session_type }} active">
+                        {% if session.session_type == 'chat' %}
+                            <i class="fas fa-comments"></i> Chat Session
+                        {% elif session.session_type == 'phone' %}
+                            <i class="fas fa-phone"></i> Phone Call
+                        {% else %}
+                            <i class="fas fa-video"></i> Video Call
+                        {% endif %}
+                    </div>
+                    <div class="join-session">
+                        <a href="#" class="btn btn-danger btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Join Session
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Sessions -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="h5 mb-0">Upcoming Sessions</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Expert Name</th>
+                            <th>Session Date & Time</th>
+                            <th>Duration</th>
+                            <th>Medium</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in upcoming_sessions %}
+                        <tr>
+                            <td>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</td>
+                            <td>{{ session.session_date|date:"F d, Y H:i" }}</td>
+                            <td>{{ session.expert.session_duration }} minutes</td>
+                            <td>
+                                {% if session.session_type == 'chat' %}
+                                    <span class="badge bg-info">Chat</span>
+                                {% else %}
+                                    <span class="badge bg-success">Call</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">Upcoming</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No upcoming sessions</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Sessions -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h3 class="h5 mb-0">Past Sessions</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Expert Name</th>
+                            <th>Session Date & Time</th>
+                            <th>Duration</th>
+                            <th>Medium</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in past_sessions %}
+                        <tr>
+                            <td>{{ session.expert.user.first_name }} {{ session.expert.user.last_name }}</td>
+                            <td>{{ session.session_date|date:"F d, Y H:i" }}</td>
+                            <td>{{ session.expert.session_duration }} minutes</td>
+                            <td>
+                                {% if session.session_type == 'chat' %}
+                                    <span class="badge bg-info">Chat</span>
+                                {% else %}
+                                    <span class="badge bg-success">Call</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">Completed</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No past sessions</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.25rem;
+    }
+    
+    .bg-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+    
+    .bg-success {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .bg-warning {
+        background-color: #ffc107;
+        color: black;
+    }
+    
+    .bg-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* Live Session Styles */
+    .live-sessions i {
+        color: #dc3545;
+    }
+
+    .pulse-icon {
+        animation: pulse 1.5s infinite;
+    }
+
+    .live-indicator {
+        color: #dc3545;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+        animation: pulse 1.5s infinite;
+    }
+
+    .live-card {
+        position: relative;
+        border: 2px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .live-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: white;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse 1.5s infinite;
+    }
+
+    .session-type.active {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    .join-session {
+        margin-top: 1.5rem;
+    }
+
+    .btn-block {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.8rem;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.5;
+            transform: scale(1.05);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Enhanced hover effect for live cards */
+    .live-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
+    }
+
+    .analytics-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+    }
+
+    .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .title-section {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .title-section h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .gradient-icon {
+        background: linear-gradient(45deg, #2E7D32, #4CAF50);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.8rem;
+    }
+
+    .subtitle {
+        color: var(--text-dark);
+        opacity: 0.7;
+        font-size: 1.1rem;
+    }
+
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .live-stat {
+        background: linear-gradient(135deg, rgba(220,53,69,0.1), rgba(220,53,69,0.05));
+        border: 1px solid rgba(220,53,69,0.2);
+    }
+
+    .stat-icon {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.8rem;
+    }
+
+    .live-stat .stat-icon {
+        color: #dc3545;
+    }
+
+    .ripple-effect {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(220,53,69,0.2);
+        border-radius: 50%;
+        animation: ripple 2s infinite;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-info h4 {
+        font-size: 1rem;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        opacity: 0.7;
+    }
+
+    .stat-number {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-color);
+    }
+
+    .label {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        opacity: 0.7;
+    }
+
+    .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        color: #dc3545;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: scale(0.8);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .title-section h2 {
+            font-size: 2rem;
+        }
+        
+        .stats-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-card {
+            padding: 1.2rem;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.session-card');
+    cards.forEach(card => {
+        const index = parseInt(card.dataset.index);
+        const delay = index * 100;
+        card.style.animation = `fadeIn 0.5s ease-in-out forwards ${delay}ms`;
+    });
+
+    // Auto-refresh live sessions every minute
+    if(document.querySelector('.live-sessions')) {
+        setInterval(function() {
+            location.reload();
+        }, 60000);
+    }
+});
+</script>
+{% endblock %} 

@@ -81,9 +81,9 @@ INSTALLED_APPS = [
     'blog',
     'qa_sessions',
     'disease_detection',
-    'solar_forecast',
     'expert_QA_session',
     'channels',
+    'solar_forecast',
 ]
 
 

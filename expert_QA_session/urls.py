@@ -11,7 +11,12 @@ from .views import (
     cancel_session,
     rate_session,
     expert_sessions,
-    expert_chat_session
+    expert_chat_session,
+    expert_call_session,
+    expert_send_message,
+    get_chat_messages,
+    update_call_status,
+    session_report
 )
 app_name = 'expert_QA_session'
 urlpatterns = [
@@ -25,6 +30,11 @@ urlpatterns = [
     path('rate_session/<int:session_id>/', rate_session, name='rate_session'),
     path('book_session/<int:expert_id>/', book_session, name='book_session'),
     path('active_chat_session/<int:session_id>/', active_chat_session, name='active_chat_session'),
-    path('expert/sessions/', expert_sessions, name='expert_sessions'),
+    path('expert-sessions/', expert_sessions, name='expert_sessions'),
     path('expert/chat/<int:session_id>/', expert_chat_session, name='expert_chat_session'),
+    path('expert/call/<int:session_id>/', expert_call_session, name='expert_call_session'),
+    path('expert/send_message/<int:session_id>/', expert_send_message, name='expert_send_message'),
+    path('expert/get_messages/<int:session_id>/', get_chat_messages, name='get_chat_messages'),
+    path('expert/update_call_status/<int:session_id>/', update_call_status, name='update_call_status'),
+    path('session-report/', session_report, name='session_report'),
 ]
