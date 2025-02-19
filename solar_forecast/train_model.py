@@ -139,14 +139,14 @@ def train_and_save_models():
         # Train model
         history = model.fit(
             X_train_reshaped,
-            y_train,
+    y_train,
             validation_data=(X_test_reshaped, y_test),
             epochs=100,
-            batch_size=32,
+    batch_size=32,
             callbacks=callbacks,
-            verbose=1
-        )
-        
+    verbose=1
+)
+
         # Evaluate model
         test_loss, test_mae = model.evaluate(X_test_reshaped, y_test, verbose=0)
         print(f"\nTest MAE: {test_mae:.2f} W/m²")

@@ -31,17 +31,20 @@ def get_wind_precipitation(city):
     precipitation = data.get('rain', {}).get('1h', 0)  # If no rain, default to 0
 
     return wind_speed, precipitation
+
 def calculate_theoretical_solar_radiation(temp, humidity, wind_speed, precipitation, cloud_coverage):
-    # Simple theoretical model based on clear sky radiation and cloud coverage
+    # Enhanced theoretical model
     max_radiation = 1000  # Maximum possible radiation at sea level
     cloud_factor = 1 - (cloud_coverage / 100)
     temp_factor = 1 + ((temp - 25) / 100)  # Temperature adjustment
     humidity_factor = 1 - (humidity / 200)  # Humidity adjustment
+    wind_factor = 1 - (wind_speed / 20)  # Wind adjustment
     
-    theoretical_radiation = max_radiation * cloud_factor * temp_factor * humidity_factor
+    theoretical_radiation = max_radiation * cloud_factor * temp_factor * humidity_factor * wind_factor
     
-    # Adjust for precipitation
+    # Enhanced precipitation adjustment
     if precipitation > 0:
-        theoretical_radiation *= (1 - (precipitation / 50))
+        rain_factor = 1 - (precipitation / 25)  # More sensitive to rain
+        theoretical_radiation *= max(0.2, rain_factor)  # Minimum 20% radiation even in heavy rain
         
     return max(0, min(1200, theoretical_radiation))

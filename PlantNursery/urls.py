@@ -28,8 +28,8 @@ urlpatterns = [
     path('delivery/', include('delivery.urls')), 
      path('blog/', include('blog.urls')),  
      path('qa_sessions/', include('qa_sessions.urls')),
- path('disease/', include('disease_detection.urls')),  # Include app routes
     path('expert_QA_session/', include('expert_QA_session.urls')),  # Include expert sessions URLs
     path('solar/', include('solar_forecast.urls')),  # Include solar forecast URLs
-    
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('ar_garden/', include('ar_garden.urls')),  # Include AR garden URLs
+    path('pdd/', include('pdd.urls')),  # Include the pdd URLs
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # For serving media files

@@ -1,0 +1,120 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .plant-icon {
+        width: 50px;
+        height: 50px;
+        cursor: move;
+    }
+    #field-image {
+        position: relative;
+        border: 1px solid #ccc;
+    }
+    .placed-plant {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Design Your Garden</h2>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <h3>Available Plants</h3>
+            <div id="plant-palette">
+                {% for plant in plants %}
+                <div class="plant-item" draggable="true" data-plant-id="{{ plant.id }}">
+                    <img src="{{ plant.icon.url }}" class="plant-icon" alt="{{ plant.name }}">
+                    <span>{{ plant.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button id="optimize-btn" class="btn btn-primary mt-3">Optimize Placement</button>
+        </div>
+        
+        <div class="col-md-9">
+            <div id="field-container" style="position: relative;">
+                <img src="{{ field.image.url }}" id="field-image" style="width: 100%;">
+                {% for plant in user_plants %}
+                <img src="{{ plant.plant.icon.url }}" 
+                     class="placed-plant" 
+                     style="left: {{ plant.x_position }}%; top: {{ plant.y_position }}%; transform: rotate({{ plant.rotation }}deg);"
+                     data-plant-id="{{ plant.id }}">
+                {% endfor %}
+            </div>
+            
+            <a href="{% url 'ar_garden:view_3d_garden' field.id %}" class="btn btn-success mt-3">View in 3D</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Drag and drop functionality
+    const fieldContainer = document.getElementById('field-container');
+    const plantPalette = document.getElementById('plant-palette');
+    
+    plantPalette.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('plant-id', e.target.dataset.plantId);
+    });
+    
+    fieldContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    });
+    
+    fieldContainer.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        const plantId = e.dataTransfer.getData('plant-id');
+        const rect = fieldContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        // Check plant spacing
+        const response = await fetch(`/check-plant-distance/{{ field.id }}/?x_position=${x}&y_position=${y}&plant_id=${plantId}`);
+        const data = await response.json();
+        
+        if (data.valid) {
+            // Add plant to field
+            const formData = new FormData();
+            formData.append('plant', plantId);
+            formData.append('x_position', x);
+            formData.append('y_position', y);
+            formData.append('rotation', Math.random() * 360);
+            
+            const result = await fetch('{% url "ar_garden:select_plants" field.id %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                }
+            });
+            
+            if (result.ok) {
+                location.reload();
+            }
+        } else {
+            alert(data.message);
+        }
+    });
+    
+    // AI optimization
+    document.getElementById('optimize-btn').addEventListener('click', async () => {
+        const response = await fetch(`/optimize-placement/{{ field.id }}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            location.reload();
+        }
+    });
+</script>
+{% endblock %}

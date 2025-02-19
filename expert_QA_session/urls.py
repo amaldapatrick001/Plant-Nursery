@@ -1,4 +1,6 @@
 from django.urls import path
+
+from ar_garden.views import add_plant_type, plant_list
 from .views import (
     active_chat_session,
     book_session,

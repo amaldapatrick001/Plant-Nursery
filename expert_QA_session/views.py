@@ -368,30 +368,37 @@ def active_chat_session(request, session_id):
 
 @check_auth
 def expert_sessions(request):
-    # Get current time
     now = timezone.now()
+    user_timezone = timezone.get_current_timezone()  # Get user's timezone
     
-    # Get active sessions (happening right now)
+    # Initialize all querysets
     active_sessions = ExpertSession.objects.filter(
-        session_date__lte=now,
-        session_date__gte=now - timezone.timedelta(minutes=30)  # Consider sessions within last 30 minutes as active
+        session_date__lte=now + timezone.timedelta(minutes=30),
+        session_date__gte=now - timezone.timedelta(minutes=30)
     ).order_by('session_date')
     
-    # Get upcoming sessions
     upcoming_sessions = ExpertSession.objects.filter(
         session_date__gt=now
     ).order_by('session_date')
     
-    # Get past sessions
     past_sessions = ExpertSession.objects.filter(
-        session_date__lt=now - timezone.timedelta(minutes=30)  # Sessions older than 30 minutes
+        session_date__lt=now - timezone.timedelta(minutes=30)
     ).order_by('-session_date')
+    
+    # Convert to user's timezone before passing to template
+    for sessions in [active_sessions, upcoming_sessions, past_sessions]:
+        for session in sessions:
+            if session.session_date:
+                # Convert to user's timezone and make it timezone-aware
+                session.session_date = timezone.localtime(session.session_date, timezone=user_timezone)
     
     context = {
         'active_sessions': active_sessions,
         'upcoming_sessions': upcoming_sessions,
         'past_sessions': past_sessions,
+        'current_time': timezone.localtime(now, timezone=user_timezone),
     }
+    
     return render(request, 'expert_QA_session/expert_sessions.html', context)
 
 @check_auth

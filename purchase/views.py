@@ -578,7 +578,7 @@ def submit_review(request, order_id):
     order = get_object_or_404(Order, id=order_id, user_id=request.session.get('user_id'))
 
     # Ensure the order is delivered before allowing a review
-    if order.status != 'Delivered':
+    if order.status != 'delivered':
         return JsonResponse({'error': 'You can only review delivered items.'}, status=403)
 
     if request.method == 'POST':

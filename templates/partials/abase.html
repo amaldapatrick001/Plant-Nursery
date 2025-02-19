@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -297,13 +296,28 @@
                         
                     </div>
                 </div>
+                <!-- AR Garden Management -->
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="arGardenDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-leaf mr-2"></i> AR Garden
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="arGardenDropdown">
+                        <h6 class="dropdown-header">Garden Management</h6>
+                        <a class="dropdown-item" href="{% url 'ar_garden:upload_field' %}">
+                            <i class="fas fa-upload mr-2"></i> Upload Field
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">Plant Types</h6>
+                        <a class="dropdown-item" href="{% url 'ar_garden:plant_list' %}">
+                            <i class="fas fa-list mr-2"></i> View Plant Types
+                        </a>
+                        <a class="dropdown-item" href="{% url 'ar_garden:add_plant_type' %}">
+                            <i class="fas fa-plus-circle mr-2"></i> Add Plant Type
+                        </a>
+                    </div>
+                </div>
                 <a href="{% url 'expert_QA_session:session_report' %}" class="nav-link">
                     <i class="fas fa-chart-bar"></i> Session Report
-                </a>
-
-                <!-- View Contact Us Submissions -->
-                <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
-                    <i class="fas fa-envelope mr-2"></i> Contact Us
                 </a>
 
                 <!-- Logout -->

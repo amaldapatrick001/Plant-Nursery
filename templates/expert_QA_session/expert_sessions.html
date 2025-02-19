@@ -87,8 +87,8 @@
                         <p><i class="fas fa-tag"></i> {{ session.get_session_type_display }}</p>
                     </div>
                 </div>
-                <div class="countdown" data-time="{{ session.session_date|date:'c' }}">
-                    Starts in: <span class="timer">Loading...</span>
+                <div class="session-countdown" data-session-time="{{ session.session_date|date:'c' }}">
+                    <span class="timer">Calculating...</span>
                 </div>
             </div>
             {% empty %}
@@ -114,11 +114,7 @@
                         <p><i class="fas fa-tag"></i> {{ session.get_session_type_display }}</p>
                     </div>
                 </div>
-                <div class="session-actions">
-                    <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#sessionDetails{{ session.session_id }}">
-                        <i class="fas fa-info-circle"></i> View Details
-                    </a>
-                </div>
+                
             </div>
             {% empty %}
             <p class="text-muted">No past sessions</p>
@@ -261,26 +257,51 @@
 </style>
 
 <script>
-// Countdown timer functionality
 function updateCountdowns() {
-    document.querySelectorAll('.countdown').forEach(countdown => {
-        const targetTime = new Date(countdown.dataset.time);
+    const countdowns = document.querySelectorAll('.session-countdown');
+    countdowns.forEach(countdown => {
+        // Parse the ISO date string and create a local date object
+        const sessionTimeStr = countdown.dataset.sessionTime;
+        const sessionTime = new Date(sessionTimeStr);
         const now = new Date();
-        const diff = targetTime - now;
-
-        if (diff > 0) {
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            countdown.querySelector('.timer').textContent = 
-                `${hours}h ${minutes}m`;
-        } else {
+        
+        // Calculate time difference in milliseconds
+        let diff = sessionTime.getTime() - now.getTime();
+        
+        if (diff <= 0) {
             countdown.querySelector('.timer').textContent = 'Starting soon';
+            return;
         }
+
+        // Convert milliseconds to hours and minutes
+        const totalHours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        // Format the display text
+        let displayText = '';
+        if (totalHours > 24) {
+            const days = Math.floor(totalHours / 24);
+            const remainingHours = totalHours % 24;
+            displayText = `${days}d ${remainingHours}h ${minutes}m from now`;
+        } else if (totalHours > 0) {
+            displayText = `${totalHours}h ${minutes}m from now`;
+        } else {
+            displayText = `${minutes}m from now`;
+        }
+
+        // Debug information
+        console.log('Session time:', sessionTime);
+        console.log('Current time:', now);
+        console.log('Difference in hours:', totalHours);
+        console.log('Difference in minutes:', minutes);
+
+        countdown.querySelector('.timer').textContent = displayText;
     });
 }
 
-// Update countdowns every minute
+// Update every minute
 setInterval(updateCountdowns, 60000);
+// Initial update
 updateCountdowns();
 </script>
 {% endblock %}

@@ -1,62 +1,842 @@
 {% extends 'partials/base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Solar and Weather Forecast</h2>
-
-    <!-- Location Selector -->
-    <form method="get" class="mb-4">
-        <div class="form-group">
-            <label for="location">Select Location:</label>
-            <select name="location" id="location" class="form-control" onchange="this.form.submit()">
-                {% for location in locations %}
-                    <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}>
-                        {{ location }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-    </form>
-
-    {% if today_data %}
-    <div class="row">
-        <!-- Today's Forecast -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Today's Weather ({{ today_data.date }})</h3>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">Temperature: {{ today_data.temperature }}°C</li>
-                        <li class="list-group-item">Humidity: {{ today_data.humidity }}%</li>
-                        <li class="list-group-item">Wind Speed: {{ today_data.wind_speed }} m/s</li>
-                        <li class="list-group-item">Precipitation: {{ today_data.precipitation }} mm</li>
-                        <li class="list-group-item">Cloud Coverage: {{ today_data.cloud_coverage }}%</li>
-                        <li class="list-group-item">Solar Radiation: {{ today_data.solar_radiation }} W/m²</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tomorrow's Prediction -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Tomorrow's Prediction ({{ tomorrow_prediction.date }})</h3>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">Predicted Solar Radiation: {{ tomorrow_prediction.solar_radiation }} W/m²</li>
-                    </ul>
-                </div>
+<!-- Hero Section with Parallax Effect -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="">Home</a></span> <span>Solar Forecast</span></p>
+                <h1 class="mb-0 bread">Plant Care & Solar Radiation</h1>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="alert alert-warning">
-        No data available for the selected location.
-    </div>
-    {% endif %}
 </div>
-{% endblock %} 
+
+<section class="ftco-section">
+    <div class="container">
+        <!-- Search and Filter Card -->
+        <div class="search-filter-card mb-5">
+            <div class="card shadow-custom">
+                <div class="card-body p-4">
+                    <h4 class="filter-title text-center mb-4">
+                        <i class="fas fa-sliders-h me-2"></i>
+                        Customize Your Plant Care View
+                    </h4>
+                    <form method="get" class="row g-4">
+                        <div class="col-md-4">
+                            <div class="form-group custom-form-group">
+                                <label class="custom-label">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Location
+                                </label>
+                                <select name="location" class="form-select custom-select" onchange="this.form.submit()">
+                                    {% for location in locations %}
+                                        <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}>
+                                            {{ location }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group custom-form-group">
+                                <label class="custom-label">
+                                    <i class="fas fa-leaf me-2"></i>Plant Category
+                                </label>
+                                <select name="category" class="form-select custom-select" onchange="this.form.submit()">
+                                    {% for category in categories %}
+                                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>
+                                            {{ category }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group custom-form-group">
+                                <label class="custom-label">
+                                    <i class="fas fa-search me-2"></i>Search Plants
+                                </label>
+                                <div class="search-input-wrapper">
+                                    <input type="text" id="plant_search" class="form-control custom-input" 
+                                           placeholder="Enter plant name..." autocomplete="off">
+                                    <button type="button" id="voice-search-btn" class="voice-search-btn">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Information Section -->
+        <div class="weather-section mb-5">
+            <h3 class="section-title text-center mb-4">Weather Information</h3>
+            <div class="row">
+                <!-- Today's Weather Card -->
+                <div class="col-md-6">
+                    <div class="weather-card gradient-primary" onclick="toggleWeatherDetails('today-details')">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 text-white"><i class="fas fa-calendar-day me-2"></i>Today's Weather</h4>
+                            <span class="date-badge">{{ today_data.date }}</span>
+                            <i class="fas fa-chevron-down text-white toggle-icon" id="today-icon"></i>
+                        </div>
+                        <div class="weather-info" id="today-details" style="display: none;">
+                            <div class="info-item">
+                                <i class="fas fa-sun text-warning"></i>
+                                <span class="label">Solar Radiation:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.solar_radiation|floatformat:2 }} W/m²</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-thermometer-half text-danger"></i>
+                                <span class="label">Temperature:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.temperature|floatformat:1 }}°C</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-tint text-primary"></i>
+                                <span class="label">Humidity:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.humidity|floatformat:1 }}%</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-wind text-info"></i>
+                                <span class="label">Wind Speed:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.wind_speed|floatformat:1 }} m/s</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-cloud-rain text-primary"></i>
+                                <span class="label">Precipitation:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.precipitation|floatformat:2 }} mm</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-cloud text-secondary"></i>
+                                <span class="label">Cloud Coverage:</span>
+                                <span class="value text-dark fw-bold">{{ today_data.cloud_coverage }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tomorrow's Weather Card -->
+                <div class="col-md-6">
+                    <div class="weather-card gradient-warning" onclick="toggleWeatherDetails('tomorrow-details')">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Tomorrow's Forecast</h4>
+                            <span class="date-badge">{{ tomorrow_prediction.date }}</span>
+                            <i class="fas fa-chevron-down toggle-icon" id="tomorrow-icon"></i>
+                        </div>
+                        <div class="weather-info" id="tomorrow-details" style="display: none;">
+                            <div class="info-item">
+                                <i class="fas fa-sun"></i>
+                                <span class="label">Predicted Solar Radiation:</span>
+                                <span class="value highlight">{{ tomorrow_prediction.solar_radiation|floatformat:2 }} W/m²</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plant Care Recommendations -->
+        <div class="plant-care-section">
+            <h3 class="section-title text-center mb-4">Plant Care Recommendations</h3>
+            
+            <!-- Toggle Buttons -->
+            <div class="text-center mb-4">
+                <div class="btn-group" role="group" aria-label="Toggle time period">
+                    <button type="button" class="btn btn-custom {% if view_type == 'today' %}active{% endif %}" 
+                            id="today-btn" onclick="loadRecommendations('today')">
+                        <i class="fas fa-calendar-day me-2"></i>Today's Care
+                    </button>
+                    <button type="button" class="btn btn-custom {% if view_type == 'tomorrow' %}active{% endif %}" 
+                            id="tomorrow-btn" onclick="loadRecommendations('tomorrow')">
+                        <i class="fas fa-calendar-plus me-2"></i>Tomorrow's Care
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recommendations Container -->
+            <div class="row" id="recommendations-container">
+                {% for plant in recommendations %}
+                <div class="col-lg-6 mb-4 plant-card">
+                    <div class="care-card h-100 {% if plant.status == 'low' %}warning{% elif plant.status == 'high' %}danger{% else %}success{% endif %}">
+                        <div class="care-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">{{ plant.name }}</h5>
+                                <span class="category-badge">{{ plant.category }}</span>
+                            </div>
+                            <span class="scientific-name">({{ plant.scientific_name }})</span>
+                        </div>
+                        <div class="care-body">
+                            <div class="care-info">
+                                <div class="care-instructions-container">
+                                    <i class="fas fa-leaf care-icon me-3"></i>
+                                    <p class="care-instructions mb-0">{{ plant.care }}</p>
+                                </div>
+                                <div class="radiation-info">
+                                    <div class="radiation-range">
+                                        <i class="fas fa-sun me-2"></i>
+                                        <span>Optimal Range: {{ plant.min_radiation|floatformat:0 }} - {{ plant.max_radiation|floatformat:0 }} W/m²</span>
+                                    </div>
+                                    <div class="status-badge {{ plant.status }}">
+                                        {{ plant.status|title }} Radiation Level
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center" style="display: none;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block styles %}
+<style>
+    /* General button and interactive element styles */
+    .btn-custom {
+        font-size: 16px;
+        padding: 12px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+        margin: 5px;
+    }
+
+    /* Weather Card Styles with Gradient */
+    .weather-card {
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        cursor: pointer;
+    }
+
+    .gradient-primary {
+        background: linear-gradient(145deg, #007bff, #0056b3);
+        border: 2px solid #0056b3;
+        color: white;
+    }
+
+    .gradient-primary:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
+    }
+
+    .gradient-warning {
+        background: linear-gradient(145deg, #6ee07d, #4caf50);
+        border: 2px solid #4caf50;
+        color: white;
+    }
+
+    .gradient-warning:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Card Headers */
+    .card-header {
+        padding: 1.5rem;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Weather Info Items */
+    .weather-info {
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item {
+        background: rgba(255, 255, 255, 0.95);
+        margin-bottom: 0.8rem;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: transform 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-item:hover {
+        transform: translateX(5px);
+        background: white;
+    }
+
+    .info-item i {
+        width: 30px;
+        font-size: 1.2rem;
+        margin-right: 15px;
+    }
+
+    .info-item .label {
+        flex: 1;
+        color: #333;
+        font-weight: 500;
+        margin-right: 15px;
+    }
+
+    .info-item .value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #000;
+    }
+
+    /* Icon Colors */
+    .text-warning { color: #ffc107; }
+    .text-danger { color: #dc3545; }
+    .text-primary { color: #0d6efd; }
+    .text-info { color: #0dcaf0; }
+    .text-secondary { color: #6c757d; }
+
+    /* Dark Text */
+    .text-dark {
+        color: #000 !important;
+    }
+
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+
+    /* Plant Care Cards */
+    .care-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 2px solid transparent;
+    }
+
+    .care-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .care-card.warning {
+        border-color: #ffc107;
+    }
+
+    .care-card.danger {
+        border-color: #dc3545;
+    }
+
+    .care-card.success {
+        border-color: #28a745;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-align: center;
+        margin-top: 1rem;
+        display: inline-block;
+        width: auto;
+        min-width: 120px;
+    }
+
+    .status-badge.low {
+        background: linear-gradient(145deg, #ffc107, #ff9800);
+        color: white;
+        border: 2px solid #ff9800;
+    }
+
+    .status-badge.high {
+        background: linear-gradient(145deg, #ff6a00, #ff3f00);
+        color: white;
+        border: 2px solid #ff3f00;
+    }
+
+    .status-badge.normal {
+        background: linear-gradient(145deg, #6ee07d, #4caf50);
+        color: white;
+        border: 2px solid #4caf50;
+    }
+
+    /* Search and Filter Styles */
+    .search-filter-card {
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .shadow-custom {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.98);
+    }
+
+    .filter-title {
+        color: #333;
+        font-weight: 600;
+        font-size: 1.5rem;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .filter-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(145deg, #82ae46, #6ee07d);
+        border-radius: 3px;
+    }
+
+    .custom-form-group {
+        margin-bottom: 1rem;
+    }
+
+    .custom-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .custom-label i {
+        color: #82ae46;
+    }
+
+    .custom-select, .custom-input {
+        height: 50px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.375rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+        background-color: #fff;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .custom-select:hover, .custom-input:hover {
+        border-color: #82ae46;
+    }
+
+    .custom-select:focus, .custom-input:focus {
+        border-color: #82ae46;
+        box-shadow: 0 0 0 0.2rem rgba(130, 174, 70, 0.25);
+        outline: none;
+    }
+
+    .custom-select option {
+        padding: 10px;
+        font-weight: 500;
+    }
+
+    .custom-input::placeholder {
+        color: #adb5bd;
+        opacity: 0.8;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .search-filter-card {
+            margin-top: -30px;
+        }
+
+        .custom-select, .custom-input {
+            height: 45px;
+            font-size: 0.9rem;
+        }
+
+        .filter-title {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Section Titles */
+    .section-title {
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(145deg, #82ae46, #6ee07d);
+        border-radius: 3px;
+    }
+
+    /* Category Badge */
+    .category-badge {
+        background: linear-gradient(145deg, #82ae46, #6ee07d);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 2px solid #82ae46;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .btn-custom {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        
+        .info-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .info-item i {
+            margin-bottom: 10px;
+            margin-right: 0;
+        }
+    }
+
+    /* Toggle Button Styles */
+    .btn-group {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 50px;
+        overflow: hidden;
+    }
+
+    .btn-custom {
+        padding: 12px 24px;
+        border: none;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background: #e9ecef;
+    }
+
+    .btn-custom.active {
+        background: linear-gradient(145deg, #82ae46, #6ee07d);
+        color: white;
+    }
+
+    .care-instructions-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .care-icon {
+        font-size: 1.2rem;
+        color: #82ae46;
+        flex-shrink: 0;
+    }
+
+    .care-instructions {
+        flex: 1;
+        margin-left: 10px;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .voice-search-btn {
+        position: absolute;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #82ae46;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    .voice-search-btn:hover {
+        background-color: rgba(130, 174, 70, 0.1);
+    }
+    .voice-search-btn.listening {
+        animation: pulse 1.5s infinite;
+        background-color: #ff4444;
+        color: white;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .weather-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        width: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    /* Solar Icons */
+    .fa-sun {
+        color: #ffa726;  /* Orange */
+        text-shadow: 0 0 15px rgba(255, 167, 38, 0.4);
+    }
+
+    /* Temperature Icons */
+    .fa-thermometer-half {
+        color: #ef5350;  /* Red */
+        text-shadow: 0 0 15px rgba(239, 83, 80, 0.4);
+    }
+
+    /* Humidity Icons */
+    .fa-tint {
+        color: #29b6f6;  /* Light Blue */
+        text-shadow: 0 0 15px rgba(41, 182, 246, 0.4);
+    }
+
+    /* Wind Icons */
+    .fa-wind {
+        color: #78909c;  /* Blue Grey */
+        text-shadow: 0 0 15px rgba(120, 144, 156, 0.4);
+    }
+
+    /* Rain Icons */
+    .fa-cloud-rain {
+        color: #42a5f5;  /* Blue */
+        text-shadow: 0 0 15px rgba(66, 165, 245, 0.4);
+    }
+
+    /* Cloud Icons */
+    .fa-cloud {
+        color: #90a4ae;  /* Grey Blue */
+        text-shadow: 0 0 15px rgba(144, 164, 174, 0.4);
+    }
+
+    .info-item:hover .weather-icon {
+        transform: scale(1.1);
+    }
+</style>
+{% endblock %}
+
+<script>
+document.getElementById('plant_search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const plantCards = document.querySelectorAll('.plant-card');
+    
+    plantCards.forEach(card => {
+        const plantName = card.querySelector('h5').textContent.toLowerCase();
+        const scientificName = card.querySelector('.scientific-name').textContent.toLowerCase();
+        
+        if (plantName.includes(searchTerm) || scientificName.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+function toggleWeatherDetails(detailsId) {
+    const details = document.getElementById(detailsId);
+    const icon = document.getElementById(detailsId.split('-')[0] + '-icon');
+    
+    // Toggle the other panel closed
+    const otherId = detailsId === 'today-details' ? 'tomorrow-details' : 'today-details';
+    const otherDetails = document.getElementById(otherId);
+    const otherIcon = document.getElementById(otherId.split('-')[0] + '-icon');
+    
+    if (otherDetails.style.display !== 'none') {
+        otherDetails.style.display = 'none';
+        otherIcon.classList.remove('active');
+    }
+
+    // Toggle current panel
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        details.classList.add('show');
+        icon.classList.add('active');
+        
+        // Smooth scroll to the card
+        details.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        details.style.display = 'none';
+        details.classList.remove('show');
+        icon.classList.remove('active');
+    }
+}
+
+// Optional: Close weather details when clicking outside
+document.addEventListener('click', function(event) {
+    const weatherCards = document.querySelectorAll('.weather-card');
+    let clickedOutside = true;
+    
+    weatherCards.forEach(card => {
+        if (card.contains(event.target)) {
+            clickedOutside = false;
+        }
+    });
+    
+    if (clickedOutside) {
+        const details = document.querySelectorAll('.weather-info');
+        const icons = document.querySelectorAll('.toggle-icon');
+        
+        details.forEach(detail => {
+            detail.style.display = 'none';
+            detail.classList.remove('show');
+        });
+        
+        icons.forEach(icon => {
+            icon.classList.remove('active');
+        });
+    }
+});
+
+function loadRecommendations(viewType) {
+    const container = document.getElementById('recommendations-container');
+    const spinner = document.getElementById('loading-spinner');
+    const todayBtn = document.getElementById('today-btn');
+    const tomorrowBtn = document.getElementById('tomorrow-btn');
+
+    // Update button states
+    todayBtn.classList.toggle('active', viewType === 'today');
+    tomorrowBtn.classList.toggle('active', viewType === 'tomorrow');
+
+    // Show loading spinner
+    container.style.opacity = '0.5';
+    spinner.style.display = 'block';
+
+    // Get current URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('view_type', viewType);
+
+    // Make AJAX request
+    fetch(`${window.location.pathname}?${urlParams.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Build HTML for recommendations
+        const recommendationsHtml = data.recommendations.map(plant => `
+            <div class="col-lg-6 mb-4 plant-card">
+                <div class="care-card h-100 ${getStatusClass(plant.status)}">
+                    <div class="care-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">${plant.name}</h5>
+                            <span class="category-badge">${plant.category}</span>
+                        </div>
+                        <span class="scientific-name">(${plant.scientific_name})</span>
+                    </div>
+                    <div class="care-body">
+                        <div class="care-info">
+                            <div class="care-instructions-container">
+                                <i class="fas fa-leaf care-icon me-3"></i>
+                                <p class="care-instructions mb-0">${plant.care}</p>
+                            </div>
+                            <div class="radiation-info">
+                                <div class="radiation-range">
+                                    <i class="fas fa-sun me-2"></i>
+                                    <span>Optimal Range: ${plant.min_radiation} - ${plant.max_radiation} W/m²</span>
+                                </div>
+                                <div class="status-badge ${plant.status}">
+                                    ${plant.status.charAt(0).toUpperCase() + plant.status.slice(1)} Radiation Level
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Update container with new recommendations
+        container.innerHTML = recommendationsHtml;
+        container.style.opacity = '1';
+        spinner.style.display = 'none';
+    })
+    .catch(error => {
+        console.error('Error loading recommendations:', error);
+        container.style.opacity = '1';
+        spinner.style.display = 'none';
+    });
+}
+
+function getStatusClass(status) {
+    switch(status) {
+        case 'low': return 'warning';
+        case 'high': return 'danger';
+        default: return 'success';
+    }
+}
+
+// Voice Search Implementation
+const voiceSearchBtn = document.getElementById('voice-search-btn');
+const searchInput = document.getElementById('plant_search');
+
+if ('webkitSpeechRecognition' in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onstart = () => {
+        voiceSearchBtn.classList.add('listening');
+        searchInput.placeholder = 'Listening...';
+    };
+    
+    recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        searchInput.value = text;
+        // Trigger the search function
+        searchInput.dispatchEvent(new Event('input'));
+    };
+    
+    recognition.onend = () => {
+        voiceSearchBtn.classList.remove('listening');
+        searchInput.placeholder = 'Enter plant name...';
+    };
+    
+    recognition.onerror = () => {
+        voiceSearchBtn.classList.remove('listening');
+        searchInput.placeholder = 'Enter plant name...';
+        alert('Voice recognition error. Please try again.');
+    };
+    
+    voiceSearchBtn.addEventListener('click', () => {
+        recognition.start();
+    });
+} else {
+    voiceSearchBtn.style.display = 'none';
+    console.log('Speech recognition not supported');
+}
+</script>{% endblock %} 

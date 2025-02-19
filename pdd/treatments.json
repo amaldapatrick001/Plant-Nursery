@@ -1,0 +1,316 @@
+{
+    "Apple Scab": {
+        "description": "A fungal disease causing dark, scabby lesions on leaves and fruit.",
+        "chemical": [
+            "Fungicide spray",
+            "copper-based fungicides"
+        ],
+        "cultural": [
+            "Remove infected leaves",
+            "improve air circulation"
+        ]
+    },
+    "Apple Healthy": {
+        "description": "A healthy apple leaf with no visible disease symptoms.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Maintain proper watering and fertilization"
+        ]
+    },
+    "Apple Rust": {
+        "description": "A fungal infection causing rust-colored spots on apple leaves.",
+        "chemical": [
+            "Sulfur-based fungicides",
+            "remove affected leaves"
+        ],
+        "cultural": [
+            "Remove fallen leaves",
+            "avoid overhead watering"
+        ]
+    },
+    "Bell Pepper Healthy": {
+        "description": "A healthy bell pepper leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Ensure proper nutrient balance in soil"
+        ]
+    },
+    "Bell Pepper Spot": {
+        "description": "Dark spots caused by bacterial infection on bell pepper leaves.",
+        "chemical": [
+            "Bacterial spray",
+            "remove infected plants"
+        ],
+        "cultural": [
+            "Avoid overhead watering",
+            "use disease-free seeds"
+        ]
+    },
+    "Blueberry Healthy": {
+        "description": "A healthy blueberry leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Ensure good soil conditions",
+            "avoid overcrowding"
+        ]
+    },
+    "Cherry Healthy": {
+        "description": "A healthy cherry leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Proper spacing",
+            "adequate sunlight"
+        ]
+    },
+    "Corn Gray Leaf Spot": {
+        "description": "Grayish spots on corn leaves caused by fungal infection.",
+        "chemical": [
+            "Fungicide spray",
+            "crop rotation"
+        ],
+        "cultural": [
+            "Rotate crops",
+            "use disease-resistant varieties"
+        ]
+    },
+    "Corn Leaf Blight": {
+        "description": "Irregular lesions caused by fungal infection in corn.",
+        "chemical": [
+            "Use resistant varieties",
+            "fungicide treatment"
+        ],
+        "cultural": [
+            "Avoid planting corn in the same spot yearly"
+        ]
+    },
+    "Corn Rust": {
+        "description": "Rust-colored pustules on corn leaves due to fungal spores.",
+        "chemical": [
+            "Fungicide spray",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Remove infected leaves",
+            "improve air circulation"
+        ]
+    },
+    "Peach Healthy": {
+        "description": "A healthy peach leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Prune infected branches",
+            "ensure proper spacing"
+        ]
+    },
+    "Potato Healthy": {
+        "description": "A healthy potato leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Crop rotation",
+            "avoid excessive moisture"
+        ]
+    },
+    "Potato Early Blight": {
+        "description": "Early blight causing concentric rings on potato leaves.",
+        "chemical": [
+            "Fungicide spray",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Remove infected leaves",
+            "avoid wet foliage"
+        ]
+    },
+    "Potato Late Blight": {
+        "description": "Late blight causing water-soaked lesions on potato leaves.",
+        "chemical": [
+            "Copper-based fungicides",
+            "crop rotation"
+        ],
+        "cultural": [
+            "Destroy infected plants",
+            "use resistant varieties"
+        ]
+    },
+    "Raspberry Healthy": {
+        "description": "A healthy raspberry leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Maintain healthy soil",
+            "provide adequate nutrition"
+        ]
+    },
+    "Soybean Healthy": {
+        "description": "A healthy soybean leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Ensure balanced nutrients",
+            "proper irrigation"
+        ]
+    },
+    "Soybean Disease": {
+        "description": "A diseased soybean leaf with unknown symptoms.",
+        "chemical": [
+            "Monitor and apply fungicides if needed"
+        ],
+        "cultural": [
+            "Rotate crops",
+            "remove infected leaves"
+        ]
+    },
+    "Squash Powdery Mildew": {
+        "description": "Powdery mildew causing white fungal growth on squash leaves.",
+        "chemical": [
+            "Apply sulfur-based fungicide"
+        ],
+        "cultural": [
+            "Ensure proper spacing",
+            "remove infected leaves"
+        ]
+    },
+    "Strawberry Healthy": {
+        "description": "A healthy strawberry leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Avoid overhead watering",
+            "improve drainage"
+        ]
+    },
+    "Tomato Early Blight": {
+        "description": "Early blight in tomato causing dark, concentric spots.",
+        "chemical": [
+            "Fungicide spray",
+            "prune affected leaves"
+        ],
+        "cultural": [
+            "Use mulch",
+            "prune lower leaves"
+        ]
+    },
+    "Tomato Septoria Leaf Spot": {
+        "description": "Septoria leaf spot causing small dark spots on tomato leaves.",
+        "chemical": [
+            "Fungicide application",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Avoid overcrowding",
+            "apply fungicide early"
+        ]
+    },
+    "Tomato Healthy": {
+        "description": "A healthy tomato leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Keep plants healthy",
+            "ensure proper watering"
+        ]
+    },
+    "Tomato Bacterial Spot": {
+        "description": "Bacterial spot causing small black lesions on tomato leaves.",
+        "chemical": [
+            "Bacterial spray",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Use disease-resistant varieties",
+            "remove infected leaves"
+        ]
+    },
+    "Tomato Late Blight": {
+        "description": "Late blight causing dark, water-soaked patches on tomato leaves.",
+        "chemical": [
+            "Fungicide spray",
+            "avoid overhead watering"
+        ],
+        "cultural": [
+            "Destroy infected plants",
+            "use copper-based sprays"
+        ]
+    },
+    "Tomato Mosaic Virus": {
+        "description": "Mosaic virus causing irregular leaf mottling in tomatoes.",
+        "chemical": [
+            "Remove infected plants",
+            "virus-resistant varieties"
+        ],
+        "cultural": [
+            "Monitor plants regularly",
+            "remove infected leaves"
+        ]
+    },
+    "Tomato Yellow Leaf Curl Virus": {
+        "description": "Yellow leaf curl virus causing leaf distortion in tomatoes.",
+        "chemical": [
+            "Use resistant plant varieties",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Use yellow sticky traps",
+            "apply neem oil"
+        ]
+    },
+    "Tomato Leaf Mold": {
+        "description": "Leaf mold causing fuzzy mold growth on tomato leaves.",
+        "chemical": [
+            "Improve air circulation",
+            "apply fungicide"
+        ],
+        "cultural": [
+            "Ensure proper airflow",
+            "remove affected leaves"
+        ]
+    },
+    "Tomato Spider Mites": {
+        "description": "Spider mites causing stippling and webbing on tomato leaves.",
+        "chemical": [
+            "Insecticidal soap",
+            "neem oil"
+        ],
+        "cultural": [
+            "Use neem oil",
+            "encourage natural predators"
+        ]
+    },
+    "Grape Healthy": {
+        "description": "A healthy grape leaf.",
+        "chemical": [
+            "No treatment needed"
+        ],
+        "cultural": [
+            "Ensure proper vine spacing",
+            "remove infected leaves"
+        ]
+    },
+    "Grape Black Rot": {
+        "description": "Black rot causing dark, necrotic lesions on grape leaves.",
+        "chemical": [
+            "Fungicide spray",
+            "remove infected leaves"
+        ],
+        "cultural": [
+            "Prune affected leaves",
+            "maintain vineyard hygiene"
+        ]
+    }
+}
