@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
+    'chatterbot.ext.django_chatterbot',
 
     'core',
     'userauths',
@@ -85,6 +86,7 @@ INSTALLED_APPS = [
     'solar_forecast',
     'ar_garden',
     'pdd',
+    'chatbot'
 ]
 
 
@@ -245,4 +247,14 @@ LOGGING = {
         },
     },
 }
+
+# Get API keys from environment variables
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+
+# Add validation to ensure keys are present
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in environment variables")
+if not OPENWEATHER_API_KEY:
+    raise ValueError("OPENWEATHER_API_KEY not found in environment variables")
 

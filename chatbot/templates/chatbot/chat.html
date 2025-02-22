@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🌱 AI Plant Care Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>🌿 Smart Plant Care Assistant</h2>
+    <input type="text" id="city" placeholder="Enter your city (optional)">
+    <input type="text" id="query" placeholder="Ask about plant care...">
+    <button onclick="sendQuery()">Ask</button>
+    <div id="response"></div>
+
+    <script>
+        function sendQuery() {
+            var query = $("#query").val();
+            var city = $("#city").val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'chatbot' %}",
+                data: {
+                    query: query,
+                    city: city,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $("#response").html("<p><strong>Bot:</strong> " + response.response + "</p>");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
