@@ -58,7 +58,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Expert, User_Reg, Login
 import logging
 
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg, Count, Sum, Q
+from decimal import Decimal
+from products.models import Batch, Category, Product
+from products.views import get_collaborative_recommendations
+from purchase.models import Review
+import traceback
+from expert_QA_session.models import Expert  # Add this import
 
 def register(request):
     if request.method == 'POST':
@@ -316,6 +322,80 @@ from django.views.generic import TemplateView
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class IndexView(TemplateView):
     template_name = 'core/index.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        try:
+            experts = Expert.objects.select_related('user').all()
+            
+            context.update({
+                'experts': experts,
+                'has_experts': experts.exists(),
+                'debug': True,
+                'debug_info': {
+                    'total_experts': experts.count(),
+                    'expert_list': [
+                        {
+                            'id': e.expert_id,
+                            'name': f"{e.user.first_name} {e.user.last_name}",
+                            'expertise': e.expertise_area
+                        } for e in experts
+                    ]
+                }
+            })
+
+        except Exception as e:
+            context.update({
+                'experts': [],
+                'has_experts': False,
+                'debug': True,
+                'error_message': str(e)
+            })
+        
+        # Add recommended products based on authentication status
+        if self.request.user.is_authenticated:
+            recommended_products = self.get_recommended_products()
+        else:
+            recommended_products = self.get_popular_products()
+        
+        # Calculate discounted price and get average rating for each product
+        for batch in recommended_products:
+            if batch.discount:
+                discount_amount = (batch.price * Decimal(batch.discount)) / 100
+                batch.discounted_price = batch.price - discount_amount
+            
+            # Get average rating from the product's reviews using the correct related name
+            reviews = Review.objects.filter(product=batch.product)
+            if reviews.exists():
+                batch.avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+            else:
+                batch.avg_rating = None
+            
+        context['recommended_products'] = recommended_products
+        return context
+    
+    def get_recommended_products(self):
+        """
+        Get personalized recommendations for authenticated users.
+        """
+        return (Batch.objects
+                .select_related('product')
+                .filter(status=True)
+                .order_by('-created_on')[:4])
+    
+    def get_popular_products(self):
+        """
+        Get popular products for non-authenticated users
+        """
+        return (Batch.objects
+                .select_related('product')
+                .filter(status=True)
+                .order_by('-stock_quantity')[:4])
+
+
+
+    
 
     
 from django.db.models import Count

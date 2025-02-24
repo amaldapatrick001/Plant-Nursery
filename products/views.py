@@ -11,6 +11,8 @@ from tensorflow.keras.preprocessing.image import img_to_array
 import io
 from django.db.models import Q, Avg, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from purchase.models import OrderItem, Order, Cart
+from userauths.models import Login, User_Reg
 
 # Initialize the ML model (do this at module level)
 model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
@@ -513,6 +515,20 @@ def cproduct_list(request):
     except EmptyPage:
         products_paginated = paginator.page(paginator.num_pages)
 
+    # Get recommendations if user is logged in
+    recommendations = []
+    if 'user_id' in request.session:
+        user_id = request.session['user_id']
+        print(f"User ID from session: {user_id}")  # Debug print
+        try:
+            recommendations = get_collaborative_recommendations(user_id)
+            print(f"Got {len(recommendations)} recommendations")  # Debug print
+        except Exception as e:
+            print(f"Error getting recommendations: {e}")
+            recommendations = []
+    else:
+        print("No user_id in session")  # Debug print
+
     context = {
         'products': products_paginated,
         'query': query,
@@ -525,7 +541,9 @@ def cproduct_list(request):
         'best_time_to_plant': best_time_to_plant,
         'image_search_performed': image_search_performed,
         'similarity_scores': similarity_scores,
+        'recommendations': recommendations,
     }
+    print("Context recommendations:", context['recommendations'])  # Debug print
     return render(request, 'products/cproduct_list.html', context)
 from django.shortcuts import render, get_object_or_404
 from purchase.models import Review
@@ -580,7 +598,7 @@ def cproduct_details(request, product_id):
     user_lname = request.session.get('user_last_name')
 
     if not user_fname or not user_lname:
-        user = User_Reg.objects.filter(uid=request.session.get('user_id')).first()
+        user = User_Reg.objects.filter(login__login_id=request.session.get('user_id')).first()
         user_fname = user.first_name if user else 'Guest'
         user_lname = user.last_name if user else ''
 
@@ -692,3 +710,155 @@ def wishlist_addtocart(request, batch_id):
 
     # Redirect back to the wishlist page (or cart page, depending on the flow)
     return redirect('purchase:cart_detail')  # or 'purchase:cart_detail' if you want to redirect to the cart page directly
+
+def get_collaborative_recommendations(user_id):
+    """
+    Get personalized recommendations
+    """
+    print(f"Starting recommendations for user_id: {user_id}")
+    
+    try:
+        # 1. First get available products with stock
+        available_products = Product.objects.filter(
+            status=True,
+            batches__status=True,  # Using correct relationship name
+            batches__stock_quantity__gt=0
+        ).distinct()
+        
+        print(f"Found {available_products.count()} available products")  # Debug print
+
+        if not available_products.exists():
+            print("No available products found!")
+            return []
+
+        # 2. Get highly rated products
+        highly_rated = available_products.annotate(
+            avg_rating=Avg('reviews__rating')
+        ).filter(
+            avg_rating__isnull=False  # Has at least one review
+        ).order_by('-avg_rating')[:2]
+        
+        print(f"Found {highly_rated.count()} highly rated products")  # Debug print
+
+        recommendations = []
+
+        # Add highly rated products
+        for product in highly_rated:
+            batch = Batch.objects.filter(  # Using Batch model directly
+                product=product,
+                status=True,
+                stock_quantity__gt=0
+            ).first()
+            
+            if batch:
+                recommendations.append({
+                    'batch': batch,
+                    'reason': f'Highly Rated Product',
+                    'score': float(product.avg_rating or 3.0)
+                })
+                print(f"Added recommendation: {product.name}")  # Debug print
+
+        # 3. Get popular products (most ordered)
+        if len(recommendations) < 3:
+            popular = available_products.annotate(
+                order_count=Count('batches__orderitem')  # Using correct relationship path
+            ).order_by('-order_count')[:2]
+            
+            print(f"Found {popular.count()} popular products")  # Debug print
+
+            for product in popular:
+                # Skip if already in recommendations
+                if not any(r['batch'].product.id == product.id for r in recommendations):
+                    batch = Batch.objects.filter(  # Using Batch model directly
+                        product=product,
+                        status=True,
+                        stock_quantity__gt=0
+                    ).first()
+                    
+                    if batch:
+                        recommendations.append({
+                            'batch': batch,
+                            'reason': 'Popular Choice',
+                            'score': 2.0
+                        })
+                        print(f"Added popular product: {product.name}")  # Debug print
+
+        # 4. If still need more, add random products
+        if len(recommendations) < 3:
+            remaining_needed = 3 - len(recommendations)
+            existing_ids = [r['batch'].product.id for r in recommendations]
+            
+            random_products = available_products.exclude(
+                id__in=existing_ids
+            ).order_by('?')[:remaining_needed]
+            
+            print(f"Adding {random_products.count()} random products")  # Debug print
+
+            for product in random_products:
+                batch = Batch.objects.filter(  # Using Batch model directly
+                    product=product,
+                    status=True,
+                    stock_quantity__gt=0
+                ).first()
+                
+                if batch:
+                    recommendations.append({
+                        'batch': batch,
+                        'reason': 'You Might Like This',
+                        'score': 1.0
+                    })
+                    print(f"Added random product: {product.name}")  # Debug print
+
+        # Sort and return top 3
+        recommendations.sort(key=lambda x: x['score'], reverse=True)
+        final_recommendations = recommendations[:3]
+
+        print(f"Final recommendations count: {len(final_recommendations)}")
+        for rec in final_recommendations:
+            print(f"Final recommendation: {rec['batch'].product.name} - {rec['reason']}")
+
+        return final_recommendations
+
+    except Exception as e:
+        print(f"Error in get_collaborative_recommendations: {str(e)}")
+        import traceback
+        traceback.print_exc()  # Print full error traceback
+        return []
+
+def get_general_recommendations():
+    """
+    Get general recommendations (top 3 rated products)
+    """
+    try:
+        recommendations = []
+        
+        # Get top rated products with stock
+        top_products = Product.objects.filter(
+            status=True,
+            batches__status=True,  # Using correct relationship name
+            batches__stock_quantity__gt=0
+        ).annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        ).filter(
+            review_count__gt=0
+        ).order_by('-avg_rating')[:3]
+
+        for product in top_products:
+            batch = Batch.objects.filter(  # Using Batch model directly
+                product=product,
+                status=True,
+                stock_quantity__gt=0
+            ).first()
+            if batch:
+                recommendations.append({
+                    'batch': batch,
+                    'reason': 'Top Rated Product',
+                    'score': float(product.avg_rating or 3.0)
+                })
+
+        return recommendations
+
+    except Exception as e:
+        print(f"Error in get_general_recommendations: {str(e)}")
+        return []

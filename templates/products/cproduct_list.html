@@ -197,29 +197,22 @@
         </div>
       </div>
 
+    <!-- Add recommendations section here -->
+    {% if recommendations %}
+        <!-- Recommendations HTML from above -->
+    {% endif %}
 
-        </div><!-- 
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-10 mb-5 text-center">
-                    <ul class="product-category list-inline" style="margin-top: 20px; padding: 0; list-style: none;">
-                        <li class="list-inline-item">
-                            <a href="?category=" class="category-link {% if not request.GET.category %}active{% endif %}">
-                                All
-                            </a>
-                        </li>
-                        {% for category in categories %}
-                        <li class="list-inline-item">
-                            <a href="?category={{ category.id }}" class="category-link {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
-                                {{ category.category_name }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>-->
-<br><br>
+    <!-- Add this temporarily at the top of your template to debug -->
+    {% if recommendations %}
+        <div style="display: none;">
+            Debug Recommendations: {{ recommendations|length }}
+            {% for rec in recommendations %}
+                {{ rec.batch.product.name }} - {{ rec.reason }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Rest of your product list -->
     <div class="container">
         <div class="row">
             <div class="col-md-3 mb-5">
@@ -788,6 +781,123 @@
         {% endif %}
     </div>
 {% endif %}
+<!-- 
+{% if recommendations %}
+<div class="recommendations-section mt-4 mb-5">
+    <div class="container">
+        <h3 class="section-title text-center mb-4">Recommended for You</h3>
+        <div class="row">
+            {% for rec in recommendations %}
+            <div class="col-md-3 mb-4">
+                <div class="product-card shadow-sm rounded-lg overflow-hidden bg-white border">
+                    <a href="{% url 'products:cproduct_details' rec.batch.product.id %}">
+                        <div class="product-image position-relative">
+                            {% if rec.batch.product.image_1 %}
+                            <img src="{{ rec.batch.product.image_1.url }}" 
+                                 alt="{{ rec.batch.product.name }}" 
+                                 class="img-fluid rounded-top">
+                            {% endif %}
+                            
+                            {% if rec.batch.discount %}
+                            <div class="discount-badge">
+                                <span class="discount-text">{{ rec.batch.discount }}% OFF</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                    
+                    <div class="p-3">
+                        <h5 class="product-title mb-2">{{ rec.batch.product.name }}</h5>
+                        <p class="recommendation-reason text-muted mb-2">
+                            <small><i class="fas fa-star text-warning"></i> {{ rec.reason }}</small>
+                        </p>
+                        <div class="price-section mb-3">
+                            <span class="current-price">₹{{ rec.batch.price }}</span>
+                            {% if rec.batch.discount %}
+                            <span class="original-price text-muted"><del>₹{{ rec.batch.get_original_price }}</del></span>
+                            {% endif %}
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{% url 'products:cproduct_details' rec.batch.product.id %}" 
+                               class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                            <a href="{% url 'purchase:add_to_cart' rec.batch.id %}" 
+                               class="btn btn-sm btn-success">
+                                Add to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+ -->
+
+ <!--
+<style>
+    .recommendations-section {
+        background-color: #f8f9fa;
+        padding: 40px 0;
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        color: #333;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+    
+    .product-card {
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .product-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .recommendation-reason {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .price-section {
+        margin: 15px 0;
+    }
+    
+    .current-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #82ae46;
+    }
+    
+    .original-price {
+        margin-left: 10px;
+        font-size: 14px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .action-buttons .btn {
+        flex: 1;
+        padding: 8px 15px;
+    }
+</style>
+{% endif %} -->
 
 <style>
 .search-results-info {
@@ -867,6 +977,17 @@
 }
 </style>
 
-{% endblock %}
+<div class="whatsapp-chat">
+    <a href="https://web.whatsapp.com/send?phone=919562290332" class="whatsapp-button" id="whatsappButton" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <span class="chat-tooltip">Chat with us!</span>
+    </a>
+</div>
+
+<!-- Add these lines just before closing body tag -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock content %}
 
 

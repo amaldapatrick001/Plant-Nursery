@@ -39,39 +39,36 @@ urlpatterns = [
     path('edit-category/<int:category_id>/', edit_category, name='edit-category'),  # Edit category
 
     # Plant Type URLs
-    path('plant_type_list/', plant_type_list, name='plant-type-list'),  # Ensure this matches
-    path('add_plant_type/', add_plant_type, name='add-plant-type'),
-    path('plant-types/', plant_type_list, name='plant-type-list'),  # List active plant types
-    path('add-plant-type/', add_plant_type, name='add-plant-type'),  # Add a new plant type
-    path('manage-plant-types/', plant_type_update, name='plant-type-update'),  # Manage plant types
-    path('update-plant-type-status/<int:plant_type_id>/', update_plant_type_status, name='update-plant-type-status'),  # Toggle status
-    path('edit-plant-type/<int:plant_type_id>/', edit_plant_type, name='edit-plant-type'),  # Edit plant type
+    path('plant-types/', plant_type_list, name='plant-type-list'),
+    path('add-plant-type/', add_plant_type, name='add-plant-type'),
+    path('manage-plant-types/', plant_type_update, name='plant-type-update'),
+    path('update-plant-type-status/<int:plant_type_id>/', update_plant_type_status, name='update-plant-type-status'),
+    path('edit-plant-type/<int:plant_type_id>/', edit_plant_type, name='edit-plant-type'),
 
     # Plant Category URLs
-    path('add-plant-category/', add_plant_category, name='add_plant_category'),
-    path('add-plant-category/', add_plant_category, name='add-plant-category'),  # This should match your template
-   path('plant_category_list/', plant_category_list, name='plant_category_list'),
-    path('get_cultivation_methods/<int:category_id>/', get_cultivation_methods, name='get_cultivation_methods'),
-    path('plant-categories/', plant_category_list, name='plant-category-list'),  # List plant categories
-    path('edit-plant-category/<int:category_id>/', edit_plant_category, name='edit-plant-category'),  # Edit plant category
+    path('plant-categories/', plant_category_list, name='plant-category-list'),
+    path('add-plant-category/', add_plant_category, name='add-plant-category'),
+    path('edit-plant-category/<int:category_id>/', edit_plant_category, name='edit-plant-category'),
+    path('get-cultivation-methods/<int:category_id>/', get_cultivation_methods, name='get_cultivation_methods'),
 
-    # AJAX URLs
-path('add-product/', add_product, name='add_product'),  # URL to add a product
-    path('get-plant-categories/', get_plant_category, name='get_plant_category'),  
-    path('add_product/', add_product, name='add_product'),
-    path('get_plant_category/', get_plant_category, name='get_plant_category'),
-    path('product_list/', product_list, name='product_list'),  # Product list
+    # Product URLs
+    path('add-product/', add_product, name='add_product'),
+    path('product-list/', product_list, name='product_list'),
+    path('get-plant-categories/', get_plant_category, name='get_plant_category'),
 
     # Batch URLs
-    path('add-batch/', add_batch, name='add_batch'),  # Add batch
-    path('batches/', batch_list_view, name='batch_list'),  # List batches
-# AJAX URLs
-    path('ajax/load-plant-types/', load_plant_types, name='ajax_load_plant_types'),  # Ensure this URL is present
-path('cproducts/', cproduct_list, name='cproduct_list'),
- path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
- path('cproduct_details/<int:product_id>/', cproduct_details, name='cproduct_details'),
+    path('add-batch/', add_batch, name='add_batch'),
+    path('batches/', batch_list_view, name='batch_list'),
 
-path('wishlist/', wishlist_view, name='wishlist'),
+    # AJAX URLs
+    path('ajax/load-plant-types/', load_plant_types, name='ajax_load_plant_types'),
+
+    # Customer Product URLs
+    path('cproducts/', cproduct_list, name='cproduct_list'),
+    path('cproduct-details/<int:product_id>/', cproduct_details, name='cproduct_details'),
+
+    # Wishlist URLs
+    path('wishlist/', wishlist_view, name='wishlist'),
     path('wishlist/add/<int:batch_id>/', add_to_wishlist, name='add_to_wishlist'),
     path('wishlist/remove/<int:batch_id>/', remove_from_wishlist, name='remove_from_wishlist'),
     path('wishlist/add-to-cart/<int:batch_id>/', wishlist_addtocart, name='wishlist_addtocart'),

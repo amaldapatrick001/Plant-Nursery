@@ -86,7 +86,8 @@ INSTALLED_APPS = [
     'solar_forecast',
     'ar_garden',
     'pdd',
-    'chatbot'
+    'chatbot',
+    'garden_designer',
 ]
 
 
@@ -258,3 +259,12 @@ if not GEMINI_API_KEY:
 if not OPENWEATHER_API_KEY:
     raise ValueError("OPENWEATHER_API_KEY not found in environment variables")
 
+# Weather API Key
+OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+
+# AI Recommendation Settings
+AI_RECOMMENDATION_SETTINGS = {
+    'MIN_MATCH_SCORE': 50,
+    'MAX_RECOMMENDATIONS': 8,
+    'UPDATE_INTERVAL_HOURS': 1
+}

@@ -33,4 +33,5 @@ urlpatterns = [
     path('ar_garden/', include('ar_garden.urls')),  # Include AR garden URLs
     path('pdd/', include('pdd.urls')),  # Include the pdd URLs
     path('chatbot/', include('chatbot.urls')),  # Include the chatbot URLs
+  path('garden/', include('garden_designer.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # For serving media files
