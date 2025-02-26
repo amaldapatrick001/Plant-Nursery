@@ -139,6 +139,40 @@
             </div>
         </div>
 
+        <!-- Add this section after the weather cards -->
+        <div class="model-info-section mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-brain me-2"></i>
+                        Prediction Model Information
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Model Type: Hybrid (CNN + CatBoost)</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-percentage"></i>
+                                <span>Accuracy: {{ model_accuracy|floatformat:2 }}%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Last Updated: {{ last_trained|date:"F d, Y H:i" }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-database"></i>
+                                <span>Training Data Points: {{ training_samples }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Plant Care Recommendations -->
         <div class="plant-care-section">
             <h3 class="section-title text-center mb-4">Plant Care Recommendations</h3>
@@ -646,6 +680,45 @@
     .info-item:hover .weather-icon {
         transform: scale(1.1);
     }
+
+    .model-info-section .info-item {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+    }
+
+    .model-info-section .info-item i {
+        margin-right: 15px;
+        color: #82ae46;
+        font-size: 1.2rem;
+    }
+
+    .prediction-accuracy {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(130, 174, 70, 0.9);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Update weather card styles */
+    .weather-card .prediction-tag {
+        position: absolute;
+        top: -10px;
+        right: 20px;
+        background: #82ae46;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
 </style>
 {% endblock %}
 
@@ -839,4 +912,28 @@ if ('webkitSpeechRecognition' in window) {
     voiceSearchBtn.style.display = 'none';
     console.log('Speech recognition not supported');
 }
+
+function updatePredictions() {
+    const location = document.querySelector('select[name="location"]').value;
+    fetch(`/api/solar-forecast/?location=${location}`)
+        .then(response => response.json())
+        .then(data => {
+            // Update prediction values
+            document.getElementById('current-radiation').textContent = 
+                `${data.current_radiation.toFixed(2)} W/m²`;
+            document.getElementById('predicted-radiation').textContent = 
+                `${data.predicted_radiation.toFixed(2)} W/m²`;
+            
+            // Update accuracy indicator
+            const accuracyEl = document.getElementById('prediction-accuracy');
+            accuracyEl.textContent = `${(data.accuracy * 100).toFixed(1)}% Accurate`;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Update predictions every 5 minutes
+setInterval(updatePredictions, 300000);
+
+// Initial update
+document.addEventListener('DOMContentLoaded', updatePredictions);
 </script>{% endblock %} 

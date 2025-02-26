@@ -9,6 +9,9 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import matplotlib.pyplot as plt
+from catboost import CatBoostRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
+from tensorflow.keras.layers import Input
 
 def load_and_preprocess_data():
     """
@@ -86,100 +89,111 @@ def build_model(input_shape):
     )
     return model
 
+def train_catboost_model(X_train, X_test, y_train, y_test):
+    """Train CatBoost model"""
+    catboost_model = CatBoostRegressor(
+        iterations=1000,
+        learning_rate=0.03,
+        depth=6,
+        loss_function='RMSE',
+        verbose=200
+    )
+    
+    catboost_model.fit(
+        X_train, y_train,
+        eval_set=(X_test, y_test),
+        early_stopping_rounds=50
+    )
+    
+    # Save model
+    model_path = os.path.join(os.path.dirname(__file__), 'models', 'solar_model_catboost.cbm')
+    catboost_model.save_model(model_path)
+    
+    return catboost_model
+
+def train_cnn(model, X_train, X_test, y_train, y_test):
+    """Train CNN model with callbacks for better training"""
+    
+    # Create models directory if it doesn't exist
+    model_dir = os.path.join(os.path.dirname(__file__), 'models')
+    os.makedirs(model_dir, exist_ok=True)
+    
+    # Define callbacks
+    callbacks = [
+        EarlyStopping(
+            monitor='val_loss',
+            patience=10,
+            restore_best_weights=True
+        ),
+        ModelCheckpoint(
+            filepath=os.path.join(model_dir, 'solar_model_cnn.keras'),
+            monitor='val_loss',
+            save_best_only=True
+        ),
+        ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.2,
+            patience=5,
+            min_lr=0.0001
+        )
+    ]
+    
+    # Train the model
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_test, y_test),
+        epochs=100,
+        batch_size=32,
+        callbacks=callbacks,
+        verbose=1
+    )
+    
+    # Save training history
+    plt.figure(figsize=(10, 6))
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.title('Model Loss During Training')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig(os.path.join(model_dir, 'training_history.png'))
+    plt.close()
+    
+    return model, history
+
 def train_and_save_models():
-    """Train the model and save if performance meets criteria"""
     try:
         # Load and preprocess data
         X, y = load_and_preprocess_data()
         
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         
-        # Scale the features
+        # Scale features
         scaler = StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
         
-        # Reshape data for CNN
-        X_train_reshaped = X_train_scaled.reshape((X_train_scaled.shape[0], X_train_scaled.shape[1], 1))
-        X_test_reshaped = X_test_scaled.reshape((X_test_scaled.shape[0], X_test_scaled.shape[1], 1))
+        # Train CNN
+        X_train_cnn = X_train_scaled.reshape((X_train_scaled.shape[0], X_train_scaled.shape[1], 1))
+        X_test_cnn = X_test_scaled.reshape((X_test_scaled.shape[0], X_test_scaled.shape[1], 1))
         
-        # Build model
-        model = build_model((X_train_scaled.shape[1], 1))
+        cnn_model = build_model((X_train_scaled.shape[1], 1))
+        train_cnn(cnn_model, X_train_cnn, X_test_cnn, y_train, y_test)
         
-        # Setup model directory
-        model_dir = os.path.join(os.path.dirname(__file__), 'models')
-        os.makedirs(model_dir, exist_ok=True)
+        # Train CatBoost
+        catboost_model = train_catboost_model(X_train, X_test, y_train, y_test)
         
-        # Define callbacks
-        callbacks = [
-            EarlyStopping(
-                monitor='val_loss',
-                patience=20,
-                restore_best_weights=True,
-                verbose=1
-            ),
-            ModelCheckpoint(
-                os.path.join(model_dir, 'solar_model.keras'),
-                monitor='val_loss',
-                save_best_only=True,
-                verbose=1
-            ),
-            ReduceLROnPlateau(
-                monitor='val_loss',
-                factor=0.5,
-                patience=10,
-                min_lr=0.00001,
-                verbose=1
-            )
-        ]
+        # Evaluate hybrid performance
+        cnn_pred = cnn_model.predict(X_test_cnn)
+        catboost_pred = catboost_model.predict(X_test)
         
-        # Train model
-        history = model.fit(
-            X_train_reshaped,
-    y_train,
-            validation_data=(X_test_reshaped, y_test),
-            epochs=100,
-    batch_size=32,
-            callbacks=callbacks,
-    verbose=1
-)
-
-        # Evaluate model
-        test_loss, test_mae = model.evaluate(X_test_reshaped, y_test, verbose=0)
-        print(f"\nTest MAE: {test_mae:.2f} W/m²")
+        # Ensemble predictions
+        hybrid_pred = 0.6 * cnn_pred.flatten() + 0.4 * catboost_pred
         
-        # Plot training history
-        plt.figure(figsize=(12, 4))
-        
-        # Plot loss
-        plt.subplot(1, 2, 1)
-        plt.plot(history.history['loss'], label='Training Loss')
-        plt.plot(history.history['val_loss'], label='Validation Loss')
-        plt.title('Model Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.legend()
-        
-        # Plot MAE
-        plt.subplot(1, 2, 2)
-        plt.plot(history.history['mae'], label='Training MAE')
-        plt.plot(history.history['val_mae'], label='Validation MAE')
-        plt.title('Model MAE')
-        plt.xlabel('Epoch')
-        plt.ylabel('MAE (W/m²)')
-        plt.legend()
-        
-        # Save plot
-        plt.tight_layout()
-        plt.savefig(os.path.join(model_dir, 'training_history.png'))
-        plt.close()
-        
-        print("\nTraining completed successfully!")
-        print(f"Model saved to: {os.path.join(model_dir, 'solar_model.keras')}")
-        print(f"Training history plot saved to: {os.path.join(model_dir, 'training_history.png')}")
+        print("\nHybrid Model Performance:")
+        print(f"MAE: {mean_absolute_error(y_test, hybrid_pred):.2f}")
+        print(f"R2 Score: {r2_score(y_test, hybrid_pred):.2f}")
         
     except Exception as e:
         print(f"Error during training: {str(e)}")

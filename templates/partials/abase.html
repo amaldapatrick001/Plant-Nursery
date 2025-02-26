@@ -296,25 +296,19 @@
                         
                     </div>
                 </div>
-                <!-- AR Garden Management -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="arGardenDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-leaf mr-2"></i> AR Garden
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="arGardenDropdown">
-                        <h6 class="dropdown-header">Garden Management</h6>
-                        <a class="dropdown-item" href="{% url 'garden_designer:add_plant' %}">
-                            <i class="fas fa-upload mr-2"></i> Add Plant for Garden
-                        </a>
-                        <a href="{% url 'garden_designer:plant_list' %}" class="nav-link">
-                            <i class="fas fa-list mr-2"></i> Plant List
-                        </a>
-                    </div>
-                </div>
+                
                 <a href="{% url 'expert_QA_session:session_report' %}" class="nav-link">
                     <i class="fas fa-chart-bar"></i> Session Report
                 </a>
                 
+
+               <!-- AR Garden -->
+                <a href="{% url 'plant_layout:add_plant' %}" class="nav-link">
+                    <i class="fas fa-plus-circle"></i> Add Plant
+                </a>
+                <a href="{% url 'plant_layout:plant_list' %}" class="nav-link">
+                    <i class="fas fa-list"></i> Plant List
+                </a>
                 <!-- Logout -->
                 {% if request.session.is_authenticated %}
     <a href="{% url 'userauths:logout' %}" class="list-group-item list-group-item-action">

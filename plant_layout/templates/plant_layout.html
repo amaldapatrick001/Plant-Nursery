@@ -1,0 +1,393 @@
+<!-- no-->
+ 
+
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <!-- Left Column: Layout Form and List -->
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">🌱 Create Layout</h3>
+                    <form id="layoutForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="layoutName" class="form-label">Layout Name</label>
+                            <input type="text" class="form-control" id="layoutName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="plotImage" class="form-label">Plot Image</label>
+                            <div class="input-group">
+                                <input type="file" 
+                                       class="form-control" 
+                                       id="plotImage" 
+                                       accept="image/*"
+                                       aria-describedby="plotImageHelp">
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="clearImage">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div id="plotImageHelp" class="form-text">
+                                Upload an image of your plot (optional)
+                            </div>
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="mt-2 d-none">
+                                <img src="" alt="Plot preview" class="img-fluid rounded">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="plotWidth" class="form-label">Plot Width (m)</label>
+                            <input type="number" class="form-control" id="plotWidth" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="plotLength" class="form-label">Plot Length (m)</label>
+                            <input type="number" class="form-control" id="plotLength" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Create Layout</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Saved Layouts with Search -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="card-title mb-0">Saved Layouts</h3>
+                        <div class="search-container">
+                            <div class="input-group">
+                                <input type="text" 
+                                       id="layoutSearch" 
+                                       class="form-control form-control-sm" 
+                                       placeholder="Search layouts..."
+                                       aria-label="Search layouts">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Image Marquee with Search Functionality -->
+                    <div class="image-marquee-container">
+                        <div class="image-marquee" id="layoutMarquee">
+                            {% for layout in user_layouts %}
+                            <div class="marquee-layout-item" 
+                                 data-layout-id="{{ layout.id }}"
+                                 data-layout-name="{{ layout.layout_name|lower }}"
+                                 data-dimensions="{{ layout.plot_width }}x{{ layout.plot_length }}m"
+                                 data-updated="{{ layout.updated_at|date:'M d, Y' }}">
+                                <img src="{{ layout.plot_image.url }}" alt="{{ layout.layout_name }}">
+                                <div class="marquee-overlay">
+                                    <h5 class="layout-title">{{ layout.layout_name }}</h5>
+                                    <div class="layout-details">
+                                        <p class="dimensions">Size: {{ layout.plot_width }}x{{ layout.plot_length }}m</p>
+                                        <p class="updated">Updated: {{ layout.updated_at|date:"M d, Y" }}</p>
+                                        <button class="btn btn-sm btn-primary load-btn" onclick="loadLayout({{ layout.id }})">Load Layout</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <!-- Duplicate for smooth scrolling -->
+                            {% for layout in user_layouts %}
+                            <div class="marquee-layout-item" 
+                                 data-layout-id="{{ layout.id }}"
+                                 data-layout-name="{{ layout.layout_name|lower }}"
+                                 data-dimensions="{{ layout.plot_width }}x{{ layout.plot_length }}m"
+                                 data-updated="{{ layout.updated_at|date:'M d, Y' }}">
+                                <img src="{{ layout.plot_image.url }}" alt="{{ layout.layout_name }}">
+                                <div class="marquee-overlay">
+                                    <h5 class="layout-title">{{ layout.layout_name }}</h5>
+                                    <div class="layout-details">
+                                        <p class="dimensions">Size: {{ layout.plot_width }}x{{ layout.plot_length }}m</p>
+                                        <p class="updated">Updated: {{ layout.updated_at|date:"M d, Y" }}</p>
+                                        <button class="btn btn-sm btn-primary load-btn" onclick="loadLayout({{ layout.id }})">Load Layout</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div id="noResults" class="text-center py-3 d-none">
+                        <p class="text-muted">No layouts found matching your search.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Layout Display -->
+        <div class="col-md-8">
+            <div id="layoutDisplay" class="canvas-wrapper" style="position: relative;">
+                <div class="canvas-container" style="border: 1px solid #000000; border-radius: 4px; overflow: hidden;">
+                    <img id="layoutImage" src="" alt="Layout Image" class="img-fluid" style="display: none; width: 100%; height: auto;">
+                </div>
+                <div id="layoutInfo" class="active-layout-info" style="display: none;">
+                    <h5 class="layout-title" id="layoutTitle"></h5>
+                    <p class="layout-dimensions" id="layoutDimensions"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadLayout(layoutId) {
+    fetch(`/api/layouts/${layoutId}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                // Set the image source
+                const layoutImage = document.getElementById('layoutImage');
+                layoutImage.src = data.plot_image;
+
+                // Set the dimensions of the image container
+                const layoutDisplay = document.getElementById('layoutDisplay');
+                layoutDisplay.style.width = `${data.plot_width}px`; // Use pixels directly
+                layoutDisplay.style.height = `${data.plot_length}px`; // Use pixels directly
+
+                // Set the title and dimensions text
+                document.getElementById('layoutTitle').innerText = data.name;
+                document.getElementById('layoutDimensions').innerText = `Dimensions: ${data.plot_width}m x ${data.plot_length}m`;
+
+                // Show the image and info
+                layoutImage.style.display = 'block';
+                document.getElementById('layoutInfo').style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error loading layout:', error));
+}
+
+</script>
+
+<style>
+    .canvas-wrapper {
+    position: relative;
+    width: auto; /* Allow width to be set dynamically */
+    height: auto; /* Allow height to be set dynamically */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Add styles for layout thumbnails */
+.layout-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.layout-thumbnail {
+    flex: 0 0 150px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.layout-thumbnail:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.layout-thumbnail.active {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px 4px 0 0;
+}
+
+.thumbnail-info {
+    padding: 8px;
+    font-size: 12px;
+}
+
+.layout-name {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+}
+
+.layout-dims {
+    color: #666;
+    font-size: 11px;
+}
+
+/* Enhanced Image Marquee Styles */
+.image-marquee-container {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.image-marquee {
+    display: flex;
+    animation: scrollImages 5s linear infinite;
+    gap: 20px;
+    padding: 15px;
+}
+
+.image-marquee:hover {
+    animation-play-state: paused;
+}
+
+.marquee-layout-item {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 150px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.marquee-layout-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.marquee-layout-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.marquee-layout-item:hover img {
+    transform: scale(1.1);
+}
+
+.marquee-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.marquee-layout-item:hover .marquee-overlay {
+    transform: translateY(0);
+}
+
+.layout-title {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+}
+
+.layout-details {
+    font-size: 13px;
+    color: #ddd;
+}
+
+.layout-details p {
+    margin: 5px 0;
+}
+
+.load-btn {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #007bff;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.load-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Search Styles */
+.search-container {
+    width: 250px;
+}
+
+.input-group {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background-color: #fff;
+    border-left: none;
+    cursor: pointer;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+/* Hide filtered items */
+.marquee-layout-item.filtered {
+    display: none;
+}
+
+/* Add these to your existing styles */
+#imagePreview {
+    position: relative;
+    max-height: 200px;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+#imagePreview img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+#clearImage {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.input-group-text {
+    cursor: pointer;
+} 
+</style>
+{% endblock %}

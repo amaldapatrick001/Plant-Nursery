@@ -30,8 +30,7 @@ urlpatterns = [
      path('qa_sessions/', include('qa_sessions.urls')),
     path('expert_QA_session/', include('expert_QA_session.urls')),  # Include expert sessions URLs
     path('solar/', include('solar_forecast.urls')),  # Include solar forecast URLs
-    path('ar_garden/', include('ar_garden.urls')),  # Include AR garden URLs
     path('pdd/', include('pdd.urls')),  # Include the pdd URLs
     path('chatbot/', include('chatbot.urls')),  # Include the chatbot URLs
-  path('garden/', include('garden_designer.urls')),
+   path('plant_layout/', include('plant_layout.urls', namespace='plant_layout')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # For serving media files

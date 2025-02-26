@@ -1,0 +1,31 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">🌿 Add a New Plant</h2>
+
+    <form method="post" enctype="multipart/form-data" class="mt-3">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label" for="{{ form.name.id_for_label }}">Plant Name</label>
+            {{ form.name }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="{{ form.image.id_for_label }}">Plant Image</label>
+            {{ form.image }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="{{ form.min_spacing_cm.id_for_label }}">Minimum Spacing (cm)</label>
+            {{ form.min_spacing_cm }}
+        </div>
+    
+        <button type="submit" class="btn btn-success">Add Plant</button>
+    </form>
+    
+    <a href="{% url 'plant_layout:plant_list' %}" class="btn btn-primary mt-3">View Plant List</a>
+</div>
+{% endblock %}

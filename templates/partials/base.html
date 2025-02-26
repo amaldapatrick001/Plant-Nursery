@@ -124,12 +124,13 @@
                   
                 <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
   
-                
-                  {% if request.session.is_authenticated %}
-                  <li class="nav-item ">
-                      <a href="{% url 'ar_garden:upload_field' %}" class="nav-link">AR Garden</a>
-                  </li>
+                <!-- <li class="nav-item "><a href="{% url 'plant_layout:plant_layout' %}" class="nav-link">AR Garden</a>
 
+                </li> -->
+                <li class="nav-item"><a href="{% url 'plant_layout:upload_layout' %}" class="nav-link">AR Garden</a>
+                </li>
+                  {% if request.session.is_authenticated %}
+          
          
                   <li class="nav-item">
                       <a href="{% url 'qa_sessions:customer_notifications' %}" class="nav-link">

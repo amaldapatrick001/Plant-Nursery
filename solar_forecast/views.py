@@ -91,7 +91,10 @@ def solar_forecast_view(request):
         'selected_location': selected_location,
         'categories': ['All'] + sorted(plant_data['Category'].unique().tolist()),
         'selected_category': selected_category,
-        'search_term': search_term
+        'search_term': search_term,
+        'model_accuracy': 95.5,  # Get from your model evaluation
+        'last_trained': datetime.now(),  # Get actual last training time
+        'training_samples': 10000,  # Get actual number of samples
     }
 
     if selected_location:

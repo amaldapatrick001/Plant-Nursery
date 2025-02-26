@@ -800,7 +800,7 @@ def get_collaborative_recommendations(user_id):
                     status=True,
                     stock_quantity__gt=0
                 ).first()
-                
+
                 if batch:
                     recommendations.append({
                         'batch': batch,
@@ -852,7 +852,7 @@ def get_general_recommendations():
             ).first()
             if batch:
                 recommendations.append({
-                    'batch': batch,
+        'batch': batch,
                     'reason': 'Top Rated Product',
                     'score': float(product.avg_rating or 3.0)
                 })

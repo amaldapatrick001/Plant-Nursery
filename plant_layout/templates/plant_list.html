@@ -1,0 +1,33 @@
+{% extends 'partials/abase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">🌱 Plant List</h2>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Plant Name</th>
+                <th>Image</th>
+                <th>Min Spacing (cm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plant in plants %}
+            <tr>
+                <td>{{ plant.name }}</td>
+                <td><img src="{{ plant.image.url }}" width="50"></td>
+                <td>{{ plant.min_spacing_cm }} cm</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No plants added yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'plant_layout:add_plant' %}" class="btn btn-success">Add New Plant</a>
+</div>
+{% endblock %}
