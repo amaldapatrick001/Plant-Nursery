@@ -12,8 +12,9 @@ urlpatterns = [
     path('api/layouts/<int:layout_id>/delete/', views.delete_layout, name='delete_layout'),
     path('api/plants/', views.plant_list, name='plant_list'),
    
-   
-   
+    # Add these new URLs
+    path('add-plant/', views.add_plant, name='add_plant'),
+    path('plants/', views.plant_list_view, name='plant_list'),  # New view for plant list page
    
     path('upload-layout/', views.upload_layout, name='upload_layout'),
     path('save-plant-positions/<int:layout_id>/', views.save_plant_positions, name='save_plant_positions'),

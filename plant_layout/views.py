@@ -423,3 +423,20 @@ def get_layout(request, layout_id):
     except Exception as e:
         print(f"Error in get_layout: {str(e)}")  # Debug print
         return JsonResponse({'error': str(e), 'status': 'error'}, status=500)
+
+def plant_list_view(request):
+    """View function for displaying the list of plants"""
+    if not request.session.get('user_id'):
+        messages.error(request, 'You must be logged in to view plants.')
+        return redirect('userauths:login')
+
+    try:
+        plants = Plant.objects.all().order_by('name')
+        return render(request, 'plant_list.html', {
+            'plants': plants,
+            'is_logged_in': True
+        })
+    except Exception as e:
+        print(f"Plant list error: {str(e)}")  # Debug print
+        messages.error(request, f'An error occurred: {str(e)}')
+        return render(request, 'plant_list.html', {'plants': []})
