@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -296,19 +297,12 @@
                         
                     </div>
                 </div>
-                
-                <a href="{% url 'expert_QA_session:session_report' %}" class="nav-link">
-                    <i class="fas fa-chart-bar"></i> Session Report
-                </a>
-                
 
-               <!-- AR Garden -->
-                <a href="{% url 'plant_layout:add_plant' %}" class="nav-link">
-                    <i class="fas fa-plus-circle"></i> Add Plant
+                <!-- View Contact Us Submissions -->
+                <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-envelope mr-2"></i> Contact Us
                 </a>
-                <a href="{% url 'plant_layout:plant_list' %}" class="nav-link">
-                    <i class="fas fa-list"></i> Plant List
-                </a>
+
                 <!-- Logout -->
                 {% if request.session.is_authenticated %}
     <a href="{% url 'userauths:logout' %}" class="list-group-item list-group-item-action">

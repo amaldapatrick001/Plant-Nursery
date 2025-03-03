@@ -1,6 +1,5 @@
 from django.urls import path
-
-from .views import confirm_delivery,confirm_delivery_page, ddelivery_history, delivery_overview, dupdate_order_status, dview_assigned_orders, view_undelivered_orders, view_delivery_history
+from .views import ddelivery_history, delivery_overview, dupdate_order_status, dview_assigned_orders, view_undelivered_orders, view_delivery_history
 app_name = 'delivery' 
 urlpatterns = [
     path('undelivered_orders/', view_undelivered_orders, name='view_undelivered_orders'),
@@ -11,6 +10,5 @@ urlpatterns = [
 path('delivery/overview/', delivery_overview, name='delivery_overview'),
 
 path('ddelivery/history/', ddelivery_history, name='ddelivery_history'),
- path("confirm_delivery/<int:order_id>/", confirm_delivery_page, name="confirm_delivery_page"),
-    path("confirm_delivery/", confirm_delivery, name="confirm_delivery"),
+
 ]

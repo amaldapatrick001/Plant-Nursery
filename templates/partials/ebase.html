@@ -399,7 +399,7 @@
     
     <div class="dropdown">
         <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-            <i class="fas fa-comments"></i>Webinar
+            <i class="fas fa-comments"></i> Q & A Session
         </a>
         <ul class="dropdown-menu">
             <li><a href="{% url 'qa_sessions:eschedule_meeting' %}">
@@ -419,23 +419,9 @@
             <li><a href="{% url 'blog:blog_dashboard' %}">
                 <i class="fas fa-list"></i> My Blogs</a></li>
         </ul>
-
-    </div>
-    <div class="dropdown">
-        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-            <i class="fas fa-calendar-check"></i> Sessions Management
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <a href="{% url 'expert_QA_session:expert_sessions' %}">
-                    <i class="fas fa-list"></i> All Sessions
-                </a>
-            </li>
-        </ul>
     </div>
     <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
-
 
 <!-- Main Content -->
 <main class="main-content">

@@ -1,4 +1,3 @@
-from multiprocessing import context
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.utils import timezone
@@ -9,8 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 import logging
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
 
@@ -72,35 +69,40 @@ def dview_assigned_orders(request):
     if 'user_id' not in request.session:
         return redirect('userauths:login')
 
-    login_user = Login.objects.get(login_id=request.session['user_id'])
-    user = login_user.uid
-    delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
+    try:
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        user = login_user.uid
+        delivery_personnel = get_object_or_404(DeliveryPersonnel, user=user)
 
-    # Get orders in different stages
-    assigned_orders = Order.objects.filter(
-        assigned_delivery_person=delivery_personnel,
-        status='assigned'
-    ).select_related('user', 'billing')
+        # Get orders in different stages
+        assigned_orders = Order.objects.filter(
+            assigned_delivery_person=delivery_personnel,
+            status='assigned'
+        ).select_related('user', 'billing')
 
-    picked_up_orders = Order.objects.filter(
-        assigned_delivery_person=delivery_personnel,
-        status='picked_up'
-    ).select_related('user', 'billing')
+        picked_up_orders = Order.objects.filter(
+            assigned_delivery_person=delivery_personnel,
+            status='picked_up'
+        ).select_related('user', 'billing')
 
-    in_transit_orders = Order.objects.filter(
-        assigned_delivery_person=delivery_personnel,
-        status='in_transit'
-    ).select_related('user', 'billing')
+        in_transit_orders = Order.objects.filter(
+            assigned_delivery_person=delivery_personnel,
+            status='in_transit'
+        ).select_related('user', 'billing')
 
-    context = {
-        'assigned_orders': assigned_orders,
-        'picked_up_orders': picked_up_orders,
-        'in_transit_orders': in_transit_orders,
-        'delivery_personnel': delivery_personnel
-    }
+        context = {
+            'assigned_orders': assigned_orders,
+            'picked_up_orders': picked_up_orders,
+            'in_transit_orders': in_transit_orders,
+            'delivery_personnel': delivery_personnel
+        }
+        
+        return render(request, 'Deliveryboy/dassigned_orders.html', context)
     
-    return render(request, 'Deliveryboy/dassigned_orders.html', context)
-    
+    except Exception as e:
+        logger.error(f"Error in dview_assigned_orders: {str(e)}")
+        messages.error(request, "An error occurred while fetching orders.")
+        return redirect('userauths:login')
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dupdate_order_status(request, order_id):
@@ -227,35 +229,6 @@ def delivery_overview(request):
 #     }
     
      return render(request, 'delivery/ddelivery_overview.html', context)
-
-
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def confirm_delivery_page(request, order_id):
-    """Renders the QR scanner page for delivery confirmation"""
-    return render(request, 'Deliveryboy/confirm_delivery.html', {'order_id': order_id})
-
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def confirm_delivery(request):
-    """Processes the scanned QR code and updates order status"""
-    if request.method == "POST":
-        scanned_order_id = request.POST.get("order_id")
-
-        try:
-            order = get_object_or_404(Order, id=scanned_order_id, status="in_transit")
-
-            # Mark order as delivered
-            order.status = "delivered"
-            order.save()
-
-            messages.success(request, f"Order {order.id} has been marked as delivered!")
-            return redirect("delivery:view_assigned_orders")
-        
-        except Exception as e:
-            messages.error(request, "Invalid Order ID or Order not in transit!")
-            return redirect("delivery:confirm_delivery_page", order_id=scanned_order_id)
-
-    return JsonResponse({"status": "error", "message": "Invalid Request"}, status=400)
-
 
 # Placeholder for assigned orders view
 def assigned_orders():

@@ -2,17 +2,16 @@
 {% load static %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Section with Orders Title -->
 <div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/nur3.jpeg' %}');">
     <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
             <div class="col-md-9 ftco-animate text-center">
-                <h1 class="mb-0 bread text-white">Order Details</h1>
-                <p class="breadcrumbs text-white">
-                    <span class="mr-2"><a href="{% url 'userauths:index' %}" class="text-white">Home</a></span>
-                    <span class="mr-2"><a href="{% url 'purchase:order_history' %}" class="text-white">Orders</a></span>
-                    <span class="text-white">Details</span>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="">Home</a></span>
+                    <span>Orders</span>
                 </p>
+                <h1 class="mb-0 bread">My Orders</h1>
             </div>
         </div>
     </div>
@@ -20,306 +19,121 @@
 
 <!-- Main Content -->
 <div class="container my-5">
-    <div class="order-summary-container">
-        <!-- Order Status Timeline -->
-        <div class="order-timeline mb-4">
-            <div class="timeline-item {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}active{% endif %}">
-                <i class="fas fa-box"></i>
-                <span>Processing</span>
-            </div>
-            <div class="timeline-item {% if order.status == 'shipped' or order.status == 'delivered' %}active{% endif %}">
-                <i class="fas fa-shipping-fast"></i>
-                <span>Shipped</span>
-            </div>
-            <div class="timeline-item {% if order.status == 'delivered' %}active{% endif %}">
-                <i class="fas fa-check-circle"></i>
-                <span>Delivered</span>
-            </div>
+    <div class="order-summary">
+        <h2 class="mb-4">Order Summary</h2>
+
+        <!-- Order Details -->
+        <div class="order-details mb-4">
+            <p><strong>Status:</strong> <span class="badge badge-info">{{ order.status }}</span></p>
+            <p><strong>Order Date:</strong> {{ order.order_date|date:"F j, Y" }}</p>
+            {% if order.delivery_date %}
+                <p><strong>Estimated Delivery Date:</strong> {{ order.delivery_date|date:"F j, Y" }}</p>
+            {% endif %}
+            <p><strong>Payment Status:</strong> <span class="badge badge-success">{{ order.payment_status }}</span></p>
+            <p><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
         </div>
 
-        <!-- Order Details Card -->
-        <div class="order-details-card">
-            <div class="card-header">
-                <h3>Order Information</h3>
-                <span class="order-date">{{ order.order_date|date:"F j, Y" }}</span>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <label>Order Status</label>
-                            <p class="status-badge status-{{ order.status|lower }}">{{ order.status }}</p>
-                        </div>
-                        
-                    </div>
-                    <div class="col-md-6">
-                        {% if order.delivery_date %}
-                        <div class="info-group">
-                            <label>Estimated Delivery</label>
-                            <p>{{ order.delivery_date|date:"F j, Y" }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Cart Items -->
+        <h3 class="mb-3">Items in Your Order</h3>
+        <table class="table table-striped table-hover cart-items mb-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price (Rs)</th>
+                    <th>Total (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.order_items.all %}
+                    <tr>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>Rs. {{ item.price }}</td>
+                        <td>Rs. {{ item.get_total_price_with_discount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-        <!-- Order Items -->
-        <div class="order-items-card">
-            <div class="card-header">
-                <h3>Order Items</h3>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table items-table">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in order.order_items.all %}
-                            <tr>
-                                <td class="item-details">
-                                    <span class="item-name">{{ item.product }}</span>
-                                </td>
-                                <td>{{ item.quantity }}</td>
-                                <td>₹{{ item.price }}</td>
-                                <td class="item-total">₹{{ item.get_total_price_with_discount }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Summary Section -->
+        <div class="summary mb-4">
+            <p><strong>Subtotal:</strong> Rs. {{ actual_subtotal }}</p>
+            <p><strong>Discount:</strong> Rs. {{ total_discount }}</p>
+            <p><strong>Delivery Fee:</strong> Rs. {{ delivery_price }}</p>
+            <h3><strong>Grand Total:</strong> Rs. {{ total_price_with_delivery_and_discount }}</h3>
         </div>
-
-        <!-- Order Summary -->
-        <div class="order-total-card">
-            <div class="total-row">
-                <span>Subtotal</span>
-                <span>₹{{ actual_subtotal }}</span>
-            </div>
-            <div class="total-row">
-                <span>Discount</span>
-                <span>-₹{{ total_discount }}</span>
-            </div>
-            <div class="total-row">
-                <span>Delivery Fee</span>
-                <span>₹{{ delivery_price }}</span>
-            </div>
-            <div class="total-row grand-total">
-                <span>Grand Total</span>
-                <span>₹{{ total_price_with_delivery_and_discount }}</span>
-            </div>
-        </div>
-
-        {% if qr_code_url %}
-        <div class="qr-code-section">
-            <h4>Scan QR Code to Confirm Delivery</h4>
-            <img src="{{ qr_code_url }}" alt="Scan to Confirm Delivery" class="qr-code">
-        </div>
-        {% endif %}
 
         <!-- Download Button -->
-        <div class="text-center mt-4">
-            <a href="{% url 'purchase:download_bill' order.id %}" class="btn-download">
-                <i class="fas fa-download"></i> Download Invoice
-            </a>
+        <div class="text-center">
+            <a href="{% url 'purchase:download_bill' order.id %}" class="btn btn-primary download-btn">Download Bill</a>
         </div>
     </div>
 </div>
+{% endblock %}
 
 {% block styles %}
 <style>
-    /* Enhanced Order Summary Styles */
-    .order-summary-container {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        padding: 40px;
-        margin-top: -50px;
-        position: relative;
-        z-index: 2;
-    }
-
-    /* Timeline Styles */
-    .order-timeline {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 0;
-        position: relative;
-        margin-bottom: 40px;
-    }
-
-    .order-timeline::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(to right, #82ae46 50%, #eee 50%);
-        z-index: 1;
-    }
-
-    .timeline-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        z-index: 2;
-        background: white;
-        padding: 0 20px;
-    }
-
-    .timeline-item i {
-        font-size: 30px;
-        color: #ddd;
-        margin-bottom: 10px;
-        transition: all 0.3s ease;
-        background: white;
-        padding: 15px;
-        border-radius: 50%;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .timeline-item.active i {
+    /* Hero Section Styles */
+    .hero-wrap {
+        padding: 50px 0;
         color: white;
-        background: linear-gradient(145deg, #82ae46, #6a9139);
-        box-shadow: 0 8px 20px rgba(130, 174, 70, 0.3);
-    }
-
-    .timeline-item span {
-        font-size: 1em;
-        color: #666;
-        font-weight: 500;
-    }
-
-    /* Cards Styling */
-    .order-details-card, .order-items-card, .order-total-card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
-        overflow: hidden;
-    }
-
-    .card-header {
-        background: linear-gradient(145deg, #82ae46, #6a9139);
-        padding: 25px;
-        border-bottom: none;
-    }
-
-    .card-header h3 {
-        color: white;
-        font-size: 1.3em;
-        margin: 0;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-    }
-
-    .card-body {
-        padding: 30px;
-    }
-
-    /* Total Card */
-    .total-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px 25px;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        font-size: 1.1em;
-    }
-
-    .grand-total {
-        background: linear-gradient(145deg, #f8f9fa, #ffffff);
-        font-weight: 600;
-        font-size: 1.3em;
-        color: #82ae46;
-        border-bottom: none;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-    }
-
-    /* QR Code Section */
-    .qr-code-section {
         text-align: center;
-        margin: 40px 0;
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Order Summary Section */
+    .order-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         padding: 30px;
-        background: linear-gradient(145deg, #ffffff, #f8f9fa);
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     }
 
-    .qr-code {
-        max-width: 200px;
-        margin: 20px 0;
+    .order-details, .summary {
+        background-color: #ffffff;
         padding: 15px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 5px;
+        margin-bottom: 20px;
     }
 
-    /* Download Button */
-    .btn-download {
-        background: linear-gradient(145deg, #82ae46, #6a9139);
-        color: white;
-        padding: 15px 40px;
-        border-radius: 30px;
-        font-size: 1.1em;
-        font-weight: 500;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(130, 174, 70, 0.3);
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
+    .order-details p {
+        margin: 0 0 10px;
     }
 
-    .btn-download:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(130, 174, 70, 0.4);
-        background: linear-gradient(145deg, #6a9139, #82ae46);
-        color: white;
-    }
-
-    /* Status and Payment Badges */
-    .status-badge, .payment-badge {
-        padding: 8px 18px;
-        border-radius: 25px;
+    .badge {
+        padding: 5px 10px;
         font-size: 0.9em;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
 
-    /* Items Table */
-    .items-table {
+    /* Cart Items Table */
+    .cart-items {
         margin-top: 20px;
     }
 
-    .items-table th {
-        background: linear-gradient(145deg, #f8f9fa, #ffffff);
-        color: #666;
-        font-weight: 600;
-        padding: 15px;
-        border-top: none;
+    .cart-items th {
+        background-color: #343a40;
+        color: white;
     }
 
-    .items-table td {
-        padding: 20px 15px;
-        vertical-align: middle;
+    .summary p, .summary h3 {
+        margin: 0 0 10px;
     }
 
-    .item-total {
-        font-weight: 600;
-        color: #82ae46;
+    /* Download Button */
+    .download-btn {
+        padding: 10px 20px;
         font-size: 1.1em;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .download-btn:hover {
+        background-color: #0056b3;
     }
 </style>
-{% endblock %}
 {% endblock %}

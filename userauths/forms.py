@@ -259,18 +259,26 @@ class ExpertProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Expert
-        fields = [
-            'expertise_area', 'qualifications', 'description',
-            'profile_picture', 'specialization_tags', 'availability_status',
-            'consultation_fee', 'certifications', 'contact_email',
-            'contact_phone', 'location', 'languages', 'chat_enabled',
-            'phone_enabled', 'meet_link', 'session_duration', 'session_price'
-        ]
+        fields = ['expertise_area', 'other_expertise_area', 'qualifications', 'other_qualification', 'description', 'profile_picture', 'specialization_tags', 'availability_schedule', 'availability_status', 'consultation_fee', 'certifications', 'contact_email', 'contact_phone', 'location', 'languages']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Add any field customization here
+    def clean(self):
+        cleaned_data = super().clean()
+        expertise_area = cleaned_data.get('expertise_area')
+        other_expertise = cleaned_data.get('other_expertise_area')
+        qualifications = cleaned_data.get('qualifications')
+        other_qualification = cleaned_data.get('other_qualification')
 
+        if expertise_area == 'other' and not other_expertise:
+            raise forms.ValidationError({
+                'other_expertise_area': 'Please specify your expertise area when selecting "Other"'
+            })
+
+        if qualifications == 'other' and not other_qualification:
+            raise forms.ValidationError({
+                'other_qualification': 'Please specify your qualification when selecting "Other"'
+            })
+
+        return cleaned_data
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 

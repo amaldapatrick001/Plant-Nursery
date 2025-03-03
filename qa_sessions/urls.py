@@ -15,5 +15,5 @@ urlpatterns = [
     path('remove-slot/<int:session_id>/', views.remove_slot, name='remove_slot'),
     path('expert/meetings/', views.eview_scheduled_meetings, name='eview_scheduled_meetings'),
     path('expert/meeting/<str:session_id>/', views.eview_meeting_detail, name='eview_meeting_detail'),
-   path('expert/schedule/', views.eschedule_meeting, name='eschedule_meeting'),  # Changed from 'schedule_meeting' to 'eschedule_meeting'
+    path('expert/schedule/', views.eschedule_meeting, name='eschedule_meeting'),
 ]

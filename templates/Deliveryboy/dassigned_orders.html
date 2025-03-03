@@ -110,7 +110,6 @@
                         <th><i class="fas fa-user"></i> Customer</th>
                         <th><i class="fas fa-map-marker-alt"></i> Location</th>
                         <th><i class="fas fa-info-circle"></i> Status</th>
-                        <th><i class="fas fa-tasks"></i> Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,12 +121,6 @@
                             <span class="location-text">{{ order.billing.street_address }}, {{ order.billing.town_city }}, {{ order.billing.district }}</span>
                         </td>
                         <td><span class="status-pill status-in-transit">{{ order.status|title }}</span></td>
-                        <td>
-                            <a href="{% url 'delivery:confirm_delivery_page' order.id %}" class="action-button confirm-btn">
-                                <i class="fas fa-check-circle"></i> Confirm Delivery
-                            </a>
-                        </td>
-                        
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -306,17 +299,6 @@
 
     .transit-btn:hover {
         background: #e65100;
-        transform: translateX(3px);
-        color: white;
-    }
-
-    .confirm-btn {
-        background: #4caf50;
-        color: white;
-    }
-
-    .confirm-btn:hover {
-        background: #388e3c;
         transform: translateX(3px);
         color: white;
     }
