@@ -14,23 +14,23 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from purchase.models import OrderItem, Order, Cart
 from userauths.models import Login, User_Reg
 
-# Initialize the ML model (do this at module level)
-model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
+# # Initialize the ML model (do this at module level)
+# model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
 
-def extract_features(image):
-    # Preprocess image for ResNet50
-    img = Image.open(io.BytesIO(image.read())).convert('RGB')
-    img = img.resize((224, 224))
-    x = img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
+# def extract_features(image):
+#     # Preprocess image for ResNet50
+#     img = Image.open(io.BytesIO(image.read())).convert('RGB')
+#     img = img.resize((224, 224))
+#     x = img_to_array(img)
+#     x = np.expand_dims(x, axis=0)
+#     x = preprocess_input(x)
     
-    # Extract features
-    features = model.predict(x)
-    return features.flatten()
+#     # Extract features
+#     features = model.predict(x)
+#     return features.flatten()
 
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+# def cosine_similarity(a, b):
+#     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 # View to list only active categories
 def category_list(request):
