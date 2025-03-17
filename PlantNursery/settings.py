@@ -96,8 +96,8 @@ INSTALLED_APPS = [
     'qa_sessions',
     'expert_QA_session',
     'channels',
-    'solar_forecast',
-    'pdd',
+    # 'solar_forecast',
+    # 'pdd',
     'chatbot',
     'plant_layout',
 ]
