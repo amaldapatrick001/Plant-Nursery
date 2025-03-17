@@ -31,47 +31,31 @@ SITE_URL = os.getenv('SITE_URL')
 
 GOOGLE_CALENDAR_CREDENTIALS = os.path.join(BASE_DIR, 'credentials/service-account-key.json')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'OPTIONS': {
-            'sslmode': 'prefer',  # Try 'prefer' or 'disable'
-        },
-    }
-}
-
-
-
-import os
-
-import os
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME', 'EnchantedEden'),  # Default value if env variable is not set
-#         'USER': os.getenv('DB_USER', 'postgres'),       # Default value if env variable is not set
-#         'PASSWORD': os.getenv('DB_PASSWORD', 'Amalda@2002'),  # Default value if env variable is not set
-#         'HOST': 'db',  # Use the service name 'db' from docker-compose.yml
-#         'PORT': os.getenv('DB_PORT', '5432'),           # Default to PostgreSQL port
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
 #         'OPTIONS': {
-#             'sslmode': 'prefer',  # Use 'prefer' or 'disable' for local development
+#             'sslmode': 'prefer',  # Try 'prefer' or 'disable'
 #         },
 #     }
 # }
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen',
-#         conn_max_age=600,
-#         ssl_require=True
-#     )
-# }
+
+
+
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen',
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 # # Use Render Database URL if needed
 # if os.getenv('DATABASE_URL'):
 #     DATABASES['default'] = dj_database_url.config(
