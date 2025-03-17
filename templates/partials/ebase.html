@@ -409,19 +409,18 @@
         </ul>
     </div>
 
-    <div class="dropdown">
-        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+    <div class="dropdown" id="blog-management-dropdown">
+        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" id="blog-management-toggle">
             <i class="fas fa-blog"></i> Blog Management
         </a>
-        <ul class="dropdown-menu">
-            <li><a href="{% url 'blog:eadd_blog' %}">
+        <ul class="dropdown-menu" id="blog-management-menu">
+            <li><a href="{% url 'blog:eadd_blog' %}" id="add-blog-link">
                 <i class="fas fa-plus-circle"></i> Add Blog</a></li>
-            <li><a href="{% url 'blog:blog_dashboard' %}">
+            <li><a href="{% url 'blog:blog_dashboard' %}" id="my-blogs-link">
                 <i class="fas fa-list"></i> My Blogs</a></li>
-                
         </ul>
-
     </div>
+    
     
     <a href="{% url 'userauths:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
