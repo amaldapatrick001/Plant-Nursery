@@ -51,7 +51,7 @@ GOOGLE_CALENDAR_CREDENTIALS = os.path.join(BASE_DIR, 'credentials/service-accoun
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen',
+        default='postgresql://enchnatededen_gibv_user:Xb9ZFFXUZAXrPeoYxLfnLQ3frsjugCB6@dpg-cv27v9dds78s73e6m4og-a.oregon-postgres.render.com/enchnatededen_gibv',
         conn_max_age=600,
         ssl_require=True
     )
