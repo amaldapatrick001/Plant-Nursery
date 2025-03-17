@@ -263,8 +263,8 @@ LOGGING = {
 }
 
 # Get API keys from environment variables
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+GEMINI_API_KEY = "AIzaSyBMzsJbJhAmKsc5EOdvWzJ24QIDcU4YxT8"
+OPENWEATHER_API_KEY = "0acebc8791d9539d4e0b68f7262d10b6"
 
 # Add validation to ensure keys are present
 if not GEMINI_API_KEY:
@@ -273,7 +273,7 @@ if not OPENWEATHER_API_KEY:
     raise ValueError("OPENWEATHER_API_KEY not found in environment variables")
 
 # Weather API Key
-OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+OPENWEATHERMAP_API_KEY = "0acebc8791d9539d4e0b68f7262d10b6"
 
 # AI Recommendation Settings
 AI_RECOMMENDATION_SETTINGS = {
