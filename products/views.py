@@ -5,9 +5,9 @@ from .models import Batch, Category, CultivationMethod, PlantCategory, Product, 
 from .forms import BatchForm, CategoryForm, CultivationMethodForm, PlantCategoryForm, ProductForm, PlantTypeForm
 import numpy as np
 from PIL import Image
-import tensorflow as tf
-from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
-from tensorflow.keras.preprocessing.image import img_to_array
+# import tensorflow as tf
+# from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
+# from tensorflow.keras.preprocessing.image import img_to_array
 import io
 from django.db.models import Q, Avg, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
