@@ -47,15 +47,25 @@ GOOGLE_CALENDAR_CREDENTIALS = os.path.join(BASE_DIR, 'credentials/service-accoun
 
 
 
+import dj_database_url
+import os
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://enchnatededen_gibv_user:Xb9ZFFXUZAXrPeoYxLfnLQ3frsjugCB6@dpg-cv27v9dds78s73e6m4og-a.oregon-postgres.render.com/enchnatededen_gibv',
+        default=os.getenv(
+            'DATABASE_URL',
+            'postgresql://enchnatededen_gibv_user:Xb9ZFFXUZAXrPeoYxLfnLQ3frsjugCB6@dpg-cv27v9dds78s73e6m4og-a.oregon-postgres.render.com/enchnatededen_gibv'
+        ),
         conn_max_age=600,
         ssl_require=True
     )
 }
+
+
+
 # # Use Render Database URL if needed
 # if os.getenv('DATABASE_URL'):
 #     DATABASES['default'] = dj_database_url.config(

@@ -117,8 +117,7 @@
                  <!-- Blog Links for Both Guest and Registered Users -->
                   <li class="nav-item"><a href="{% url 'blog:home' %}" class="nav-link">Blog</a></li>
                   
-                    <li><a href="{% url 'pdd:upload_image' %}" class="nav-link" id="disease-detection-link">Disease Detection</a>
-                </li>
+                    
                            
                   
                 <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
@@ -130,8 +129,7 @@
                 </li>
                   {% if request.session.is_authenticated %}
           
-                  <li class="nav-item"><a href="{% url 'solar_forecast' %}" class="nav-link" id="solar-forecast-link">Solar Forecast</a></li>
-                  
+                 
                   <li class="nav-item">
                       <a href="{% url 'qa_sessions:customer_notifications' %}" class="nav-link">
                           <i class="fas fa-bell fa-2x"></i>
