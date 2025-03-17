@@ -18,6 +18,18 @@ from django.utils.dateparse import parse_date
 from django.db import transaction
 import logging
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import os
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
+from reportlab.lib.units import inch
+from io import BytesIO
+import qrcode
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 
 def ensure_user_logged_in(request):
@@ -444,10 +456,38 @@ def razorpay_checkout(request):
             # Clear session data
             request.session['current_order_id'] = None
             
-            # Prepare response message with correct delivery person name access
-            message = "Payment processed successfully. "
+            # Generate QR code
+            qr_path = generate_qr(order.id)
+
+            # Prepare email content
+            delivery_person_name = None
+            vehicle_id = None
             if order.status == 'assigned' and order.assigned_delivery_person:
                 delivery_person_name = f"{order.assigned_delivery_person.user.first_name} {order.assigned_delivery_person.user.last_name}"
+                vehicle_id = order.assigned_delivery_person.vehicle_number
+
+            subject = "Order Confirmation and QR Code"
+            message = render_to_string('emails/order_confirmation.html', {
+                'customer_name': f"{order.billing.first_name} {order.billing.last_name}",
+                'order_id': order.id,
+                'delivery_date': order.delivery_date.strftime('%B %d, %Y'),
+                'delivery_person_name': delivery_person_name,
+                'vehicle_id': vehicle_id,
+            })
+
+            # Send email with QR code
+            email = EmailMessage(
+                subject,
+                message,
+                'no-reply@yourstore.com',
+                [order.billing.email]
+            )
+            email.attach_file(qr_path)
+            email.send()
+
+            # Prepare response message
+            message = "Payment processed successfully. "
+            if order.status == 'assigned' and order.assigned_delivery_person:
                 message += f"Delivery assigned to {delivery_person_name} for {order.delivery_date.strftime('%B %d, %Y')}"
             else:
                 message += f"Delivery scheduled for {order.delivery_date.strftime('%B %d, %Y')}"
@@ -458,8 +498,7 @@ def razorpay_checkout(request):
                 'message': message,
                 'status': order.status,
                 'delivery_date': order.delivery_date.strftime('%B %d, %Y'),
-                'delivery_person': (f"{order.assigned_delivery_person.user.first_name} {order.assigned_delivery_person.user.last_name}" 
-                                  if order.assigned_delivery_person else None)
+                'delivery_person': delivery_person_name
             })
 
         except Exception as e:
@@ -499,6 +538,7 @@ def order_summary(request, order_id):
     total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
 
     # Prepare context for rendering template
+    qr_code_url = generate_qr(order_id)  # Ensure this returns the correct URL
     context = {
         'order': order,
         'order_items': order_items,
@@ -508,6 +548,7 @@ def order_summary(request, order_id):
         'total_price_with_delivery_and_discount': total_price_with_delivery_and_discount,
         'selected_address_id': request.session.get('selected_address_id'),
         'user_addresses': Billing.objects.filter(user_id=user_id),
+        'qr_code_url': qr_code_url,
     }
 
     return render(request, 'purchase/order_summary.html', context)
@@ -537,7 +578,7 @@ def submit_review(request, order_id):
     order = get_object_or_404(Order, id=order_id, user_id=request.session.get('user_id'))
 
     # Ensure the order is delivered before allowing a review
-    if order.status != 'Delivered':
+    if order.status != 'delivered':
         return JsonResponse({'error': 'You can only review delivered items.'}, status=403)
 
     if request.method == 'POST':
@@ -704,6 +745,7 @@ def update_order_status(request, order_id):
         }, status=500)
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from .models import Order, OrderItem, Login
 
 def get_order_details(request, order_id):
@@ -975,151 +1017,262 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
+from reportlab.lib.units import inch
 from io import BytesIO
 
 def download_bill(request, order_id):
     if not ensure_user_logged_in(request):
         return redirect('userauths:login')
 
-    # Ensure the user is logged in
-    user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, 'You must be logged in to access this page.')
-        return redirect('userauths:login')
-
-    # Retrieve the user using the Login model
-    user = get_object_or_404(Login, login_id=user_id)
-
-    # Fetch the order associated with the user
+    # Get user and order data
+    user = get_object_or_404(Login, login_id=request.session.get('user_id'))
     order = get_object_or_404(Order, id=order_id, user_id=user.uid_id)
+    order_items = order.order_items.all()
 
-    # Retrieve the cart associated with the order
-    cart = get_object_or_404(Cart, id=order.cart.id, user_id=user.uid_id)
-
-    # Create a PDF response
+    # Create PDF
     buffer = BytesIO()
-    pdf = SimpleDocTemplate(buffer, pagesize=letter)
-    elements = []
-
-    # Define custom colors to match HTML theme
-    primary_color = colors.HexColor("#4CAF50")
-    secondary_color = colors.HexColor("#388E3C")
-    accent_color = colors.HexColor("#8BC34A")
-
-    # Custom styles
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=50,
+        leftMargin=50,
+        topMargin=30,  # Reduced top margin for better logo placement
+        bottomMargin=50
+    )
+    
     styles = getSampleStyleSheet()
+    elements = []
+    
+    # Colors
+    brand_green = colors.HexColor("#2E7D32")
+    accent_green = colors.HexColor("#4CAF50")
+    text_gray = colors.HexColor("#484848")
+    light_gray = colors.HexColor("#F5F5F5")
+    
+    # Custom Styles
     title_style = ParagraphStyle(
-        name="Title",
-        fontSize=26,
-        leading=30,
+        'BrandTitle',
+        parent=styles['Heading1'],
+        fontSize=28,
+        textColor=brand_green,
+        spaceAfter=20,
         alignment=1,
-        textColor=primary_color,
         fontName="Helvetica-Bold"
     )
+    
     subtitle_style = ParagraphStyle(
-        name="Subtitle",
-        fontSize=12,
-        leading=14,
-        textColor=secondary_color
+        'Subtitle',
+        parent=styles['Normal'],
+        fontSize=16,
+        textColor=accent_green,
+        spaceBefore=10,
+        spaceAfter=20,
+        alignment=1
     )
-    normal_style = ParagraphStyle(
-        name="Normal",
-        fontSize=10,
-        leading=12,
-        textColor=colors.black
-    )
-    total_style = ParagraphStyle(
-        name="Total",
+    
+    heading_style = ParagraphStyle(
+        'SectionHeading',
+        parent=styles['Heading2'],
         fontSize=12,
-        leading=14,
-        textColor=primary_color,
+        textColor=brand_green,
+        spaceBefore=15,
+        spaceAfter=8,
         fontName="Helvetica-Bold"
     )
+    
+    normal_style = ParagraphStyle(
+        'ContentText',
+        parent=styles['Normal'],
+        fontSize=10,
+        textColor=text_gray,
+        spaceBefore=4,
+        spaceAfter=4,
+        fontName="Helvetica"
+    )
+    
+    # Add logo
+    try:
+        logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo.png')
+        if os.path.exists(logo_path):
+            logo = Image(logo_path)
+            # Scale logo to appropriate size (2 inch diameter)
+            aspect = logo.imageWidth / logo.imageHeight
+            logo.drawWidth = 2 * inch
+            logo.drawHeight = 2 * inch / aspect
+            logo.hAlign = 'CENTER'
+            elements.append(logo)
+            elements.append(Spacer(1, 15))
+    except Exception as e:
+        print(f"Logo loading error: {e}")
 
-    # Add logo at the top
-    logo_path = "E:/PN - Copy/PlantNursery/static/images/logo.png"
-    logo = Image(logo_path, width=100, height=50)
-    logo.hAlign = 'CENTER'
-    elements.append(logo)
-    elements.append(Spacer(1, 12))
-
-    # Add shop name and details
-    elements.append(Paragraph("Enchanted Eden Plant Nursery", title_style))
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph("Address: Your Shop Address", subtitle_style))
-    elements.append(Paragraph("Contact: Your Contact Number", subtitle_style))
-    elements.append(Paragraph("Email: Your Email", subtitle_style))
-    elements.append(Spacer(1, 20))
-
-    # Add order summary
-    elements.append(Paragraph("Order Summary", ParagraphStyle(name="Heading", fontSize=16, textColor=primary_color)))
-    elements.append(Spacer(1, 10))
-    order_details = [
-        f"Status: {order.status}",
-        f"Order Date: {order.order_date.strftime('%B %d, %Y')}",
-        f"Estimated Delivery Date: {order.delivery_date.strftime('%B %d, %Y') if order.delivery_date else 'N/A'}",
-        f"Payment Status: {order.payment_status}",
-        f"Total Amount: ₹{order.total_amount}",
-    ]
-    for detail in order_details:
-        elements.append(Paragraph(detail, normal_style))
-    elements.append(Spacer(1, 20))
-
-    # Add items in the order as a table
-    item_data = [['Product Name', 'Quantity', 'Price', 'Total']]
-    for item in cart.items.all():
-        item_data.append([
-            item.batch.product.name,
-            item.quantity,
-            f"₹{item.batch.price}",
-            f"₹{item.get_total_price()}"
-        ])
-
-    item_table = Table(item_data, colWidths=[200, 60, 80, 80])
-    item_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), primary_color),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+    # Header with border
+    header_table = Table([
+        [Paragraph("Enchanted Eden", title_style)],
+        [Paragraph("Plant Nursery", subtitle_style)],
+    ], colWidths=[440])
+    
+    header_table.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 11),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (-1, -1), light_gray),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('BOX', (0, 0), (-1, -1), 1, brand_green),
     ]))
-    elements.append(item_table)
-
-    # Calculate totals
-    actual_subtotal = sum(item.get_total_price() for item in cart.items.all())
-    total_discount = sum(item.get_discount_amount() for item in cart.items.all())
-    delivery_price = 50  # Set dynamically based on your logic
-    total_price_with_delivery_and_discount = actual_subtotal - total_discount + delivery_price
-
-    # Add totals with a new style
+    elements.append(header_table)
     elements.append(Spacer(1, 20))
-    totals_data = [
-        ["Subtotal", f"₹{actual_subtotal}"],
-        ["Discount", f"₹{total_discount}"],
-        ["Delivery Fee", f"₹{delivery_price}"],
-        ["Grand Total", f"₹{total_price_with_delivery_and_discount}"]
-    ]
-    totals_table = Table(totals_data, colWidths=[350, 100])
-    totals_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#E0E0E0")),  # Light background for all rows
-        ('TEXTCOLOR', (0, 0), (-1, -2), colors.black),  # Black text for subtotal and discount rows
-        ('TEXTCOLOR', (-1, -1), (-1, -1), primary_color),  # Color for Grand Total row
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Set font
-        ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),  # Right-align text
-        ('FONTSIZE', (0, 0), (-1, -1), 12),  # Font size
+
+    # Bill Info in an elegant box
+    bill_info = Table([
+        ['Invoice No:', f'#{order.id}', 'Date:', order.order_date.strftime('%B %d, %Y')],
+        ['Status:', order.status.title(), 'Payment:', order.payment_status]
+    ], colWidths=[70, 150, 70, 150])
+    
+    bill_info.setStyle(TableStyle([
+        ('TEXTCOLOR', (0, 0), (-1, -1), text_gray),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
         ('TOPPADDING', (0, 0), (-1, -1), 8),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-        ('LINEABOVE', (0, -1), (-1, -1), 1, primary_color),  # Line above Grand Total
-        ('LINEBELOW', (0, 0), (-1, -2), 0.5, colors.grey),  # Divider line between rows
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.lightgrey),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+        ('BOX', (0, 0), (-1, -1), 1, brand_green),
     ]))
-    elements.append(totals_table)
+    elements.append(bill_info)
+    elements.append(Spacer(1, 20))
 
-    # Build the PDF
-    pdf.build(elements)
+    # Enhanced customer details with better styling
+    elements.append(Paragraph("Billing Details", heading_style))
+    customer_details = [
+        [Paragraph(f"""
+        <b>{order.billing.first_name} {order.billing.last_name}</b><br/>
+        {order.billing.street_address}<br/>
+        {order.billing.town_city}, {order.billing.district}<br/>
+        PIN: {order.billing.postcode_zip}<br/>
+        Phone: {order.billing.phone}<br/>
+        Email: {order.billing.email}
+        """, normal_style)]
+    ]
+    customer_table = Table(customer_details, colWidths=[440])
+    customer_table.setStyle(TableStyle([
+        ('TEXTCOLOR', (0, 0), (-1, -1), text_gray),
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 0), (-1, -1), light_gray),
+        ('BOX', (0, 0), (-1, -1), 1, brand_green),
+        ('LEFTPADDING', (0, 0), (-1, -1), 20),
+    ]))
+    elements.append(customer_table)
+    elements.append(Spacer(1, 20))
 
-    # Return PDF as response
+    # Enhanced order items table
+    elements.append(Paragraph("Order Details", heading_style))
+    table_data = [['Product', 'Qty', 'Price', 'Discount', 'Total']]
+    for item in order_items:
+        row = [
+            item.product,
+            str(item.quantity),
+            f"₹{item.price}",
+            f"{item.discount}%" if item.discount else "-",
+            f"₹{item.get_total_price_with_discount():.2f}"
+        ]
+        table_data.append(row)
+    
+    order_table = Table(table_data, colWidths=[200, 50, 70, 60, 60])
+    order_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), brand_green),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('TEXTCOLOR', (0, 1), (-1, -1), text_gray),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, brand_green),
+        ('BOX', (0, 0), (-1, -1), 1.5, brand_green),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_gray]),
+    ]))
+    elements.append(order_table)
+    elements.append(Spacer(1, 15))
+
+    # Summary calculations
+    actual_subtotal = sum(item.get_total_price() for item in order_items)
+    total_discount = sum((item.get_total_price() * item.discount / 100) for item in order_items)
+    delivery_price = 50
+    final_total = order.total_amount
+
+    # Enhanced summary table
+    summary_data = [
+        ['Subtotal:', f"₹{actual_subtotal:.2f}"],
+        ['Discount:', f"₹{total_discount:.2f}"],
+        ['Delivery:', f"₹{delivery_price:.2f}"],
+        ['Total:', f"₹{final_total:.2f}"]
+    ]
+    
+    summary_table = Table(summary_data, colWidths=[340, 100])
+    summary_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+        ('TEXTCOLOR', (0, 0), (-1, -2), text_gray),
+        ('TEXTCOLOR', (-1, -1), (-1, -1), brand_green),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, -1), (-1, -1), 11),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('LINEABOVE', (0, -1), (-1, -1), 1, brand_green),
+        ('BACKGROUND', (0, -1), (-1, -1), light_gray),
+    ]))
+    elements.append(summary_table)
+
+    # Enhanced footer with border
+    elements.append(Spacer(1, 30))
+    footer_text = """Thank you for shopping with us!
+    For support: +91 9876543210 | support@enchantededen.com"""
+    
+    footer_table = Table([[Paragraph(footer_text, ParagraphStyle(
+        'Footer',
+        parent=styles['Normal'],
+        alignment=1,
+        textColor=accent_green,
+        fontSize=8,
+        fontName="Helvetica"
+    ))]], colWidths=[440])
+    
+    footer_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BACKGROUND', (0, 0), (-1, -1), light_gray),
+        ('BOX', (0, 0), (-1, -1), 1, brand_green),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(footer_table)
+
+    # Build PDF
+    doc.build(elements)
     buffer.seek(0)
-    return HttpResponse(buffer, content_type='application/pdf', headers={'Content-Disposition': f'attachment; filename="bill_{order_id}.pdf"'})
+    
+    return HttpResponse(
+        buffer,
+        content_type='application/pdf',
+        headers={'Content-Disposition': f'attachment; filename="EE_Invoice_{order_id}.pdf"'}
+    )
+
+def generate_qr(order_id):
+    # Define the directory path
+    qr_directory = os.path.join(settings.MEDIA_ROOT, 'qr_codes')
+
+    # Check if the directory exists, if not, create it
+    if not os.path.exists(qr_directory):
+        os.makedirs(qr_directory)
+
+    # Generate the QR code with the URL to confirm delivery
+    qr = qrcode.make(f"http://localhost:8000/delivery/confirm_delivery/{order_id}")
+
+    # Save the QR code image
+    qr_path = os.path.join(qr_directory, f"order_{order_id}.png")
+    qr.save(qr_path)
+
+    # Return the URL path for the QR code
+    return os.path.join(settings.MEDIA_URL, 'qr_codes', f"order_{order_id}.png")

@@ -30,9 +30,9 @@
                                 <label class="custom-label">
                                     <i class="fas fa-map-marker-alt me-2"></i>Location
                                 </label>
-                                <select name="location" class="form-select custom-select" onchange="this.form.submit()">
+                                <select name="location" class="form-select custom-select" id ="location" onchange="this.form.submit()">
                                     {% for location in locations %}
-                                        <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}>
+                                        <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}id="locations">
                                             {{ location }}
                                         </option>
                                     {% endfor %}
@@ -44,9 +44,9 @@
                                 <label class="custom-label">
                                     <i class="fas fa-leaf me-2"></i>Plant Category
                                 </label>
-                                <select name="category" class="form-select custom-select" onchange="this.form.submit()">
+                                <select name="category" class="form-select custom-select" id="category" onchange="this.form.submit()">
                                     {% for category in categories %}
-                                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>
+                                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %} id="categorys">
                                             {{ category }}
                                         </option>
                                     {% endfor %}
@@ -60,7 +60,7 @@
                                 </label>
                                 <div class="search-input-wrapper">
                                     <input type="text" id="plant_search" class="form-control custom-input" 
-                                           placeholder="Enter plant name..." autocomplete="off">
+                                           placeholder="Enter plant name..." autocomplete="off" id="plant_search">
                                     <button type="button" id="voice-search-btn" class="voice-search-btn">
                                         <i class="fas fa-microphone"></i>
                                     </button>

@@ -1,6 +1,8 @@
 from datetime import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+
+from qa_sessions.utils import GoogleMeetService
 from .models import QnASession
 from .forms import ScheduleMeetingForm, ExpertScheduleMeetingForm
 from .google_calendar import create_google_meet_event

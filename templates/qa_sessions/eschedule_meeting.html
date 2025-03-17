@@ -20,7 +20,7 @@
     }
 
     .card-header {
-        background: linear-gradient(135deg, #82ae46, #6d8a2e);
+        background: linear-gradient(#2E7D32, #2E7D32, #155618);
         color: #fff;
         border-radius: 15px 15px 0 0 !important;
         padding: 1.5rem;
@@ -81,11 +81,11 @@
                     <h3 class="mb-0">Schedule Q&A Session</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post" class="needs-validation" novalidate>
+                    <form method="post" class="needs-validation" id="qaSessionForm" novalidate>
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger" id="nonFieldErrors">
                                 {% for error in form.non_field_errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -93,49 +93,49 @@
                         {% endif %}
 
                         <div class="mb-4">
-                            <label class="form-label">Title *</label>
-                            {{ form.title }}
+                            <label class="form-label" for="sessionTitle">Title *</label>
+                            <input type="text" name="{{ form.title.name }}" id="sessionTitle" class="form-control" {% if form.title.value %}value="{{ form.title.value }}"{% endif %}>
                             {% if form.title.errors %}
-                                <div class="error-feedback">{{ form.title.errors }}</div>
+                                <div class="error-feedback" id="titleError">{{ form.title.errors }}</div>
                             {% endif %}
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Description *</label>
-                            {{ form.description }}
+                            <label class="form-label" for="sessionDescription">Description *</label>
+                            <textarea name="{{ form.description.name }}" id="sessionDescription" class="form-control">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
                             {% if form.description.errors %}
-                                <div class="error-feedback">{{ form.description.errors }}</div>
+                                <div class="error-feedback" id="descriptionError">{{ form.description.errors }}</div>
                             {% endif %}
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">Start Time *</label>
-                                {{ form.start_time }}
+                                <label class="form-label" for="sessionStartTime">Start Time *</label>
+                                <input type="datetime-local" name="{{ form.start_time.name }}" id="sessionStartTime" class="form-control" {% if form.start_time.value %}value="{{ form.start_time.value|date:'Y-m-d\TH:i' }}"{% endif %}>
                                 {% if form.start_time.errors %}
-                                    <div class="error-feedback">{{ form.start_time.errors }}</div>
+                                    <div class="error-feedback" id="startTimeError">{{ form.start_time.errors }}</div>
                                 {% endif %}
                             </div>
 
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">End Time *</label>
-                                {{ form.end_time }}
+                                <label class="form-label" for="sessionEndTime">End Time *</label>
+                                <input type="datetime-local" name="{{ form.end_time.name }}" id="sessionEndTime" class="form-control" {% if form.end_time.value %}value="{{ form.end_time.value|date:'Y-m-d\TH:i' }}"{% endif %}>
                                 {% if form.end_time.errors %}
-                                    <div class="error-feedback">{{ form.end_time.errors }}</div>
+                                    <div class="error-feedback" id="endTimeError">{{ form.end_time.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Maximum Participants *</label>
-                            {{ form.max_participants }}
+                            <label class="form-label" for="sessionMaxParticipants">Maximum Participants *</label>
+                            <input type="number" name="{{ form.max_participants.name }}" id="sessionMaxParticipants" class="form-control" {% if form.max_participants.value %}value="{{ form.max_participants.value }}"{% endif %}>
                             {% if form.max_participants.errors %}
-                                <div class="error-feedback">{{ form.max_participants.errors }}</div>
+                                <div class="error-feedback" id="maxParticipantsError">{{ form.max_participants.errors }}</div>
                             {% endif %}
                         </div>
 
                         <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary px-5">
+                            <button type="submit" class="btn btn-primary px-5" id="scheduleSessionBtn">
                                 <i class="fas fa-calendar-plus me-2"></i>Schedule Session
                             </button>
                         </div>

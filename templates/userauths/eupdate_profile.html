@@ -1,5 +1,6 @@
 {% extends 'partials/ebase.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block content %}
 <style>
@@ -569,6 +570,38 @@
 #profileImage {
     animation: fadeIn 0.3s ease-out;
 }
+
+.weekly-schedule-wrapper {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.day-schedule {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: white;
+}
+
+.time-input {
+    flex: 1;
+}
+
+.time-input input {
+    width: 100%;
+}
+
+.session-settings {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.form-check.form-switch {
+    padding-left: 2.5em;
+    margin-bottom: 0.5rem;
+}
 </style>
 
 <div class="container">
@@ -683,11 +716,12 @@
                         <!-- Availability Section -->
                         <div class="form-section">
                             <div class="section-title">
-                                <i class="fas fa-clock"></i> Availability
+                                <i class="fas fa-clock"></i> Availability Settings
                             </div>
                             
-                            <div class="availability-wrapper">
-                                <label class="form-label">Availability Status</label>
+                            <!-- Availability Status -->
+                            <div class="availability-wrapper mb-4">
+                                <label class="form-label">Current Status</label>
                                 <div class="status-options">
                                     {% for radio in form.availability_status %}
                                     <div class="form-check form-check-inline">
@@ -700,14 +734,80 @@
                                 </div>
                             </div>
 
-                            <div class="form-floating mt-3">
-                                {{ form.availability_schedule }}
-                                <label>Weekly Schedule</label>
+                            <!-- Weekly Schedule -->
+                            <div class="weekly-schedule-wrapper">
+                                <h4 class="mb-3">Weekly Availability Schedule</h4>
+                                {% for day, label in form.instance.DAYS_OF_WEEK %}
+                                    {% with day_schedule=form.instance.availability_schedule|get_schedule:day %}
+                                    <div class="day-schedule mb-3">
+                                        <div class="day-header d-flex align-items-center mb-2">
+                                            <div class="form-check">
+                                                <input type="checkbox" 
+                                                       class="form-check-input day-toggle" 
+                                                       id="day_{{ day }}" 
+                                                       data-day="{{ day }}"
+                                                       {% if day_schedule.available %}checked{% endif %}>
+                                                <label class="form-check-label" for="day_{{ day }}">
+                                                    {{ label }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="time-slots d-flex align-items-center gap-3" 
+                                             id="timeslots_{{ day }}" 
+                                             {% if not day_schedule.available %}style="display: none;"{% endif %}>
+                                            <div class="time-input">
+                                                <label class="small">Start Time</label>
+                                                <input type="time" 
+                                                       class="form-control start-time" 
+                                                       data-day="{{ day }}"
+                                                       value="{{ day_schedule.start|default:'09:00' }}">
+                                            </div>
+                                            <div class="time-input">
+                                                <label class="small">End Time</label>
+                                                <input type="time" 
+                                                       class="form-control end-time" 
+                                                       data-day="{{ day }}"
+                                                       value="{{ day_schedule.end|default:'17:00' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endwith %}
+                                {% endfor %}
                             </div>
-                            
-                            <div class="form-floating mt-3">
-                                {{ form.consultation_fee }}
-                                <label>Consultation Fee</label>
+
+                            <!-- Session Settings -->
+                            <div class="session-settings mt-4">
+                                <h4 class="mb-3">Session Settings</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            {{ form.session_duration }}
+                                            <label>Session Duration (minutes)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            {{ form.session_price }}
+                                            <label>Session Price</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="session-types mt-3">
+                                    <div class="form-check form-switch">
+                                        {{ form.chat_enabled }}
+                                        <label class="form-check-label" for="{{ form.chat_enabled.id_for_label }}">
+                                            Enable Chat Sessions
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        {{ form.phone_enabled }}
+                                        <label class="form-check-label" for="{{ form.phone_enabled.id_for_label }}">
+                                            Enable Phone Sessions
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -848,6 +948,57 @@ function previewImage(event) {
 // Add click handler for the overlay
 document.querySelector('.profile-picture-overlay').addEventListener('click', function() {
     document.getElementById('id_profile_picture').click();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle day toggles
+    document.querySelectorAll('.day-toggle').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const day = this.dataset.day;
+            const timeSlots = document.getElementById(`timeslots_${day}`);
+            timeSlots.style.display = this.checked ? 'flex' : 'none';
+            updateScheduleData();
+        });
+    });
+
+    // Handle time changes
+    document.querySelectorAll('.start-time, .end-time').forEach(input => {
+        input.addEventListener('change', updateScheduleData);
+    });
+
+    function updateScheduleData() {
+        const scheduleData = {};
+        
+        document.querySelectorAll('.day-toggle').forEach(toggle => {
+            const day = toggle.dataset.day;
+            const isAvailable = toggle.checked;
+            const startTime = document.querySelector(`.start-time[data-day="${day}"]`).value;
+            const endTime = document.querySelector(`.end-time[data-day="${day}"]`).value;
+            
+            scheduleData[day] = {
+                available: isAvailable,
+                start: startTime || '09:00',
+                end: endTime || '17:00'
+            };
+        });
+
+        // Update the hidden input with the JSON string
+        const scheduleInput = document.createElement('input');
+        scheduleInput.type = 'hidden';
+        scheduleInput.name = 'availability_schedule';
+        scheduleInput.value = JSON.stringify(scheduleData);
+        
+        // Replace existing schedule input or add new one
+        const existingInput = document.querySelector('input[name="availability_schedule"]');
+        if (existingInput) {
+            existingInput.replaceWith(scheduleInput);
+        } else {
+            document.getElementById('profileUpdateForm').appendChild(scheduleInput);
+        }
+    }
+
+    // Initialize schedule data on page load
+    updateScheduleData();
 });
 </script>
 {% endblock %}

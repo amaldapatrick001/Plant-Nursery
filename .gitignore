@@ -23,6 +23,7 @@ db.sqlite3
 # Virtual Environment
 venv/
 env/ 
+new_env/
 
 # Google API credentials
 *client_secret*.json
@@ -35,3 +36,7 @@ service-account*.json
 .env
 .env.local
 .env.*
+media/uploads/
+media/plots/
+pdd/
+solar_forcast/

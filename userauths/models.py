@@ -66,13 +66,34 @@ class Login(models.Model):
 
     def __str__(self):
         return f'Login entry for {self.email}'
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
 
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
+    def get_email_field_name(self):
+        return 'email'
+    
+    def get_username(self):
+        return self.email
+    
+    @property
+    def is_active(self):
+        return True
+    
+    def has_usable_password(self):
+        return True
+    
+    def get_session_auth_hash(self):
+        return self.password
 
 class Expert(models.Model):
+    DAYS_OF_WEEK = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday')
+    ]
+
     expert_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User_Reg, on_delete=models.CASCADE)
     login = models.OneToOneField(Login, on_delete=models.CASCADE)
@@ -85,7 +106,16 @@ class Expert(models.Model):
         blank=True
     )
     specialization_tags = models.CharField(max_length=255, null=True, blank=True)
-    availability_schedule = models.JSONField(null=True, blank=True)  # Store availability by day and time
+    availability_schedule = models.JSONField(
+        null=True, 
+        blank=True,
+        default=dict,
+        help_text="""Format: {
+            'monday': {'start': '09:00', 'end': '17:00', 'available': true},
+            'tuesday': {'start': '09:00', 'end': '17:00', 'available': true},
+            ...
+        }"""
+    )
     availability_status = models.CharField(
         max_length=20,
         choices=[('available', 'Available'), ('unavailable', 'Unavailable')],
@@ -102,6 +132,12 @@ class Expert(models.Model):
     location = models.CharField(max_length=255, null=True, blank=True)
     languages = models.CharField(max_length=255, null=True, blank=True)
     date_time_joined = models.DateTimeField(auto_now_add=True)
+    # New fields for live Q&A
+    chat_enabled = models.BooleanField(default=True)
+    phone_enabled = models.BooleanField(default=True)  # Phone call support
+    meet_link = models.URLField(null=True, blank=True)
+    session_duration = models.IntegerField(default=10)  # Max 10 mins
+    session_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # Utility methods
     def update_availability(self, status):
@@ -152,7 +188,81 @@ class Expert(models.Model):
     def __str__(self):
         return f'Expert: {self.user.first_name} {self.user.last_name} - {self.expertise_area}'
 
+    def get_available_slots(self, date):
+        """Get available time slots for a specific date"""
+        from datetime import datetime, timedelta
+        from django.utils import timezone
 
+        # Convert date string to datetime
+        if isinstance(date, str):
+            check_date = datetime.strptime(date, '%Y-%m-%d').date()
+        else:
+            check_date = date
+
+        # Get day of week in lowercase
+        day_of_week = check_date.strftime('%A').lower()
+
+        # Check if day is available in schedule
+        schedule = self.availability_schedule or {}
+        day_schedule = schedule.get(day_of_week, {})
+        
+        if not day_schedule.get('available', False):
+            return []
+
+        start_time = datetime.strptime(day_schedule.get('start', '09:00'), '%H:%M').time()
+        end_time = datetime.strptime(day_schedule.get('end', '17:00'), '%H:%M').time()
+
+        # Combine date with times
+        start_datetime = timezone.make_aware(datetime.combine(check_date, start_time))
+        end_datetime = timezone.make_aware(datetime.combine(check_date, end_time))
+
+        # If date is today, start from current time
+        now = timezone.now()
+        if check_date == now.date():
+            start_datetime = max(start_datetime, now)
+
+        # Generate slots
+        slots = []
+        current = start_datetime
+        while current + timedelta(minutes=self.session_duration) <= end_datetime:
+            # Check if slot is already booked
+            from expert_QA_session.models import ExpertSession
+            is_booked = ExpertSession.objects.filter(
+                expert=self,
+                session_date__lt=current + timedelta(minutes=self.session_duration),
+                session_date__gt=current - timedelta(minutes=self.session_duration)
+            ).exists()
+
+            if not is_booked:
+                slots.append(current.strftime('%H:%M'))
+            
+            current += timedelta(minutes=self.session_duration)
+
+        return slots
+
+    def set_availability(self, day, start_time, end_time, available=True):
+        """Set availability for a specific day"""
+        if not self.availability_schedule:
+            self.availability_schedule = {}
+        
+        self.availability_schedule[day.lower()] = {
+            'start': start_time,
+            'end': end_time,
+            'available': available
+        }
+        self.save()
+
+    def set_weekly_schedule(self, schedule_dict):
+        """Set the entire weekly schedule at once"""
+        self.availability_schedule = {
+            day.lower(): {
+                'start': times.get('start', '09:00'),
+                'end': times.get('end', '17:00'),
+                'available': times.get('available', True)
+            }
+            for day, times in schedule_dict.items()
+        }
+        self.save()
 
 class DeliveryPersonnel(models.Model):
     delivery_id = models.AutoField(primary_key=True)

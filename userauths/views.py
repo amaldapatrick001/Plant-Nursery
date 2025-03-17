@@ -1,3 +1,4 @@
+import json
 import logging
 import random
 import string
@@ -57,7 +58,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Expert, User_Reg, Login
 import logging
 
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg, Count, Sum, Q
+from decimal import Decimal
+from products.models import Batch, Category, Product
+from products.views import get_collaborative_recommendations
+from purchase.models import Review
+import traceback
+from expert_QA_session.models import Expert  # Add this import
 
 def register(request):
     if request.method == 'POST':
@@ -315,6 +322,80 @@ from django.views.generic import TemplateView
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class IndexView(TemplateView):
     template_name = 'core/index.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        try:
+            experts = Expert.objects.select_related('user').all()
+            
+            context.update({
+                'experts': experts,
+                'has_experts': experts.exists(),
+                'debug': True,
+                'debug_info': {
+                    'total_experts': experts.count(),
+                    'expert_list': [
+                        {
+                            'id': e.expert_id,
+                            'name': f"{e.user.first_name} {e.user.last_name}",
+                            'expertise': e.expertise_area
+                        } for e in experts
+                    ]
+                }
+            })
+
+        except Exception as e:
+            context.update({
+                'experts': [],
+                'has_experts': False,
+                'debug': True,
+                'error_message': str(e)
+            })
+        
+        # Add recommended products based on authentication status
+        if self.request.user.is_authenticated:
+            recommended_products = self.get_recommended_products()
+        else:
+            recommended_products = self.get_popular_products()
+        
+        # Calculate discounted price and get average rating for each product
+        for batch in recommended_products:
+            if batch.discount:
+                discount_amount = (batch.price * Decimal(batch.discount)) / 100
+                batch.discounted_price = batch.price - discount_amount
+            
+            # Get average rating from the product's reviews using the correct related name
+            reviews = Review.objects.filter(product=batch.product)
+            if reviews.exists():
+                batch.avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+            else:
+                batch.avg_rating = None
+            
+        context['recommended_products'] = recommended_products
+        return context
+    
+    def get_recommended_products(self):
+        """
+        Get personalized recommendations for authenticated users.
+        """
+        return (Batch.objects
+                .select_related('product')
+                .filter(status=True)
+                .order_by('-created_on')[:4])
+    
+    def get_popular_products(self):
+        """
+        Get popular products for non-authenticated users
+        """
+        return (Batch.objects
+                .select_related('product')
+                .filter(status=True)
+                .order_by('-stock_quantity')[:4])
+
+
+
+    
 
     
 from django.db.models import Count
@@ -351,69 +432,71 @@ def password_reset_request(request):
             email = form.cleaned_data['email']
             try:
                 user = Login.objects.get(email=email)
+                
+                # Create token manually
+                uid = urlsafe_base64_encode(force_bytes(user.login_id))
+                token = default_token_generator.make_token(user)
+                
+                # Build reset URL
+                current_site = get_current_site(request)
+                reset_url = f"{request.scheme}://{current_site.domain}/userauths/reset/{uid}/{token}/"
+                
+                # Send email
+                subject = "Password Reset Request"
+                email_body = render_to_string('userauths/password_reset_email.html', {
+                    'email': user.email,
+                    'reset_url': reset_url,
+                    'site_name': current_site.name,
+                    'protocol': request.scheme,
+                    'domain': current_site.domain,
+                    'uid': uid,
+                    'token': token,
+                })
+                
+                send_mail(
+                    subject,
+                    email_body,
+                    'noreply@enchantededen.com',
+                    [user.email],
+                    fail_silently=False,
+                )
+                
+                messages.success(request, "Password reset instructions have been sent to your email.")
+                return redirect('userauths:password_reset_done')
+                
             except Login.DoesNotExist:
-                messages.error(request, 'No user is associated with this email.')
-                return redirect('userauths:password_reset_form')
-
-            # Generate token and UID for password reset
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-            # Send password reset email
-            current_site = get_current_site(request)
-            subject = 'Password Reset Requested'
-            message = render_to_string('userauths/password_reset_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': uid,
-                'token': token,
-            })
-            send_mail(subject, message, 'admin@example.com', [user.email], fail_silently=False)
-
-            # Redirect to password reset done page
-            return redirect('userauths:password_reset_done')
+                messages.error(request, "No account found with this email address.")
+                
     else:
         form = CustomPasswordResetForm()
-
+    
     return render(request, 'userauths/password_reset_form.html', {'form': form})
 
 
-def password_reset_confirm(request, uidb64=None, token=None, *args, **kwargs):
-    error_message = None
-    validlink = False  # Default to False
-
+def password_reset_confirm(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = Login.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Login.DoesNotExist) as e:
+        user = Login.objects.get(login_id=uid)
+    except (TypeError, ValueError, OverflowError, Login.DoesNotExist):
         user = None
-        error_message = str(e)
-
-    if user is not None and default_token_generator.check_token(user, token):
-        validlink = True  # Set validlink to True if token and user are valid
-
-        if request.method == 'POST':
-            form = CustomSetPasswordForm(user=user, data=request.POST)
-            if form.is_valid():
-                form.save()  # Save the new password
-                return redirect('userauths:password_reset_complete')
-
-        else:
-            form = CustomSetPasswordForm(user=user)
         
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = CustomSetPasswordForm(user, request.POST)
+            if form.is_valid():
+                new_password = form.cleaned_data['new_password1']
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, "Your password has been reset successfully!")
+                return redirect('userauths:password_reset_complete')
+        else:
+            form = CustomSetPasswordForm(user)
         return render(request, 'userauths/password_reset_confirm.html', {
             'form': form,
-            'validlink': validlink,
-            'uid': uidb64,
-            'token': token,
+            'validlink': True
         })
     else:
-        if not error_message:
-            error_message = "The reset link is invalid or has expired. Please try resetting your password again."
-        return render(request, 'userauths/password_reset_confirm.html', {
-            'error_message': error_message,
-            'validlink': validlink
-        })
+        return render(request, 'userauths/password_reset_invalid.html')
 
 
 
@@ -679,6 +762,7 @@ def google_callback(request):
                 1: 'userauths:adminindex',
                 2: 'userauths:index',
                 3: 'userauths:delivery_dashboard',
+                
                 4: 'userauths:update_expert_profile'
             }
 
@@ -792,7 +876,10 @@ def update_expert_profile(request):
         return JsonResponse({'status': 'error', 'message': 'Not authenticated'}, status=401)
 
     try:
-        user = User_Reg.objects.get(uid=request.session['user_id'])
+        # First get the Login object using login_id from session
+        login_user = Login.objects.get(login_id=request.session['user_id'])
+        # Then get the User_Reg through the uid field
+        user = login_user.uid
         expert = get_object_or_404(Expert, user=user)
 
         if request.method == 'POST':
@@ -800,21 +887,27 @@ def update_expert_profile(request):
             if form.is_valid():
                 expert = form.save(commit=False)
                 
-                # Handle profile picture if provided
+                # Handle profile picture
                 if 'profile_picture' in request.FILES:
                     expert.profile_picture = request.FILES['profile_picture']
                 
-                # Get availability status from form
-                expert.availability_status = form.cleaned_data['availability_status']
+                # Handle availability schedule
+                schedule_data = request.POST.get('availability_schedule')
+                if schedule_data:
+                    try:
+                        expert.availability_schedule = json.loads(schedule_data)
+                    except json.JSONDecodeError:
+                        return JsonResponse({
+                            'status': 'error',
+                            'message': 'Invalid schedule format'
+                        }, status=400)
                 
                 expert.save()
-                
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Profile updated successfully'
                 })
             else:
-                print(form.errors)  # For debugging
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Please correct the following errors:',
@@ -822,10 +915,23 @@ def update_expert_profile(request):
                 }, status=400)
         else:
             form = ExpertProfileUpdateForm(instance=expert)
-            return render(request, 'userauths/eupdate_profile.html', {'form': form})
+            return render(request, 'userauths/eupdate_profile.html', {
+                'form': form,
+                'expert': expert
+            })
 
+    except Login.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'User not found'
+        }, status=404)
+    except Expert.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Expert profile not found'
+        }, status=404)
     except Exception as e:
-        print(f"Error updating profile: {str(e)}")  # For debugging
+        print(f"Error updating profile: {str(e)}")
         return JsonResponse({
             'status': 'error',
             'message': str(e)

@@ -218,17 +218,25 @@
         <!-- Right Column: Product Information and Add to Cart -->
         <div class="col-md-6">
             <h2 class="product-title">{{ product.name }}</h2>
-            <p class="product-description">{{ product.description }}</p>
-            <ul class="details-list">
-                <li><strong>Category:</strong> {{ plant_category.name }}</li>
-                <li><strong>Sunlight Requirement:</strong> {{ plant_category.sunlight_requirement }}</li>
-                <li><strong>Water Requirement:</strong> {{ plant_category.water_requirement }}</li>
-                <li><strong>Climate Suitability:</strong> {{ plant_category.climate_suitability }}</li>
-                <li><strong>Growth Rate:</strong> {{ plant_category.growth_rate }}</li>
-                <li><strong>Soil Type:</strong> {{ plant_category.soil_type }}</li>
-                <li><strong>Best Time to Plant:</strong> {{ plant_category.best_time_to_plant }}</li>
-                <li><strong>Stock Quantity:</strong> {{ batch.stock_quantity }}</li>
-            </ul>
+            <!-- Text-to-speech button -->
+            <button id="speak-product-details" class="speak-button btn btn-outline-primary mb-3">
+                🔊 Read
+            </button>
+            <div class="product-details-content">
+                <!-- Product description -->
+                <p class="product-description">{{ product.description }}</p>
+                <!-- Product details list -->
+                <ul class="details-list">
+                    <li><strong>Category:</strong> {{ plant_category.name }}</li>
+                    <li><strong>Sunlight Requirement:</strong> {{ plant_category.sunlight_requirement }}</li>
+                    <li><strong>Water Requirement:</strong> {{ plant_category.water_requirement }}</li>
+                    <li><strong>Climate Suitability:</strong> {{ plant_category.climate_suitability }}</li>
+                    <li><strong>Growth Rate:</strong> {{ plant_category.growth_rate }}</li>
+                    <li><strong>Soil Type:</strong> {{ plant_category.soil_type }}</li>
+                    <li><strong>Best Time to Plant:</strong> {{ plant_category.best_time_to_plant }}</li>
+                    <li><strong>Stock Quantity:</strong> {{ batch.stock_quantity }}</li>
+                </ul>
+            </div>
             <div class="mt-4">
                 <a href="{% url 'purchase:add_to_cart' batch.id %}" class="btn btn-custom mr-2">Add to Cart</a>
                 <a href="{% url 'products:cproduct_list' %}" class="btn btn-secondary">Back to Product List</a>
@@ -236,4 +244,78 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentUtterance = null;
+
+        // Function to handle text-to-speech
+        function speak(text) {
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            // Create new utterance
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Set properties for better performance
+            currentUtterance.rate = 1.0;  // Speech rate
+            currentUtterance.pitch = 1.0; // Speech pitch
+            currentUtterance.volume = 1.0; // Speech volume
+            
+            // Handle the browser bug that stops speech after ~15 seconds
+            currentUtterance.addEventListener('end', function() {
+                // Resume speaking if browser paused it
+                window.speechSynthesis.resume();
+            });
+
+            currentUtterance.addEventListener('error', function(event) {
+                console.error('Speech synthesis error:', event);
+            });
+
+            // Start speaking
+            window.speechSynthesis.speak(currentUtterance);
+
+            // Keep the speech synthesis active
+            function keepAlive() {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.pause();
+                    window.speechSynthesis.resume();
+                    setTimeout(keepAlive, 5000);
+                }
+            }
+            keepAlive();
+        }
+
+        // Product details speech button
+        document.getElementById('speak-product-details').addEventListener('click', function() {
+            // Build a structured description
+            const title = document.querySelector('.product-title').textContent;
+            const description = document.querySelector('.product-description').textContent;
+            const detailsList = Array.from(document.querySelector('.details-list').children)
+                .map(li => li.textContent)
+                .join('. ');
+            
+            const fullText = `${title}. Description: ${description}. Product Details: ${detailsList}`;
+            speak(fullText);
+        });
+
+        // Cultivation details speech button
+        document.getElementById('speak-cultivation-details')?.addEventListener('click', function() {
+            // Build a structured cultivation description
+            const cultivationDetails = Array.from(document.querySelectorAll('.cultivation-method p'))
+                .map(p => p.textContent)
+                .join('. ');
+            
+            speak(`Cultivation Method Details. ${cultivationDetails}`);
+        });
+
+        // Stop speech if user navigates away
+        window.addEventListener('beforeunload', function() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        });
+    });
+</script>
+
 {% endblock %}

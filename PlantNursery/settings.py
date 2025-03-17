@@ -12,36 +12,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Google Calendar Settings
 GOOGLE_CALENDAR_CREDENTIALS_FILE = os.getenv('GOOGLE_CALENDAR_CREDENTIALS_FILE')
-
-# Google Calendar Settings
 GOOGLE_CALENDAR_SETTINGS = {
-    'CLIENT_SECRETS_FILE': os.getenv('GOOGLE_CLIENT_SECRETS_FILE'),
+    'CLIENT_SECRETS_FILE': os.path.join(BASE_DIR, 'qa_sessions', 'client_secret.json'),
     'TOKEN_FILE': os.path.join(BASE_DIR, 'qa_sessions', 'token.pickle'),
-    'SCOPES': ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/calendar.events'],
+    'SCOPES': [os.getenv('GOOGLE_CALENDAR_SCOPES')],
 }
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security and Authentication
-GOOGLE_OAUTH_CLIENT_ID = '130668388328-jkl8a6uqp9op73h46pff1401ab16vop5.apps.googleusercontent.com'
-SECRET_KEY = 'django-insecure-_&b(9(a%^7)t%%&9ctl$)bb8t2mo1djy8#kc_szj7ss6v!ahpk'
-DEBUG = True
+GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
 CLIENT_SECRET = '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'
-GOOGLE_OAUTH_REDIRECT_URI = 'http://localhost:8000/userauths/google/callback'  # Remove trailing slash
-SITE_URL = 'http://localhost:8000'  # Base URL without trailing slash
+GOOGLE_OAUTH_REDIRECT_URI = os.getenv('GOOGLE_OAUTH_REDIRECT_URI')
+SITE_URL = os.getenv('SITE_URL')
 # Database Configuration
 
 GOOGLE_CALENDAR_CREDENTIALS = os.path.join(BASE_DIR, 'credentials/service-account-key.json')
-GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'EnchantedEden',
-        'USER': 'postgres',
-        'PASSWORD': 'Amalda@2002',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'OPTIONS': {
             'sslmode': 'prefer',  # Try 'prefer' or 'disable'
         },
@@ -49,21 +46,46 @@ DATABASES = {
 }
 
 
-# Use Render Database URL if needed
-# DATABASES['default'] = dj_database_url.config(
-#     default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen'
-# )
 
+import os
+
+import os
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME', 'EnchantedEden'),  # Default value if env variable is not set
+#         'USER': os.getenv('DB_USER', 'postgres'),       # Default value if env variable is not set
+#         'PASSWORD': os.getenv('DB_PASSWORD', 'Amalda@2002'),  # Default value if env variable is not set
+#         'HOST': 'db',  # Use the service name 'db' from docker-compose.yml
+#         'PORT': os.getenv('DB_PORT', '5432'),           # Default to PostgreSQL port
+#         'OPTIONS': {
+#             'sslmode': 'prefer',  # Use 'prefer' or 'disable' for local development
+#         },
+#     }
+# }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgresql://enchnatededen_user:kkLlccBiPIAlJiIr8WhLcKKUhd72178E@dpg-cslaof68ii6s73d9cod0-a.oregon-postgres.render.com/enchnatededen',
+#         conn_max_age=600,
+#         ssl_require=True
+#     )
+# }
+# # Use Render Database URL if needed
+# if os.getenv('DATABASE_URL'):
+#     DATABASES['default'] = dj_database_url.config(
+#         default=os.getenv('DATABASE_URL')
+#     )
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER="amaldapatrick2025@mca.ajce.in"
-EMAIL_HOST_PASSWORD="gaeo uuau ymdg sebd"  # New app password
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 
 # Installed applications
 INSTALLED_APPS = [
@@ -74,6 +96,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_extensions',
+     'whitenoise.runserver_nostatic', 
+    # 'chatterbot.ext.django_chatterbot',
 
     'core',
     'userauths',
@@ -85,11 +110,24 @@ INSTALLED_APPS = [
     'delivery',
     'blog',
     'qa_sessions',
-    'disease_detection',
-    
-
+    'expert_QA_session',
+    'channels',
+    'solar_forecast',
+    'pdd',
+    'chatbot',
+    'plant_layout',
 ]
 
+
+ASGI_APPLICATION = 'PlantNursery.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Authentication backends
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
@@ -108,6 +146,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'userauths.middleware.NoCacheMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 ]
 
 # URL configurations
@@ -120,11 +159,7 @@ LOGIN_URL = '/userauths/login/'
 # Google OAuth2
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_OAUTH_CLIENT_ID
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CLIENT_SECRET
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/calendar.event',
-]
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPES').split(',')
 
 # Additional Social Auth Settings
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/userauths/login/'
@@ -198,13 +233,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Site configuration
 SITE_ID = 1
-SITE_NAME = 'Enchanted Eden'
-DOMAIN = 'localhost:8000'
+SITE_NAME = os.getenv('SITE_NAME')
+DOMAIN = os.getenv('DOMAIN')
 PASSWORD_RESET_EMAIL_TEMPLATE = 'userauths/password_reset_email.html'
 
 # Razorpay Configuration
-RAZORPAY_KEY_ID = 'rzp_test_DRyi6K0A68qkc4'
-RAZORPAY_KEY_SECRET = '3zvEn8RxuvCxgu8ATRny3g95'
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 
 # Allowed Hosts
 ALLOWED_HOSTS = ['enchnated-eden.onrender.com', 'localhost', '127.0.0.1']
@@ -243,3 +278,22 @@ LOGGING = {
     },
 }
 
+# Get API keys from environment variables
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+
+# Add validation to ensure keys are present
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in environment variables")
+if not OPENWEATHER_API_KEY:
+    raise ValueError("OPENWEATHER_API_KEY not found in environment variables")
+
+# Weather API Key
+OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+
+# AI Recommendation Settings
+AI_RECOMMENDATION_SETTINGS = {
+    'MIN_MATCH_SCORE': 50,
+    'MAX_RECOMMENDATIONS': 8,
+    'UPDATE_INTERVAL_HOURS': 1
+}

@@ -20,4 +20,16 @@ def strip(value):
     """
     if value:
         return value.strip()
-    return '' 
+    return ''
+
+@register.filter(name='get_item')
+def get_item(dictionary, key):
+    if dictionary is None:
+        return {}
+    return dictionary.get(key, {})
+
+@register.filter(name='get_schedule')
+def get_schedule(schedule, day):
+    if not schedule or day not in schedule:
+        return {'available': False, 'start': '09:00', 'end': '17:00'}
+    return schedule.get(day, {}) 

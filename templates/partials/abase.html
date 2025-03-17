@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,6 +97,39 @@
                 width: 100%;
             }
         }
+        /* Additional styles for AR Garden section */
+        #arGardenDropdown {
+            transition: all 0.3s ease;
+        }
+
+        #arGardenDropdown:hover {
+            background-color: #558b2f;
+            color: #fff;
+        }
+
+        .dropdown-header {
+            color: #ffffff;
+            font-weight: bold;
+            padding: 8px 16px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #558b2f;
+            color: #ffffff;
+            transform: translateX(5px);
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
     </style>
 </head>
 
@@ -126,7 +158,7 @@
         </div>
 
         <div class="list-group list-group-flush">
-            <!-- Manage Categories -->
+            <!-- Categories Dropdown -->
             <div class="dropdown">
                 <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-th-large mr-2"></i> Manage Categories
@@ -145,166 +177,153 @@
                     <a class="dropdown-item" href="{% url 'products:plant-type-update' %}"><i class="fas fa-edit mr-2"></i> Update Plant Types</a>
                 </div>
             </div>
-<!-- Manage Plants Dropdown -->
-<div class="dropdown">
-    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="productsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-seedling mr-2"></i> Manage Plants
-    </a>
-    
-    <div class="dropdown-menu" aria-labelledby="productsDropdown">
-        <!-- Plant Categories Section -->
-        <h6 class="dropdown-header">Plant Categories</h6>
-        <a class="dropdown-item" href="{% url 'products:plant-category-list' %}">
-            <i class="fas fa-list mr-2"></i> Category List
-        </a>
-        <a class="dropdown-item" href="{% url 'products:add-plant-category' %}">
-            <i class="fas fa-plus-circle mr-2"></i> Add New Category
-        </a>
-        
 
-        <!-- Product Section -->
-        <h6 class="dropdown-header">Product</h6>
-        <a class="dropdown-item" href="{% url 'products:product_list' %}">
-            <i class="fas fa-list mr-2"></i> Product List
-        </a>
-        <a class="dropdown-item" href="{% url 'products:add_product' %}">
-            <i class="fas fa-plus-circle mr-2"></i> Add New Product
-        </a>
-
-        <!-- Branch Section -->
-        <h6 class="dropdown-header">Branch</h6>
-        <a class="dropdown-item" href="{% url 'products:batch_list' %}">
-            <i class="fas fa-list mr-2"></i> Branch List
-        </a>
-        <a class="dropdown-item" href="{% url 'products:add_batch' %}">
-            <i class="fas fa-plus-circle mr-2"></i> Add New Branch
-        </a>
-    </div>
-</div>
-
-                <!-- Manage Users -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="usersDropdown"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-users mr-2"></i> Manage Users
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="usersDropdown">
-                        <!-- <a class="dropdown-item" href="{% url 'userauths:register' %}">Add User</a> -->
-                        <a class="dropdown-item" href="{% url 'userauths:user_details' %}">View Users</a>
-                        <a class="dropdown-item" href="{% url 'userauths:user_details_view' %}">Deleted Users</a>
-                    </div>
-                </div>
-
-                <!-- Manage Orders -->
-<div class="dropdown">
-    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="ordersDropdown"
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-shopping-cart mr-2"></i> Manage Orders
-    </a>
-    <div class="dropdown-menu" aria-labelledby="ordersDropdown">
-        <a class="dropdown-item" href="{% url 'purchase:view_orders' %}">View Orders</a>
-    </div>
-</div>
-
-
-                <!-- Inventory Reports -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="reportsDropdown"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-chart-line mr-2"></i> Inventory Reports
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                        <a class="dropdown-item" href="{% url 'purchase:manage_reviews' %}">Manage Reviews</a>
-                        <a class="dropdown-item" href="{% url 'purchase:reports' %}">View Reports</a>
-                        <a class="dropdown-item" href="{% url 'purchase:generate_report' %}">Generate Report</a>
-                    </div>
-                </div>
-
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="blogDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-blog mr-2"></i> Manage Blog
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="blogDropdown">
-                        <!-- <a class="dropdown-item" href="">
-                            <i class="fas fa-list mr-2"></i> Blog List
-                        </a> -->
-                        <a class="dropdown-item" href="{% url 'blog:add' %}">
-                            <i class="fas fa-plus-circle mr-2"></i> Add New Blog
-                        </a>
-                        <a class="dropdown-item" href="{% url 'blog:admin_blog_dashboard' %}">
-                            <i class="fas fa-edit mr-2"></i> Blog Dashboard
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="expertDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-tie mr-2"></i> Manage Experts
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="expertDropdown">
-                        <h6 class="dropdown-header">Experts</h6>
-                        <a class="dropdown-item" href="{% url 'userauths:add_expert' %}">
-                            <i class="fas fa-plus-circle mr-2"></i> Add New Expert
-                        </a>
-                        <a class="dropdown-item" href="{% url 'userauths:manage_experts' %}">
-                            <i class="fas fa-edit mr-2"></i> View and Update Expert Info
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Manage Delivery Personnel Dropdown -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="deliveryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-truck mr-2"></i> Manage Delivery
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="deliveryDropdown">
-                        <h6 class="dropdown-header">Delivery Personnel</h6>
-                        <a class="dropdown-item" href="{% url 'userauths:delivery_personnel_list' %}">
-                            <i class="fas fa-list mr-2"></i> View Delivery Personnel
-                        </a>
-                        <a class="dropdown-item" href="{% url 'userauths:register_delivery_personnel' %}">
-                            <i class="fas fa-plus-circle mr-2"></i> Add Delivery Personnel
-                        </a>
-
-                        <div class="dropdown-divider"></div>
-
-                        <h6 class="dropdown-header">Deliveries</h6>
-                        <!-- <a class="dropdown-item" href="">
-                            <i class="fas fa-shipping-fast mr-2"></i> Active Deliveries
-                        </a> -->
-                        <a class="dropdown-item" href="{% url 'delivery:view_delivery_history' %}">
-                            <i class="fas fa-history mr-2"></i> Delivery History
-                        </a>
-                        <a class="dropdown-item" href="{% url 'delivery:view_undelivered_orders' %}">
-                            <i class="fas fa-tasks mr-2"></i> Assign Deliveries
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Manage Webinars/Meetings Dropdown -->
-                <div class="dropdown">
-                    <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="webinarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-video mr-2"></i> Manage Webinars
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="webinarDropdown">
-                        <h6 class="dropdown-header">Meetings & Sessions</h6>
-                        <a href="{% url 'qa_sessions:schedule_meeting' %}" class="dropdown-item">
-                            <i class="fas fa-calendar-plus mr-2"></i> Schedule Meeting
-                        </a>
-                        <a href="{% url 'qa_sessions:ameeting_list' %}" class="dropdown-item">
-                            <i class="fas fa-calendar-check mr-2"></i> View Meetings
-                        </a>
-                        
-                        
-                    </div>
-                </div>
-
-                <!-- View Contact Us Submissions -->
-                <a href="{% url 'contact_list' %}" class="list-group-item list-group-item-action">
-                    <i class="fas fa-envelope mr-2"></i> Contact Us
+            <!-- Plants Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="productsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-seedling mr-2"></i> Manage Plants
                 </a>
+                <div class="dropdown-menu" aria-labelledby="productsDropdown">
+                    <h6 class="dropdown-header">Plant Categories</h6>
+                    <a class="dropdown-item" href="{% url 'products:plant-category-list' %}"><i class="fas fa-list mr-2"></i> Category List</a>
+                    <a class="dropdown-item" href="{% url 'products:add-plant-category' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Category</a>
 
-                <!-- Logout -->
-                {% if request.session.is_authenticated %}
+                    <div class="dropdown-divider"></div>
+
+                    <h6 class="dropdown-header">Products</h6>
+                    <a class="dropdown-item" href="{% url 'products:product_list' %}"><i class="fas fa-list mr-2"></i> Product List</a>
+                    <a class="dropdown-item" href="{% url 'products:add_product' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Product</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <h6 class="dropdown-header">Branch</h6>
+                    <a class="dropdown-item" href="{% url 'products:batch_list' %}"><i class="fas fa-list mr-2"></i> Branch List</a>
+                    <a class="dropdown-item" href="{% url 'products:add_batch' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Branch</a>
+                </div>
+            </div>
+
+            <!-- Users Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="usersDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-users mr-2"></i> Manage Users
+                </a>
+                <div class="dropdown-menu" aria-labelledby="usersDropdown">
+                    <h6 class="dropdown-header">User Management</h6>
+                    <a class="dropdown-item" href="{% url 'userauths:user_details' %}"><i class="fas fa-user-check mr-2"></i> View Users</a>
+                    <a class="dropdown-item" href="{% url 'userauths:user_details_view' %}"><i class="fas fa-user-times mr-2"></i> Deleted Users</a>
+                </div>
+            </div>
+
+            <!-- Orders Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="ordersDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-shopping-cart mr-2"></i> Manage Orders
+                </a>
+                <div class="dropdown-menu" aria-labelledby="ordersDropdown">
+                    <h6 class="dropdown-header">Order Management</h6>
+                    <a class="dropdown-item" href="{% url 'purchase:view_orders' %}"><i class="fas fa-list-alt mr-2"></i> View Orders</a>
+                </div>
+            </div>
+
+            <!-- Reports Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="reportsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-chart-line mr-2"></i> Inventory Reports
+                </a>
+                <div class="dropdown-menu" aria-labelledby="reportsDropdown">
+                    <h6 class="dropdown-header">Reports & Analytics</h6>
+                    <a class="dropdown-item" href="{% url 'purchase:manage_reviews' %}"><i class="fas fa-star mr-2"></i> Manage Reviews</a>
+                    <a class="dropdown-item" href="{% url 'purchase:reports' %}"><i class="fas fa-file-alt mr-2"></i> View Reports</a>
+                    <a class="dropdown-item" href="{% url 'purchase:generate_report' %}"><i class="fas fa-file-export mr-2"></i> Generate Report</a>
+                </div>
+            </div>
+
+            <!-- Blog Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="blogDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-blog mr-2"></i> Manage Blog
+                </a>
+                <div class="dropdown-menu" aria-labelledby="blogDropdown">
+                    <h6 class="dropdown-header">Blog Management</h6>
+                    <a class="dropdown-item" href="{% url 'blog:add' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Blog</a>
+                    <a class="dropdown-item" href="{% url 'blog:admin_blog_dashboard' %}"><i class="fas fa-columns mr-2"></i> Blog Dashboard</a>
+                </div>
+            </div>
+
+            <!-- Experts Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="expertDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-tie mr-2"></i> Manage Experts
+                </a>
+                <div class="dropdown-menu" aria-labelledby="expertDropdown">
+                    <h6 class="dropdown-header">Expert Management</h6>
+                    <a class="dropdown-item" href="{% url 'userauths:add_expert' %}"><i class="fas fa-plus-circle mr-2"></i> Add New Expert</a>
+                    <a class="dropdown-item" href="{% url 'userauths:manage_experts' %}"><i class="fas fa-user-cog mr-2"></i> Manage Experts</a>
+                </div>
+            </div>
+
+            <!-- Delivery Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="deliveryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-truck mr-2"></i> Manage Delivery
+                </a>
+                <div class="dropdown-menu" aria-labelledby="deliveryDropdown">
+                    <h6 class="dropdown-header">Personnel</h6>
+                    <a class="dropdown-item" href="{% url 'userauths:delivery_personnel_list' %}"><i class="fas fa-users mr-2"></i> View Personnel</a>
+                    <a class="dropdown-item" href="{% url 'userauths:register_delivery_personnel' %}"><i class="fas fa-user-plus mr-2"></i> Add Personnel</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <h6 class="dropdown-header">Deliveries</h6>
+                    <a class="dropdown-item" href="{% url 'delivery:view_delivery_history' %}"><i class="fas fa-history mr-2"></i> Delivery History</a>
+                    <a class="dropdown-item" href="{% url 'delivery:view_undelivered_orders' %}"><i class="fas fa-tasks mr-2"></i> Assign Deliveries</a>
+                </div>
+            </div>
+
+            <!-- Webinars Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="webinarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-video mr-2"></i> Manage Webinars
+                </a>
+                <div class="dropdown-menu" aria-labelledby="webinarDropdown">
+                    <h6 class="dropdown-header">Meetings & Sessions</h6>
+                    <a class="dropdown-item" href="{% url 'qa_sessions:schedule_meeting' %}"><i class="fas fa-calendar-plus mr-2"></i> Schedule Meeting</a>
+                    <a class="dropdown-item" href="{% url 'qa_sessions:ameeting_list' %}"><i class="fas fa-calendar-check mr-2"></i> View Meetings</a>
+                </div>
+            </div>
+
+            <!-- Session Reports Dropdown -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="sessionReportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-chart-bar mr-2"></i> Session Reports
+                </a>
+                <div class="dropdown-menu" aria-labelledby="sessionReportDropdown">
+                    <h6 class="dropdown-header">Reports</h6>
+                    <a class="dropdown-item" href="{% url 'expert_QA_session:session_report' %}"><i class="fas fa-file-alt mr-2"></i> View Session Reports</a>
+                </div>
+            </div>
+
+            <!-- AR Garden -->
+            <div class="dropdown">
+                <a class="list-group-item list-group-item-action dropdown-toggle" href="#" id="arGardenDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-vr-cardboard mr-2"></i> AR Garden Management
+                </a>
+                <div class="dropdown-menu" aria-labelledby="arGardenDropdown">
+                    <h6 class="dropdown-header">Garden Management</h6>
+                    <a class="dropdown-item" href="{% url 'plant_layout:add_plant' %}">
+                        <i class="fas fa-plus-circle mr-2"></i> Add New Plant
+                    </a>
+                    <a class="dropdown-item" href="{% url 'plant_layout:plant_list' %}">
+                        <i class="fas fa-leaf mr-2"></i> View Plant Library
+                    </a>
+                    
+                    <div class="dropdown-divider"></div>
+                    
+                </div>
+            </div>
+
+            <!-- Logout -->
+            {% if request.session.is_authenticated %}
     <a href="{% url 'userauths:logout' %}" class="list-group-item list-group-item-action">
         <i class="fas fa-sign-out-alt mr-2"></i> Logout
     </a>
@@ -314,40 +333,40 @@
     </a>
 {% endif %}
 
-            </div>
         </div>
+    </div>
 
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <h2>Admin Dashboard</h2>
-                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'userauths:adminindex' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        {% if request.session.is_authenticated %}
-                        <a href="{% url 'userauths:logout' %}" class="nav-link">Logout</a>
-                        {% else %}
-                        <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
-                        {% endif %}
-                    </li>
-                </ul>
-            </nav>
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <h2>Admin Dashboard</h2>
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'userauths:adminindex' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Profile</a>
+                </li>
+                <li class="nav-item">
+                    {% if request.session.is_authenticated %}
+                    <a href="{% url 'userauths:logout' %}" class="nav-link">Logout</a>
+                    {% else %}
+                    <a href="{% url 'userauths:login' %}" class="nav-link">Login</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
 
-            {% block content %}
-            <!-- Add dynamic content here -->
-            {% endblock %}
-        </div>
+        {% block content %}
+        <!-- Add dynamic content here -->
+        {% endblock %}
+    </div>
 
 
-    <!-- JS and JQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- JS and JQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

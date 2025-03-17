@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: EnchantedEden
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Amalda@2002
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env  # Load environment variables from .env file
+    environment:
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}  # Reference EMAIL_HOST_USER from .env
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}  # Reference EMAIL_HOST_PASSWORD from .env
+
+volumes:
+  postgres_data:

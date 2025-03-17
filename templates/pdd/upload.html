@@ -25,16 +25,16 @@
                             <div class="form-group">
                                 <label for="image" class="d-block mb-3">Drag and drop your image here or click to browse</label>
                                 <input type="file" class="form-control-file d-none" id="image" name="image" accept="image/*" required>
-                                <button type="button" class="btn btn-outline-primary btn-lg" onclick="document.getElementById('image').click()">
+                                <button type="button" class="btn btn-outline-primary btn-lg" id="disease-detection-file" onclick="document.getElementById('image').click()">
                                     Choose File
                                 </button>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg px-5 py-2 mt-3">
-                            <i class="fas fa-search me-2"></i>Detect Disease
+                            <i class="fas fa-search me-2" id="disease-detection-buttons"></i>Detect Disease
                         </button>
                     </form>
-                </div>
+                </div> 
             </div>
         </div>
     </div>

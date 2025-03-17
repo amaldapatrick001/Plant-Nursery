@@ -1,7 +1,2 @@
-<<<<<<< HEAD
 
 Enchanted Eden is a comprehensive web application designed to cater to plant enthusiasts, farmers, and agricultural experts. The platform integrates e-commerce capabilities with advanced agricultural services and community engagement features. Users can browse and purchase a wide variety of plants and gardening supplies, register plants for continuous monitoring, and book skilled farmers for systematic cultivation. The platform also offers tools for designing virtual gardens and leverages machine learning for pest and disease detection. Enchanted Eden aims to foster a vibrant community of plant lovers by providing educational resources, expert guidance, and a user-friendly experience that promotes sustainable gardening practices.
-=======
-
-Enchanted Eden is a comprehensive web application designed to cater to plant enthusiasts, farmers, and agricultural experts. The platform integrates e-commerce capabilities with advanced agricultural services and community engagement features. Users can browse and purchase a wide variety of plants and gardening supplies, register plants for continuous monitoring, and book skilled farmers for systematic cultivation. The platform also offers tools for designing virtual gardens and leverages machine learning for pest and disease detection. Enchanted Eden aims to foster a vibrant community of plant lovers by providing educational resources, expert guidance, and a user-friendly experience that promotes sustainable gardening practices.
->>>>>>> 1f7ed6f7831d74d3de04e0424065c63794fd8d85
