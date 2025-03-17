@@ -111,3 +111,4 @@ google-auth
 google-auth-oauthlib
 google-auth-httplib2
 google-api-python-client
+numpy==1.26.4pandas==2.2.3
