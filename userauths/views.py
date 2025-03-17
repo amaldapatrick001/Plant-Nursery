@@ -61,7 +61,7 @@ import logging
 from django.db.models import Avg, Count, Sum, Q
 from decimal import Decimal
 from products.models import Batch, Category, Product
-from products.views import get_collaborative_recommendations
+#from products.views import get_collaborative_recommendations
 from purchase.models import Review
 import traceback
 from expert_QA_session.models import Expert  # Add this import
