@@ -133,6 +133,7 @@ class Expert(models.Model):
     languages = models.CharField(max_length=255, null=True, blank=True)
     date_time_joined = models.DateTimeField(auto_now_add=True)
     # New fields for live Q&A
+    #chat_enabled = models.BooleanField(default=True)
     phone_enabled = models.BooleanField(default=True)  # Phone call support
     meet_link = models.URLField(null=True, blank=True)
     session_duration = models.IntegerField(default=10)  # Max 10 mins

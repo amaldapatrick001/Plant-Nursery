@@ -263,9 +263,12 @@ class ExpertProfileUpdateForm(forms.ModelForm):
             'expertise_area', 'qualifications', 'description',
             'profile_picture', 'specialization_tags', 'availability_status',
             'consultation_fee', 'certifications', 'contact_email',
-            'contact_phone', 'location', 'languages', 'chat_enabled',
+            'contact_phone', 'location', 'languages',
             'phone_enabled', 'meet_link', 'session_duration', 'session_price'
         ]
+
+
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
